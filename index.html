@@ -15,7 +15,6 @@
             --primary-blue: #3b82f6;
             --accent-green: #10b981;
             --accent-red: #ef4444;
-            --accent-orange: #f59e0b;
         }
 
         body {
@@ -29,165 +28,58 @@
             align-items: center;
         }
 
-        .container {
-            width: 100%;
-            max-width: 1200px;
-        }
+        .container { width: 100%; max-width: 1200px; }
 
-        /* Cabecera */
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
+        header { text-align: center; margin-bottom: 30px; }
         header h1 {
-            font-size: 2.3rem;
-            margin-bottom: 5px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            font-size: 2.3rem; margin-bottom: 5px; text-transform: uppercase;
             background: linear-gradient(to right, #ffffff, var(--primary-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
+        header p { color: var(--text-muted); font-size: 1.1rem; margin: 0; }
 
-        header p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            margin: 0;
-        }
-
-        /* Tarjetas de Indicadores (Efecto Vidrio) */
+        /* Panel de KPIs */
         .kpi-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px; margin-bottom: 30px;
         }
 
         .card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            transition: transform 0.2s, box-shadow 0.2s;
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px); border-radius: 12px; padding: 20px; text-align: center;
         }
-
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        .card h3 {
-            margin: 0 0 10px 0;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .card .value {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-
+        .card h3 { margin: 0 0 10px 0; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; }
+        .card .value { font-size: 2rem; font-weight: bold; }
         .card.objetivo .value { color: #ffffff; }
         .card.cubiertos .value { color: var(--accent-green); }
         .card.vacantes .value { color: var(--accent-red); }
         .card.cobertura .value { color: var(--primary-blue); }
 
-        /* Filtros y Buscador */
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
+        /* Controles de Filtros */
+        .controls { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
         .search-input, .filter-select {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            color: var(--text-color);
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.2s;
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            color: var(--text-color); padding: 12px 20px; border-radius: 8px; font-size: 1rem; outline: none;
         }
+        .search-input { flex: 1; min-width: 250px; }
+        .filter-select { min-width: 200px; cursor: pointer; }
 
-        .search-input {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .filter-select {
-            min-width: 200px;
-            cursor: pointer;
-        }
-
-        .search-input:focus, .filter-select:focus {
-            border-color: var(--primary-blue);
-        }
-
-        /* Tabla Estilizada */
+        /* Tabla Interactiva */
         .table-responsive {
-            overflow-x: auto;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
+            overflow-x: auto; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px;
         }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 16px 20px; border-bottom: 1px solid var(--card-border); }
+        th { background-color: rgba(0, 0, 0, 0.3); color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; }
+        
+        tr:hover td { background-color: rgba(255, 255, 255, 0.02); }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        th, td {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--card-border);
-        }
-
-        th {
-            background-color: rgba(0, 0, 0, 0.3);
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
-            background-color: rgba(255, 255, 255, 0.02);
-        }
-
-        /* Etiquetas de Prioridad */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
+        .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; }
         .badge.alta { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
         .badge.media { background: rgba(245, 158, 11, 0.15); color: #fde68a; }
         .badge.baja { background: rgba(59, 130, 246, 0.15); color: #bfdbfe; }
-
-        /* Adaptabilidad Móvil */
-        @media (max-width: 768px) {
-            header h1 { font-size: 1.8rem; }
-            th, td { padding: 12px 15px; }
-            .controls { flex-direction: column; }
-        }
+        
+        .loading { text-align: center; padding: 40px; color: var(--text-muted); font-size: 1.2rem; }
     </style>
 </head>
 <body>
@@ -195,30 +87,18 @@
 <div class="container">
     <header>
         <h1>Dotación Pendiente – Sede Moreno</h1>
-        <p>Seguimiento del personal requerido para completar la estructura operativa</p>
+        <p>Seguimiento de búsquedas activas en tiempo real</p>
     </header>
 
-    <!-- Panel de Tarjetas KPIs -->
+    <!-- Indicadores -->
     <div class="kpi-container">
-        <div class="card objetivo">
-            <h3>👥 Dotación Objetivo</h3>
-            <div class="value" id="kpi-objetivo">0</div>
-        </div>
-        <div class="card cubiertos">
-            <h3>✅ Personal Cubierto</h3>
-            <div class="value" id="kpi-cubiertos">0</div>
-        </div>
-        <div class="card vacantes">
-            <h3>🔴 Vacantes Pendientes</h3>
-            <div class="value" id="kpi-vacantes">0</div>
-        </div>
-        <div class="card cobertura">
-            <h3>📊 % de Cobertura</h3>
-            <div class="value" id="kpi-cobertura">0%</div>
-        </div>
+        <div class="card objetivo"><h3>👥 Estructura Ideal</h3><div class="value" id="kpi-objetivo">-</div></div>
+        <div class="card cubiertos"><h3>✅ Personal Activo</h3><div class="value" id="kpi-cubiertos">-</div></div>
+        <div class="card vacantes"><h3>🔴 Total Vacantes</h3><div class="value" id="kpi-vacantes">-</div></div>
+        <div class="card cobertura"><h3>📊 Cobertura</h3><div class="value" id="kpi-cobertura">-%</div></div>
     </div>
 
-    <!-- Herramientas de Búsqueda y Filtro -->
+    <!-- Buscador y Filtro -->
     <div class="controls">
         <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar por puesto o sector...">
         <select id="sectorFilter" class="filter-select">
@@ -226,57 +106,91 @@
         </select>
     </div>
 
-    <!-- Tabla Principal -->
+    <!-- Contenedor de la Tabla -->
     <div class="table-responsive">
-        <table>
+        <div id="loadingStatus" class="loading">Conectando con Google Drive y procesando nómina...</div>
+        <table id="mainTable" style="display: none;">
             <thead>
                 <tr>
-                    <th>Puesto</th>
-                    <th>Sector</th>
+                    <th>Sector / Gerencia</th>
+                    <th>Puesto Requerido</th>
                     <th>Cantidad Pendiente</th>
                     <th>Prioridad</th>
                 </tr>
             </thead>
-            <tbody id="tableBody">
-                <!-- Los registros se cargan dinámicamente con JavaScript -->
-            </tbody>
+            <tbody id="tableBody"></tbody>
         </table>
     </div>
 </div>
 
 <script>
-    // DATOS MAESTROS: Modificá estos valores para actualizar el dashboard de forma manual
-    const totalObjetivo = 1300;
-    const totalCubiertos = 1254;
+    // URL del CSV público que generaste
+    const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdBqkbpAzCq6Lw_jPa_Up8HWXE9_ZfGehz55oNvoT-WVwrD_J8Yqw1_OotD55NAw/pub?output=csv";
 
-    const puestosPendientes = [
-        { puesto: "Operario", sector: "Picking", cantidad: 12, prioridad: "Alta" },
-        { puesto: "Chofer", sector: "Tráfico", cantidad: 8, prioridad: "Alta" },
-        { puesto: "Auxiliar Cajas", sector: "Cajas", cantidad: 6, prioridad: "Media" },
-        { puesto: "Repositor", sector: "Salón", cantidad: 5, prioridad: "Media" },
-        { puesto: "Clarkista", sector: "Recepción", cantidad: 4, prioridad: "Media" },
-        { puesto: "Supervisor", sector: "Picking", cantidad: 2, prioridad: "Alta" },
-        { puesto: "Administrativo", sector: "Control", cantidad: 3, prioridad: "Baja" },
-        { puesto: "Mantenimiento", sector: "Taller", cantidad: 6, prioridad: "Baja" }
-    ];
+    let puestosPendientes = [];
 
-    // Elementos del DOM
-    const tableBody = document.getElementById('tableBody');
-    const searchInput = document.getElementById('searchInput');
-    const sectorFilter = document.getElementById('sectorFilter');
+    // Función para leer y parsear el archivo CSV de Google Sheets
+    async function fetchExcelData() {
+        try {
+            const response = await fetch(sheetCsvUrl);
+            const data = await response.text();
+            
+            // Separar por filas y luego por comas
+            const rows = data.split('\n').map(row => {
+                // Expresión regular para separar por comas respetando comillas si las hay
+                return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            });
+            
+            puestosPendientes = [];
+            
+            // Procesamos a partir de la fila 1 (omitiendo la cabecera)
+            for(let i = 1; i < rows.length; i++) {
+                const columns = rows[i];
+                if(columns.length >= 3 && columns[0].trim() !== "") {
+                    // Limpieza de caracteres de comillas
+                    const sector = columns[0].replace(/"/g, '').trim();
+                    const puesto = columns[1].replace(/"/g, '').trim();
+                    const cantidad = parseInt(columns[2]) || 0;
+                    
+                    // Prioridad automática o asignada por defecto si no viene explícita
+                    let prioridad = columns[3] ? columns[3].replace(/"/g, '').trim() : (cantidad > 5 ? "Alta" : "Media");
 
-    // Inicialización de la Aplicación
-    function initDashboard() {
-        const vacantes = totalObjetivo - totalCubiertos;
+                    if(cantidad > 0) {
+                        puestosPendientes.push({ sector, puesto, cantidad, prioridad });
+                    }
+                }
+            }
+
+            calculateKPIs();
+            populateSectorFilter();
+            renderTable(puestosPendientes);
+            
+            document.getElementById('loadingStatus').style.display = 'none';
+            document.getElementById('mainTable').style.display = 'table';
+        } catch (error) {
+            document.getElementById('loadingStatus').innerText = "⚠️ Error al conectar con el Excel en Drive. Revisá que siga publicado en la web.";
+            console.error(error);
+        }
+    }
+
+    // Calcula los bloques numéricos superiores
+    function calculateKPIs() {
+        const vacantes = puestosPendientes.reduce((sum, item) => sum + item.cantidad, 0);
+        
+        // Valores de referencia (se pueden ajustar automáticamente o mantener estáticos)
+        const totalObjetivo = 1300; 
+        const totalCubiertos = totalObjetivo - vacantes;
         const porcCobertura = ((totalCubiertos / totalObjetivo) * 100).toFixed(1);
 
-        // Renderizar KPIs
         document.getElementById('kpi-objetivo').innerText = totalObjetivo.toLocaleString();
         document.getElementById('kpi-cubiertos').innerText = totalCubiertos.toLocaleString();
         document.getElementById('kpi-vacantes').innerText = vacantes;
         document.getElementById('kpi-cobertura').innerText = `${porcCobertura}%`;
+    }
 
-        // Crear opciones del filtro de sectores automáticamente
+    // Carga los sectores dinámicamente en el desplegable
+    function populateSectorFilter() {
+        const sectorFilter = document.getElementById('sectorFilter');
         const sectores = [...new Set(puestosPendientes.map(item => item.sector))];
         sectores.forEach(sector => {
             const option = document.createElement('option');
@@ -284,62 +198,49 @@
             option.innerText = sector;
             sectorFilter.appendChild(option);
         });
-
-        renderTable(puestosPendientes);
     }
 
-    // Renderizar Filas de la Tabla
+    // Dibuja las filas de la tabla
     function renderTable(data) {
+        const tableBody = document.getElementById('tableBody');
         tableBody.innerHTML = '';
         
         if (data.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding: 30px;">No se encontraron resultados con los criterios seleccionados.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:20px;">No hay búsquedas pendientes para este filtro.</td></tr>`;
             return;
         }
 
         data.forEach(item => {
             const tr = document.createElement('tr');
+            let pClass = item.prioridad.toLowerCase().includes('alt') ? 'alta' : (item.prioridad.toLowerCase().includes('med') ? 'media' : 'baja');
             
-            let prioridadBadge = '';
-            if (item.prioridad === 'Alta') {
-                prioridadBadge = `<span class="badge alta">🔴 Alta</span>`;
-            } else if (item.prioridad === 'Media') {
-                prioridadBadge = `<span class="badge media">🟡 Media</span>`;
-            } else {
-                prioridadBadge = `<span class="badge baja">🔵 Baja</span>`;
-            }
-
             tr.innerHTML = `
-                <td><strong>${item.puesto}</strong></td>
                 <td>${item.sector}</td>
-                <td style="font-weight: 600;">${item.cantidad}</td>
-                <td>${prioridadBadge}</td>
+                <td><strong>${item.puesto}</strong></td>
+                <td style="font-weight:600;">${item.cantidad}</td>
+                <td><span class="badge ${pClass}">${item.prioridad}</span></td>
             `;
             tableBody.appendChild(tr);
         });
     }
 
-    // Lógica de Filtrado Combinado (Buscador + Selector)
+    // Filtro combinado inteligente
     function filterData() {
-        const searchValue = searchInput.value.toLowerCase();
-        const selectedSector = sectorFilter.value;
+        const searchValue = document.getElementById('searchInput').value.toLowerCase();
+        const selectedSector = document.getElementById('sectorFilter').value;
 
         const filtered = puestosPendientes.filter(item => {
             const matchesSearch = item.puesto.toLowerCase().includes(searchValue) || item.sector.toLowerCase().includes(searchValue);
             const matchesSector = selectedSector === 'Todos' || item.sector === selectedSector;
             return matchesSearch && matchesSector;
         });
-
         renderTable(filtered);
     }
 
-    // Escuchadores de Eventos
-    searchInput.addEventListener('input', filterData);
-    sectorFilter.addEventListener('change', filterData);
+    document.getElementById('searchInput').addEventListener('input', filterData);
+    document.getElementById('sectorFilter').addEventListener('change', filterData);
 
-    // Arrancar la app al cargar la ventana
-    window.onload = initDashboard;
+    window.onload = fetchExcelData;
 </script>
-
 </body>
 </html>
