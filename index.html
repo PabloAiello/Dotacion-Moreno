@@ -118,7 +118,8 @@
 </div>
 
 <script>
-    const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdBqkbpAzCq6Lw_jPa_Up8HWXE9_ZfGehz55oNvoT-WVwrD_J8Yqw1_OotD55NAw/pub?output=csv";
+    // Enlace actualizado con el GID correcto enviado por el usuario
+    const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdBqkbpAzCq6Lw_jPa_Up8HWXE9_ZfGehz55oNvoT-WVwrD_J8Yqw1_OotD55NAw/pub?gid=1030521285&single=true&output=csv";
 
     let puestosPendientes = [];
     let globales = { objetivo: 0, cubiertos: 0, vacantes: 0 };
@@ -128,20 +129,16 @@
             const response = await fetch(sheetCsvUrl);
             const textData = await response.text();
             
-            // Dividir en líneas primarias
             const lines = textData.split(/\r?\n/).filter(line => line.trim() !== "");
             if(lines.length === 0) return;
 
-            // Detectar dinámicamente si el CSV usa coma (,) o punto y coma (;)
             const firstLine = lines[0];
             const separator = firstLine.split(';').length > firstLine.split(',').length ? ';' : ',';
 
-            // Mapear todas las filas usando el separador correcto
             const rows = lines.map(line => {
                 return line.split(new RegExp(`\\${separator}(?=(?:(?:[^"]*"){2})*[^"]*$)`));
             });
 
-            // Limpiar cabeceras de comillas y espacios
             const headers = rows[0].map(h => h.replace(/["]/g, '').trim().toLowerCase());
             
             const idxSector = headers.indexOf("sector");
@@ -151,7 +148,7 @@
             const idxFalta = headers.indexOf("falta");
 
             if (idxFalta === -1 || idxSector === -1 || idxPuesto === -1) {
-                document.getElementById('loadingStatus').innerHTML = `⚠️ No se detectaron correctamente las cabeceras.<br><small>Columnas leídas: ${headers.join(' | ')}</small>`;
+                document.getElementById('loadingStatus').innerHTML = `⚠️ No se detectaron las columnas de vacantes en esta pestaña.<br><small>Columnas leídas actuales: ${headers.join(' | ')}</small>`;
                 return;
             }
 
@@ -168,7 +165,6 @@
                     const presupuestado = parseInt(columns[idxPresupuestado].replace(/[".]/g, '')) || 0;
                     const falta = parseInt(columns[idxFalta].replace(/[".]/g, '')) || 0;
                     
-                    // Solo procesar si el sector o el puesto son válidos y no son repeticiones de la cabecera
                     if (sector.toLowerCase() === "sector" || puesto.toLowerCase() === "puesto") continue;
 
                     globales.objetivo += presupuestado;
@@ -224,7 +220,7 @@
         tableBody.innerHTML = '';
         
         if (data.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:20px;">No se registran vacantes activas para este filtro.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:20px;">No se registran vacantes activas.</td></tr>`;
             return;
         }
 
