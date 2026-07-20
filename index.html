@@ -87,18 +87,18 @@
 <div class="container">
     <header>
         <h1>Dotación Pendiente – Sede Moreno</h1>
-        <p>Seguimiento de búsquedas activas en tiempo real</p>
+        <p>Seguimiento operativo mapeado en tiempo real</p>
     </header>
 
-    <!-- Indicadores -->
+    <!-- Indicadores calculados dinámicamente -->
     <div class="kpi-container">
         <div class="card objetivo"><h3>👥 Estructura Ideal</h3><div class="value" id="kpi-objetivo">-</div></div>
         <div class="card cubiertos"><h3>✅ Personal Activo</h3><div class="value" id="kpi-cubiertos">-</div></div>
         <div class="card vacantes"><h3>🔴 Total Vacantes</h3><div class="value" id="kpi-vacantes">-</div></div>
-        <div class="card cobertura"><h3>📊 Cobertura</h3><div class="value" id="kpi-cobertura">-%</div></div>
+        <div class="card cobertura"><h3>📊 % Cobertura</h3><div class="value" id="kpi-cobertura">-%</div></div>
     </div>
 
-    <!-- Buscador y Filtro -->
+    <!-- Buscador y Filtro por Sector -->
     <div class="controls">
         <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar por puesto o sector...">
         <select id="sectorFilter" class="filter-select">
@@ -108,13 +108,15 @@
 
     <!-- Contenedor de la Tabla -->
     <div class="table-responsive">
-        <div id="loadingStatus" class="loading">Conectando con Google Drive y procesando nómina...</div>
+        <div id="loadingStatus" class="loading">Conectando con Google Drive y sincronizando nómina operativa...</div>
         <table id="mainTable" style="display: none;">
             <thead>
                 <tr>
                     <th>Sector / Gerencia</th>
-                    <th>Puesto Requerido</th>
-                    <th>Cantidad Pendiente</th>
+                    <th>Puesto</th>
+                    <th>Tenemos</th>
+                    <th>Presupuestado</th>
+                    <th>Falta (Vacantes)</th>
                     <th>Prioridad</th>
                 </tr>
             </thead>
@@ -124,73 +126,81 @@
 </div>
 
 <script>
-    // URL del CSV público que generaste
+    // Tu enlace de publicación CSV directo
     const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdBqkbpAzCq6Lw_jPa_Up8HWXE9_ZfGehz55oNvoT-WVwrD_J8Yqw1_OotD55NAw/pub?output=csv";
 
     let puestosPendientes = [];
+    let globales = { objetivo: 0, cubiertos: 0, vacantes: 0 };
 
-    // Función para leer y parsear el archivo CSV de Google Sheets
     async function fetchExcelData() {
         try {
             const response = await fetch(sheetCsvUrl);
             const data = await response.text();
             
-            // Separar por filas y luego por comas
+            // Separar por filas
             const rows = data.split('\n').map(row => {
-                // Expresión regular para separar por comas respetando comillas si las hay
                 return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
             });
             
             puestosPendientes = [];
+            globales = { objetivo: 0, cubiertos: 0, vacantes: 0 };
             
-            // Procesamos a partir de la fila 1 (omitiendo la cabecera)
+            // Recorremos la hoja omitiendo la cabecera (fila 0)
             for(let i = 1; i < rows.length; i++) {
                 const columns = rows[i];
-                if(columns.length >= 3 && columns[0].trim() !== "") {
-                    // Limpieza de caracteres de comillas
+                
+                // Mapeo exacto según tu planilla:
+                // Col 0: Sector | Col 1: Puesto | Col 2: Tenemos | Col 3: Presupuestado | ... | Col 9 (J): Falta
+                if(columns.length >= 10 && columns[0].trim() !== "") {
                     const sector = columns[0].replace(/"/g, '').trim();
                     const puesto = columns[1].replace(/"/g, '').trim();
-                    const cantidad = parseInt(columns[2]) || 0;
+                    const tenemos = parseInt(columns[2]) || 0;
+                    const presupuestado = parseInt(columns[3]) || 0;
+                    const falta = parseInt(columns[9]) || 0; // Columna J
                     
-                    // Prioridad automática o asignada por defecto si no viene explícita
-                    let prioridad = columns[3] ? columns[3].replace(/"/g, '').trim() : (cantidad > 5 ? "Alta" : "Media");
+                    // Sumamos acumulados para los KPIs globales
+                    globales.objetivo += presupuestado;
+                    globales.cubiertos += tenemos;
+                    globales.vacantes += (falta > 0 ? falta : 0);
 
-                    if(cantidad > 0) {
-                        puestosPendientes.push({ sector, puesto, cantidad, prioridad });
+                    // Solo añadimos a la tabla visual los que efectivamente tengan vacantes pendientes ("Falta")
+                    if(falta > 0) {
+                        // Priorización inteligente automática basada en el volumen que falta
+                        let prioridad = "Baja";
+                        if (falta >= 5) prioridad = "Alta";
+                        else if (falta >= 2) prioridad = "Media";
+
+                        puestosPendientes.push({ sector, puesto, tenemos, presupuestado, falta, prioridad });
                     }
                 }
             }
 
-            calculateKPIs();
+            renderKPIs();
             populateSectorFilter();
             renderTable(puestosPendientes);
             
             document.getElementById('loadingStatus').style.display = 'none';
             document.getElementById('mainTable').style.display = 'table';
         } catch (error) {
-            document.getElementById('loadingStatus').innerText = "⚠️ Error al conectar con el Excel en Drive. Revisá que siga publicado en la web.";
+            document.getElementById('loadingStatus').innerText = "⚠️ Error al conectar con Google Drive. Validá que la hoja siga publicada en la web.";
             console.error(error);
         }
     }
 
-    // Calcula los bloques numéricos superiores
-    function calculateKPIs() {
-        const vacantes = puestosPendientes.reduce((sum, item) => sum + item.cantidad, 0);
-        
-        // Valores de referencia (se pueden ajustar automáticamente o mantener estáticos)
-        const totalObjetivo = 1300; 
-        const totalCubiertos = totalObjetivo - vacantes;
-        const porcCobertura = ((totalCubiertos / totalObjetivo) * 100).toFixed(1);
+    function renderKPIs() {
+        const porcCobertura = globales.objetivo > 0 ? ((globales.cubiertos / globales.objetivo) * 100).toFixed(1) : 0;
 
-        document.getElementById('kpi-objetivo').innerText = totalObjetivo.toLocaleString();
-        document.getElementById('kpi-cubiertos').innerText = totalCubiertos.toLocaleString();
-        document.getElementById('kpi-vacantes').innerText = vacantes;
+        document.getElementById('kpi-objetivo').innerText = globales.objetivo.toLocaleString();
+        document.getElementById('kpi-cubiertos').innerText = globales.cubiertos.toLocaleString();
+        document.getElementById('kpi-vacantes').innerText = globales.vacantes.toLocaleString();
         document.getElementById('kpi-cobertura').innerText = `${porcCobertura}%`;
     }
 
-    // Carga los sectores dinámicamente en el desplegable
     function populateSectorFilter() {
         const sectorFilter = document.getElementById('sectorFilter');
+        // Limpiar opciones previas excepto la primera
+        sectorFilter.innerHTML = '<option value="Todos">📦 Todos los Sectores</option>';
+        
         const sectores = [...new Set(puestosPendientes.map(item => item.sector))];
         sectores.forEach(sector => {
             const option = document.createElement('option');
@@ -200,31 +210,31 @@
         });
     }
 
-    // Dibuja las filas de la tabla
     function renderTable(data) {
         const tableBody = document.getElementById('tableBody');
         tableBody.innerHTML = '';
         
         if (data.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:20px;">No hay búsquedas pendientes para este filtro.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:20px;">No se registran vacantes activas para este sector.</td></tr>`;
             return;
         }
 
         data.forEach(item => {
             const tr = document.createElement('tr');
-            let pClass = item.prioridad.toLowerCase().includes('alt') ? 'alta' : (item.prioridad.toLowerCase().includes('med') ? 'media' : 'baja');
+            let pClass = item.prioridad === 'Alta' ? 'alta' : (item.prioridad === 'Media' ? 'media' : 'baja');
             
             tr.innerHTML = `
                 <td>${item.sector}</td>
                 <td><strong>${item.puesto}</strong></td>
-                <td style="font-weight:600;">${item.cantidad}</td>
+                <td>${item.tenemos}</td>
+                <td>${item.presupuestado}</td>
+                <td style="color: var(--accent-red); font-weight:600;">${item.falta}</td>
                 <td><span class="badge ${pClass}">${item.prioridad}</span></td>
             `;
             tableBody.appendChild(tr);
         });
     }
 
-    // Filtro combinado inteligente
     function filterData() {
         const searchValue = document.getElementById('searchInput').value.toLowerCase();
         const selectedSector = document.getElementById('sectorFilter').value;
