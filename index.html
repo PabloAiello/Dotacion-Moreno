@@ -118,8 +118,8 @@
 </div>
 
 <script>
-    // Enlace actualizado con el GID correcto enviado por el usuario
-    const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdBqkbpAzCq6Lw_jPa_Up8HWXE9_ZfGehz55oNvoT-WVwrD_J8Yqw1_OotD55NAw/pub?gid=1030521285&single=true&output=csv";
+    // Nueva URL de exportación forzada directo al GID de Búsquedas
+    const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/1-ZjmiJVt_u5fN9We8W-JeBzIFmSyFfSH/export?format=csv&gid=1030521285";
 
     let puestosPendientes = [];
     let globales = { objetivo: 0, cubiertos: 0, vacantes: 0 };
@@ -148,7 +148,7 @@
             const idxFalta = headers.indexOf("falta");
 
             if (idxFalta === -1 || idxSector === -1 || idxPuesto === -1) {
-                document.getElementById('loadingStatus').innerHTML = `⚠️ No se detectaron las columnas de vacantes en esta pestaña.<br><small>Columnas leídas actuales: ${headers.join(' | ')}</small>`;
+                document.getElementById('loadingStatus').innerHTML = `⚠️ No se detectaron las columnas de vacantes.<br><small>Columnas leídas: ${headers.join(' | ')}</small><br><br>🚨 Si ves las columnas de Nómina, asegurate en tu Google Sheets que el archivo esté compartido como "Cualquier persona con el enlace puede ver".`;
                 return;
             }
 
@@ -188,14 +188,14 @@
             document.getElementById('loadingStatus').style.display = 'none';
             document.getElementById('mainTable').style.display = 'table';
         } catch (error) {
-            document.getElementById('loadingStatus').innerText = "⚠️ Error al procesar la información de Google Sheets.";
+            document.getElementById('loadingStatus').innerText = "⚠️ Error al conectar con Google Sheets. Verificá los accesos de lectura.";
             console.error(error);
         }
     }
 
+    // [Resto de funciones de renderizado y filtros se mantienen idénticas]
     function renderKPIs() {
         const porcCobertura = globales.objetivo > 0 ? ((globales.cubiertos / globales.objetivo) * 100).toFixed(1) : 0;
-
         document.getElementById('kpi-objetivo').innerText = globales.objetivo.toLocaleString();
         document.getElementById('kpi-cubiertos').innerText = globales.cubiertos.toLocaleString();
         document.getElementById('kpi-vacantes').innerText = globales.vacantes.toLocaleString();
@@ -205,7 +205,6 @@
     function populateSectorFilter() {
         const sectorFilter = document.getElementById('sectorFilter');
         sectorFilter.innerHTML = '<option value="Todos">📦 Todos los Sectores</option>';
-        
         const sectores = [...new Set(puestosPendientes.map(item => item.sector))];
         sectores.sort().forEach(sector => {
             const option = document.createElement('option');
@@ -218,16 +217,13 @@
     function renderTable(data) {
         const tableBody = document.getElementById('tableBody');
         tableBody.innerHTML = '';
-        
         if (data.length === 0) {
             tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:20px;">No se registran vacantes activas.</td></tr>`;
             return;
         }
-
         data.forEach(item => {
             const tr = document.createElement('tr');
             let pClass = item.prioridad === 'Alta' ? 'alta' : (item.prioridad === 'Media' ? 'media' : 'baja');
-            
             tr.innerHTML = `
                 <td>${item.sector}</td>
                 <td><strong>${item.puesto}</strong></td>
@@ -243,7 +239,6 @@
     function filterData() {
         const searchValue = document.getElementById('searchInput').value.toLowerCase();
         const selectedSector = document.getElementById('sectorFilter').value;
-
         const filtered = puestosPendientes.filter(item => {
             const matchesSearch = item.puesto.toLowerCase().includes(searchValue) || item.sector.toLowerCase().includes(searchValue);
             const matchesSector = selectedSector === 'Todos' || item.sector === selectedSector;
@@ -254,7 +249,6 @@
 
     document.getElementById('searchInput').addEventListener('input', filterData);
     document.getElementById('sectorFilter').addEventListener('change', filterData);
-
     window.onload = fetchExcelData;
 </script>
 </body>
