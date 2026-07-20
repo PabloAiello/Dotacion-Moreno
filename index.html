@@ -118,17 +118,19 @@
 </div>
 
 <script>
-    // Nueva URL de exportación forzada directo al GID de Búsquedas
-    const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/1-ZjmiJVt_u5fN9We8W-JeBzIFmSyFfSH/export?format=csv&gid=1030521285";
+    // URL base de exportación
+    const baseCsvUrl = "https://docs.google.com/spreadsheets/d/1-ZjmiJVt_u5fN9We8W-JeBzIFmSyFfSH/export?format=csv&gid=1030521285";
 
     let puestosPendientes = [];
     let globales = { objetivo: 0, cubiertos: 0, vacantes: 0 };
 
     async function fetchExcelData() {
         try {
-            const response = await fetch(sheetCsvUrl);
-            const textData = await response.text();
+            // Se añade un parámetro dinámico para romper la caché del navegador
+            const response = await fetch(`${baseCsvUrl}&t=${new Date().getTime()}`);
+            if(!response.ok) throw new Error("Network response error");
             
+            const textData = await response.text();
             const lines = textData.split(/\r?\n/).filter(line => line.trim() !== "");
             if(lines.length === 0) return;
 
@@ -148,7 +150,7 @@
             const idxFalta = headers.indexOf("falta");
 
             if (idxFalta === -1 || idxSector === -1 || idxPuesto === -1) {
-                document.getElementById('loadingStatus').innerHTML = `⚠️ No se detectaron las columnas de vacantes.<br><small>Columnas leídas: ${headers.join(' | ')}</small><br><br>🚨 Si ves las columnas de Nómina, asegurate en tu Google Sheets que el archivo esté compartido como "Cualquier persona con el enlace puede ver".`;
+                document.getElementById('loadingStatus').innerHTML = `⚠️ Estructura leída incorrecta.<br><small>Cabeceras: ${headers.join(' | ')}</small><br><br>Asegurate de haber guardado los cambios de "Compartir con cualquier persona" en el botón azul de Google Sheets.`;
                 return;
             }
 
@@ -167,7 +169,7 @@
                     
                     if (sector.toLowerCase() === "sector" || puesto.toLowerCase() === "puesto") continue;
 
-                    globales.objetivo += presupuestado;
+                    globales.objectiveValue = (globales.objetivo += presupuestado);
                     globales.cubiertos += tenemos;
                     globales.vacantes += (falta > 0 ? falta : 0);
 
@@ -188,12 +190,11 @@
             document.getElementById('loadingStatus').style.display = 'none';
             document.getElementById('mainTable').style.display = 'table';
         } catch (error) {
-            document.getElementById('loadingStatus').innerText = "⚠️ Error al conectar con Google Sheets. Verificá los accesos de lectura.";
+            document.getElementById('loadingStatus').innerHTML = "⚠️ Error al conectar con Google Sheets.<br><small>Verificá que en el botón azul 'Compartir' esté configurado como 'Cualquier persona con el enlace'.</small>";
             console.error(error);
         }
     }
 
-    // [Resto de funciones de renderizado y filtros se mantienen idénticas]
     function renderKPIs() {
         const porcCobertura = globales.objetivo > 0 ? ((globales.cubiertos / globales.objetivo) * 100).toFixed(1) : 0;
         document.getElementById('kpi-objetivo').innerText = globales.objetivo.toLocaleString();
