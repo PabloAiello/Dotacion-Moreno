@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dotación Pendiente - Sede Moreno</title>
     <style>
-        /* Estilos Base - Estilo Tablero Corporativo Oscuro */
         :root {
             --bg-color: #0b0f19;
             --card-bg: rgba(255, 255, 255, 0.05);
@@ -38,7 +37,6 @@
         }
         header p { color: var(--text-muted); font-size: 1.1rem; margin: 0; }
 
-        /* Panel de KPIs */
         .kpi-container {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px; margin-bottom: 30px;
@@ -55,7 +53,6 @@
         .card.vacantes .value { color: var(--accent-red); }
         .card.cobertura .value { color: var(--primary-blue); }
 
-        /* Controles de Filtros */
         .controls { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
         .search-input, .filter-select {
             background: var(--card-bg); border: 1px solid var(--card-border);
@@ -64,14 +61,12 @@
         .search-input { flex: 1; min-width: 250px; }
         .filter-select { min-width: 200px; cursor: pointer; }
 
-        /* Tabla Interactiva */
         .table-responsive {
             overflow-x: auto; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px;
         }
         table { width: 100%; border-collapse: collapse; text-align: left; }
         th, td { padding: 16px 20px; border-bottom: 1px solid var(--card-border); }
         th { background-color: rgba(0, 0, 0, 0.3); color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; }
-        
         tr:hover td { background-color: rgba(255, 255, 255, 0.02); }
 
         .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; }
@@ -90,7 +85,6 @@
         <p>Seguimiento operativo mapeado dinámicamente</p>
     </header>
 
-    <!-- Indicadores -->
     <div class="kpi-container">
         <div class="card objetivo"><h3>👥 Estructura Ideal</h3><div class="value" id="kpi-objetivo">-</div></div>
         <div class="card cubiertos"><h3>✅ Personal Activo</h3><div class="value" id="kpi-cubiertos">-</div></div>
@@ -98,7 +92,6 @@
         <div class="card cobertura"><h3>📊 % Cobertura</h3><div class="value" id="kpi-cobertura">-%</div></div>
     </div>
 
-    <!-- Buscador y Filtro por Sector -->
     <div class="controls">
         <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar por puesto o sector...">
         <select id="sectorFilter" class="filter-select">
@@ -106,7 +99,6 @@
         </select>
     </div>
 
-    <!-- Contenedor de la Tabla -->
     <div class="table-responsive">
         <div id="loadingStatus" class="loading">Sincronizando con la pestaña BUSQUEDAS...</div>
         <table id="mainTable" style="display: none;">
@@ -126,7 +118,6 @@
 </div>
 
 <script>
-    // URL del CSV público
     const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdBqkbpAzCq6Lw_jPa_Up8HWXE9_ZfGehz55oNvoT-WVwrD_J8Yqw1_OotD55NAw/pub?output=csv";
 
     let puestosPendientes = [];
@@ -135,27 +126,32 @@
     async function fetchExcelData() {
         try {
             const response = await fetch(sheetCsvUrl);
-            const data = await response.text();
+            const textData = await response.text();
             
-            // Separar filas limpiando retornos de carro
-            const rows = data.split(/\r?\n/).map(row => {
-                return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-            });
-            
-            if(rows.length === 0) return;
+            // Dividir en líneas primarias
+            const lines = textData.split(/\r?\n/).filter(line => line.trim() !== "");
+            if(lines.length === 0) return;
 
-            // Identificar los índices de las columnas dinámicamente por nombre de cabecera
-            const headers = rows[0].map(h => h.replace(/"/g, '').trim().toLowerCase());
+            // Detectar dinámicamente si el CSV usa coma (,) o punto y coma (;)
+            const firstLine = lines[0];
+            const separator = firstLine.split(';').length > firstLine.split(',').length ? ';' : ',';
+
+            // Mapear todas las filas usando el separador correcto
+            const rows = lines.map(line => {
+                return line.split(new RegExp(`\\${separator}(?=(?:(?:[^"]*"){2})*[^"]*$)`));
+            });
+
+            // Limpiar cabeceras de comillas y espacios
+            const headers = rows[0].map(h => h.replace(/["]/g, '').trim().toLowerCase());
             
             const idxSector = headers.indexOf("sector");
             const idxPuesto = headers.indexOf("puesto");
             const idxTenemos = headers.indexOf("tenemos");
             const idxPresupuestado = headers.indexOf("presupuestado");
-            const idxFalta = headers.indexOf("falta"); // Busca automáticamente la columna J
+            const idxFalta = headers.indexOf("falta");
 
-            // Si no encuentra la columna crítica "falta", arrojamos error analítico
             if (idxFalta === -1 || idxSector === -1 || idxPuesto === -1) {
-                document.getElementById('loadingStatus').innerText = "⚠️ No se detectaron las columnas requeridas (Sector, Puesto, Falta) en la cabecera del Excel.";
+                document.getElementById('loadingStatus').innerHTML = `⚠️ No se detectaron correctamente las cabeceras.<br><small>Columnas leídas: ${headers.join(' | ')}</small>`;
                 return;
             }
 
@@ -165,14 +161,16 @@
             for(let i = 1; i < rows.length; i++) {
                 const columns = rows[i];
                 
-                // Validar que la fila tenga datos válidos y el sector no esté vacío
                 if(columns.length > Math.max(idxSector, idxFalta) && columns[idxSector].trim() !== "") {
-                    const sector = columns[idxSector].replace(/"/g, '').trim();
-                    const puesto = columns[idxPuesto].replace(/"/g, '').trim();
-                    const tenemos = parseInt(columns[idxTenemos]) || 0;
-                    const presupuestado = parseInt(columns[idxPresupuestado]) || 0;
-                    const falta = parseInt(columns[idxFalta]) || 0;
+                    const sector = columns[idxSector].replace(/["]/g, '').trim();
+                    const puesto = columns[idxPuesto].replace(/["]/g, '').trim();
+                    const tenemos = parseInt(columns[idxTenemos].replace(/[".]/g, '')) || 0;
+                    const presupuestado = parseInt(columns[idxPresupuestado].replace(/[".]/g, '')) || 0;
+                    const falta = parseInt(columns[idxFalta].replace(/[".]/g, '')) || 0;
                     
+                    // Solo procesar si el sector o el puesto son válidos y no son repeticiones de la cabecera
+                    if (sector.toLowerCase() === "sector" || puesto.toLowerCase() === "puesto") continue;
+
                     globales.objetivo += presupuestado;
                     globales.cubiertos += tenemos;
                     globales.vacantes += (falta > 0 ? falta : 0);
@@ -194,7 +192,7 @@
             document.getElementById('loadingStatus').style.display = 'none';
             document.getElementById('mainTable').style.display = 'table';
         } catch (error) {
-            document.getElementById('loadingStatus').innerText = "⚠️ Error al conectar con Google Drive. Validá que la hoja siga publicada.";
+            document.getElementById('loadingStatus').innerText = "⚠️ Error al procesar la información de Google Sheets.";
             console.error(error);
         }
     }
@@ -213,7 +211,7 @@
         sectorFilter.innerHTML = '<option value="Todos">📦 Todos los Sectores</option>';
         
         const sectores = [...new Set(puestosPendientes.map(item => item.sector))];
-        sectores.forEach(sector => {
+        sectores.sort().forEach(sector => {
             const option = document.createElement('option');
             option.value = sector;
             option.innerText = sector;
@@ -226,7 +224,7 @@
         tableBody.innerHTML = '';
         
         if (data.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:20px;">No se registran vacantes activas.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:20px;">No se registran vacantes activas para este filtro.</td></tr>`;
             return;
         }
 
