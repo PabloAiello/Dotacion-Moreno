@@ -87,10 +87,10 @@
 <div class="container">
     <header>
         <h1>Dotación Pendiente – Sede Moreno</h1>
-        <p>Seguimiento operativo mapeado en tiempo real</p>
+        <p>Seguimiento operativo mapeado dinámicamente</p>
     </header>
 
-    <!-- Indicadores calculados dinámicamente -->
+    <!-- Indicadores -->
     <div class="kpi-container">
         <div class="card objetivo"><h3>👥 Estructura Ideal</h3><div class="value" id="kpi-objetivo">-</div></div>
         <div class="card cubiertos"><h3>✅ Personal Activo</h3><div class="value" id="kpi-cubiertos">-</div></div>
@@ -108,7 +108,7 @@
 
     <!-- Contenedor de la Tabla -->
     <div class="table-responsive">
-        <div id="loadingStatus" class="loading">Conectando con Google Drive y sincronizando nómina operativa...</div>
+        <div id="loadingStatus" class="loading">Sincronizando con la pestaña BUSQUEDAS...</div>
         <table id="mainTable" style="display: none;">
             <thead>
                 <tr>
@@ -126,7 +126,7 @@
 </div>
 
 <script>
-    // Tu enlace de publicación CSV directo
+    // URL del CSV público
     const sheetCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdBqkbpAzCq6Lw_jPa_Up8HWXE9_ZfGehz55oNvoT-WVwrD_J8Yqw1_OotD55NAw/pub?output=csv";
 
     let puestosPendientes = [];
@@ -137,35 +137,47 @@
             const response = await fetch(sheetCsvUrl);
             const data = await response.text();
             
-            // Separar por filas
-            const rows = data.split('\n').map(row => {
+            // Separar filas limpiando retornos de carro
+            const rows = data.split(/\r?\n/).map(row => {
                 return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
             });
             
+            if(rows.length === 0) return;
+
+            // Identificar los índices de las columnas dinámicamente por nombre de cabecera
+            const headers = rows[0].map(h => h.replace(/"/g, '').trim().toLowerCase());
+            
+            const idxSector = headers.indexOf("sector");
+            const idxPuesto = headers.indexOf("puesto");
+            const idxTenemos = headers.indexOf("tenemos");
+            const idxPresupuestado = headers.indexOf("presupuestado");
+            const idxFalta = headers.indexOf("falta"); // Busca automáticamente la columna J
+
+            // Si no encuentra la columna crítica "falta", arrojamos error analítico
+            if (idxFalta === -1 || idxSector === -1 || idxPuesto === -1) {
+                document.getElementById('loadingStatus').innerText = "⚠️ No se detectaron las columnas requeridas (Sector, Puesto, Falta) en la cabecera del Excel.";
+                return;
+            }
+
             puestosPendientes = [];
             globales = { objetivo: 0, cubiertos: 0, vacantes: 0 };
             
-            // Recorremos la hoja omitiendo la cabecera (fila 0)
             for(let i = 1; i < rows.length; i++) {
                 const columns = rows[i];
                 
-                // Mapeo exacto según tu planilla:
-                // Col 0: Sector | Col 1: Puesto | Col 2: Tenemos | Col 3: Presupuestado | ... | Col 9 (J): Falta
-                if(columns.length >= 10 && columns[0].trim() !== "") {
-                    const sector = columns[0].replace(/"/g, '').trim();
-                    const puesto = columns[1].replace(/"/g, '').trim();
-                    const tenemos = parseInt(columns[2]) || 0;
-                    const presupuestado = parseInt(columns[3]) || 0;
-                    const falta = parseInt(columns[9]) || 0; // Columna J
+                // Validar que la fila tenga datos válidos y el sector no esté vacío
+                if(columns.length > Math.max(idxSector, idxFalta) && columns[idxSector].trim() !== "") {
+                    const sector = columns[idxSector].replace(/"/g, '').trim();
+                    const puesto = columns[idxPuesto].replace(/"/g, '').trim();
+                    const tenemos = parseInt(columns[idxTenemos]) || 0;
+                    const presupuestado = parseInt(columns[idxPresupuestado]) || 0;
+                    const falta = parseInt(columns[idxFalta]) || 0;
                     
-                    // Sumamos acumulados para los KPIs globales
                     globales.objetivo += presupuestado;
                     globales.cubiertos += tenemos;
                     globales.vacantes += (falta > 0 ? falta : 0);
 
-                    // Solo añadimos a la tabla visual los que efectivamente tengan vacantes pendientes ("Falta")
                     if(falta > 0) {
-                        // Priorización inteligente automática basada en el volumen que falta
                         let prioridad = "Baja";
                         if (falta >= 5) prioridad = "Alta";
                         else if (falta >= 2) prioridad = "Media";
@@ -182,7 +194,7 @@
             document.getElementById('loadingStatus').style.display = 'none';
             document.getElementById('mainTable').style.display = 'table';
         } catch (error) {
-            document.getElementById('loadingStatus').innerText = "⚠️ Error al conectar con Google Drive. Validá que la hoja siga publicada en la web.";
+            document.getElementById('loadingStatus').innerText = "⚠️ Error al conectar con Google Drive. Validá que la hoja siga publicada.";
             console.error(error);
         }
     }
@@ -198,7 +210,6 @@
 
     function populateSectorFilter() {
         const sectorFilter = document.getElementById('sectorFilter');
-        // Limpiar opciones previas excepto la primera
         sectorFilter.innerHTML = '<option value="Todos">📦 Todos los Sectores</option>';
         
         const sectores = [...new Set(puestosPendientes.map(item => item.sector))];
@@ -215,7 +226,7 @@
         tableBody.innerHTML = '';
         
         if (data.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:20px;">No se registran vacantes activas para este sector.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:20px;">No se registran vacantes activas.</td></tr>`;
             return;
         }
 
