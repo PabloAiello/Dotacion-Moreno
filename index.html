@@ -14,6 +14,7 @@
             --primary-blue: #3b82f6;
             --accent-green: #10b981;
             --accent-red: #ef4444;
+            --accent-purple: #a855f7;
         }
 
         body {
@@ -27,7 +28,7 @@
             align-items: center;
         }
 
-        .container { width: 100%; max-width: 1200px; }
+        .container { width: 100%; max-width: 1400px; }
 
         header { text-align: center; margin-bottom: 30px; }
         header h1 {
@@ -38,20 +39,22 @@
         header p { color: var(--text-muted); font-size: 1.1rem; margin: 0; }
 
         .kpi-container {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 20px; margin-bottom: 30px;
         }
 
         .card {
             background: var(--card-bg); border: 1px solid var(--card-border);
-            backdrop-filter: blur(10px); border-radius: 12px; padding: 20px; text-align: center;
+            backdrop-filter: blur(10px); border-radius: 12px; padding: 15px; text-align: center;
         }
-        .card h3 { margin: 0 0 10px 0; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; }
-        .card .value { font-size: 2rem; font-weight: bold; }
+        .card h3 { margin: 0 0 10px 0; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
+        .card .value { font-size: 1.8rem; font-weight: bold; }
         .card.objetivo .value { color: #ffffff; }
-        .card.cubiertos .value { color: var(--accent-green); }
+        .card.cubiertos .value { color: var(--primary-blue); }
+        .card.medicos .value { color: var(--accent-purple); }
+        .card.aptos .value { color: #f59e0b; }
         .card.vacantes .value { color: var(--accent-red); }
-        .card.cobertura .value { color: var(--primary-blue); }
+        .card.cobertura .value { color: var(--accent-green); }
 
         .controls { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
         .search-input, .filter-select {
@@ -65,7 +68,7 @@
             overflow-x: auto; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px;
         }
         table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 16px 20px; border-bottom: 1px solid var(--card-border); }
+        th, td { padding: 14px 18px; border-bottom: 1px solid var(--card-border); }
         th { background-color: rgba(0, 0, 0, 0.3); color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; }
         tr:hover td { background-color: rgba(255, 255, 255, 0.02); }
 
@@ -86,9 +89,11 @@
     </header>
 
     <div class="kpi-container">
-        <div class="card objetivo"><h3>👥 Estructura Ideal</h3><div class="value" id="kpi-objetivo">-</div></div>
-        <div class="card cubiertos"><h3>✅ Personal Activo</h3><div class="value" id="kpi-cubiertos">-</div></div>
-        <div class="card vacantes"><h3>🔴 Total Vacantes</h3><div class="value" id="kpi-vacantes">-</div></div>
+        <div class="card objetivo"><h3>👥 Presupuestado (D)</h3><div class="value" id="kpi-objetivo">-</div></div>
+        <div class="card cubiertos"><h3>✅ Tenemos (C)</h3><div class="value" id="kpi-cubiertos">-</div></div>
+        <div class="card medicos"><h3>🏥 Médico (H)</h3><div class="value" id="kpi-medicos">-</div></div>
+        <div class="card aptos"><h3>👍 Aptos (I)</h3><div class="value" id="kpi-aptos">-</div></div>
+        <div class="card vacantes"><h3>🔴 Falta (J)</h3><div class="value" id="kpi-vacantes">-</div></div>
         <div class="card cobertura"><h3>📊 % Cobertura</h3><div class="value" id="kpi-cobertura">-%</div></div>
     </div>
 
@@ -106,9 +111,11 @@
                 <tr>
                     <th>Sector / Gerencia</th>
                     <th>Puesto</th>
-                    <th>Tenemos</th>
-                    <th>Presupuestado</th>
-                    <th>Falta (Vacantes)</th>
+                    <th>Tenemos (C)</th>
+                    <th>Presupuestado (D)</th>
+                    <th>Médico (H)</th>
+                    <th>Aptos (I)</th>
+                    <th>Falta (J)</th>
                     <th>Prioridad</th>
                 </tr>
             </thead>
@@ -118,22 +125,21 @@
 </div>
 
 <script>
-    // URL base de exportación
     const baseCsvUrl = "https://docs.google.com/spreadsheets/d/1-ZjmiJVt_u5fN9We8W-JeBzIFmSyFfSH/export?format=csv&gid=1030521285";
 
     let puestosPendientes = [];
-    let globales = { objetivo: 0, cubiertos: 0, vacantes: 0 };
+    let globales = { objetivo: 0, cubiertos: 0, medicos: 0, aptos: 0, vacantes: 0 };
 
     async function fetchExcelData() {
         try {
-            // Se añade un parámetro dinámico para romper la caché del navegador
             const response = await fetch(`${baseCsvUrl}&t=${new Date().getTime()}`);
-            if(!response.ok) throw new Error("Network response error");
+            if(!response.ok) throw new Error("Error de red al intentar descargar los datos");
             
             const textData = await response.text();
             const lines = textData.split(/\r?\n/).filter(line => line.trim() !== "");
             if(lines.length === 0) return;
 
+            // Detección automática de separadores de Excel (, o ;)
             const firstLine = lines[0];
             const separator = firstLine.split(';').length > firstLine.split(',').length ? ';' : ',';
 
@@ -141,21 +147,25 @@
                 return line.split(new RegExp(`\\${separator}(?=(?:(?:[^"]*"){2})*[^"]*$)`));
             });
 
+            // Limpieza de nombres de cabecera reales
             const headers = rows[0].map(h => h.replace(/["]/g, '').trim().toLowerCase());
             
+            // Mapeo por índices exactos basados en la vista real del Excel
             const idxSector = headers.indexOf("sector");
             const idxPuesto = headers.indexOf("puesto");
             const idxTenemos = headers.indexOf("tenemos");
             const idxPresupuestado = headers.indexOf("presupuestado");
+            const idxMedico = headers.indexOf("medico");
+            const idxAptos = headers.indexOf("aptos");
             const idxFalta = headers.indexOf("falta");
 
             if (idxFalta === -1 || idxSector === -1 || idxPuesto === -1) {
-                document.getElementById('loadingStatus').innerHTML = `⚠️ Estructura leída incorrecta.<br><small>Cabeceras: ${headers.join(' | ')}</small><br><br>Asegurate de haber guardado los cambios de "Compartir con cualquier persona" en el botón azul de Google Sheets.`;
+                document.getElementById('loadingStatus').innerHTML = `⚠️ Cabeceras no encontradas.<br><small>Detectadas: ${headers.join(' | ')}</small><br><br>Asegurate de que el archivo esté compartido públicamente como 'Lector'.`;
                 return;
             }
 
             puestosPendientes = [];
-            globales = { objetivo: 0, cubiertos: 0, vacantes: 0 };
+            globales = { objetivo: 0, cubiertos: 0, medicos: 0, aptos: 0, vacantes: 0 };
             
             for(let i = 1; i < rows.length; i++) {
                 const columns = rows[i];
@@ -163,22 +173,29 @@
                 if(columns.length > Math.max(idxSector, idxFalta) && columns[idxSector].trim() !== "") {
                     const sector = columns[idxSector].replace(/["]/g, '').trim();
                     const puesto = columns[idxPuesto].replace(/["]/g, '').trim();
-                    const tenemos = parseInt(columns[idxTenemos].replace(/[".]/g, '')) || 0;
-                    const presupuestado = parseInt(columns[idxPresupuestado].replace(/[".]/g, '')) || 0;
-                    const falta = parseInt(columns[idxFalta].replace(/[".]/g, '')) || 0;
+                    
+                    // Conversión limpia de strings numéricos a enteros
+                    const tenemos = parseInt(columns[idxTenemos]?.replace(/[".]/g, '')) || 0;
+                    const presupuestado = parseInt(columns[idxPresupuestado]?.replace(/[".]/g, '')) || 0;
+                    const medico = parseInt(columns[idxMedico]?.replace(/[".]/g, '')) || 0;
+                    const aptos = parseInt(columns[idxAptos]?.replace(/[".]/g, '')) || 0;
+                    const falta = parseInt(columns[idxFalta]?.replace(/[".]/g, '')) || 0;
                     
                     if (sector.toLowerCase() === "sector" || puesto.toLowerCase() === "puesto") continue;
 
-                    globales.objectiveValue = (globales.objetivo += presupuestado);
+                    globales.objetivo += presupuestado;
                     globales.cubiertos += tenemos;
+                    globales.medicos += medico;
+                    globales.aptos += aptos;
                     globales.vacantes += (falta > 0 ? falta : 0);
 
+                    // Muestra en la tabla únicamente los puestos que registran vacantes abiertas
                     if(falta > 0) {
                         let prioridad = "Baja";
                         if (falta >= 5) prioridad = "Alta";
                         else if (falta >= 2) prioridad = "Media";
 
-                        puestosPendientes.push({ sector, puesto, tenemos, presupuestado, falta, prioridad });
+                        puestosPendientes.push({ sector, puesto, tenemos, presupuestado, medico, aptos, falta, prioridad });
                     }
                 }
             }
@@ -190,7 +207,7 @@
             document.getElementById('loadingStatus').style.display = 'none';
             document.getElementById('mainTable').style.display = 'table';
         } catch (error) {
-            document.getElementById('loadingStatus').innerHTML = "⚠️ Error al conectar con Google Sheets.<br><small>Verificá que en el botón azul 'Compartir' esté configurado como 'Cualquier persona con el enlace'.</small>";
+            document.getElementById('loadingStatus').innerHTML = "⚠️ Error al conectar con Google Sheets.<br><small>Verificá que el acceso general en 'Compartir' esté configurado como 'Cualquier persona con el enlace'.</small>";
             console.error(error);
         }
     }
@@ -199,6 +216,8 @@
         const porcCobertura = globales.objetivo > 0 ? ((globales.cubiertos / globales.objetivo) * 100).toFixed(1) : 0;
         document.getElementById('kpi-objetivo').innerText = globales.objetivo.toLocaleString();
         document.getElementById('kpi-cubiertos').innerText = globales.cubiertos.toLocaleString();
+        document.getElementById('kpi-medicos').innerText = globales.medicos.toLocaleString();
+        document.getElementById('kpi-aptos').innerText = globales.aptos.toLocaleString();
         document.getElementById('kpi-vacantes').innerText = globales.vacantes.toLocaleString();
         document.getElementById('kpi-cobertura').innerText = `${porcCobertura}%`;
     }
@@ -219,7 +238,7 @@
         const tableBody = document.getElementById('tableBody');
         tableBody.innerHTML = '';
         if (data.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:20px;">No se registran vacantes activas.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:20px;">No se registran vacantes activas.</td></tr>`;
             return;
         }
         data.forEach(item => {
@@ -230,6 +249,8 @@
                 <td><strong>${item.puesto}</strong></td>
                 <td>${item.tenemos}</td>
                 <td>${item.presupuestado}</td>
+                <td style="color: var(--accent-purple);">${item.medico}</td>
+                <td style="color: #f59e0b;">${item.aptos}</td>
                 <td style="color: var(--accent-red); font-weight:600;">${item.falta}</td>
                 <td><span class="badge ${pClass}">${item.prioridad}</span></td>
             `;
