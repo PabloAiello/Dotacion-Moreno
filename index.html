@@ -38,7 +38,6 @@
             font-style: italic;
         }
 
-        /* Botones de navegación a las páginas HTML */
         .navigation-links {
             display: flex;
             justify-content: center;
@@ -68,7 +67,6 @@
             color: var(--primary);
         }
 
-        /* Tarjetas de Métricas Resumen */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -98,7 +96,6 @@
             font-weight: bold;
         }
 
-        /* Estructura para la Tabla y los Filtros */
         .table-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -177,7 +174,6 @@
         <h1>DOTACIÓN PENDIENTE – SEDE MORENO</h1>
         <p>Seguimiento operativo mapeado dinámicamente</p>
         
-        <!-- Botones de Navegación -->
         <div class="navigation-links">
             <a href="nomina-julio.html" class="btn-nav">📊 Nómina Julio</a>
             <a href="bajas.html" class="btn-nav">🔻 Bajas</a>
@@ -188,41 +184,47 @@
     <div class="metrics-grid">
         <div class="metric-card">
             <h4>👥 Presupuestado (D)</h4>
-            <div class="value" id="val-presupuestado">329</div>
+            <div class="value">329</div>
         </div>
         <div class="metric-card">
             <h4>✅ Tenemos (C)</h4>
-            <div class="value" id="val-tenemos" style="color: #0056b3;">239</div>
+            <div class="value" style="color: #0056b3;">239</div>
         </div>
         <div class="metric-card">
             <h4>🔻 Bajas (F)</h4>
-            <div class="value" id="val-bajas" style="color: #d9534f;">20</div>
+            <div class="value" style="color: #d9534f;">20</div>
         </div>
         <div class="metric-card">
             <h4>🏥 Médico (H)</h4>
-            <div class="value" id="val-medico" style="color: #8e44ad;">3</div>
+            <div class="value" style="color: #8e44ad;">3</div>
         </div>
         <div class="metric-card">
             <h4>👍 Aptos (I)</h4>
-            <div class="value" id="val-aptos" style="color: #f39c12;">21</div>
+            <div class="value" style="color: #f39c12;">21</div>
         </div>
         <div class="metric-card">
             <h4>🔴 Falta (J)</h4>
-            <div class="value" id="val-falta" style="color: #c0392b;">118</div>
+            <div class="value" style="color: #c0392b;">118</div>
         </div>
         <div class="metric-card">
             <h4>📊 % Cobertura</h4>
-            <div class="value" id="val-cobertura" style="color: #27ae60;">72.6%</div>
+            <div class="value" style="color: #27ae60;">72.6%</div>
         </div>
     </div>
 
-    <!-- Tabla Dinámica -->
+    <!-- Tabla con Filtro de Sectores Cargado -->
     <div class="table-container">
         <div class="filter-bar">
             <div class="filter-group">
                 <label for="sectorFilter">🔍 Filtrar por Sector:</label>
                 <select id="sectorFilter" onchange="filterTable()">
                     <option value="ALL">Todos los sectores</option>
+                    <option value="OPERACIONES">OPERACIONES</option>
+                    <option value="PICKING">PICKING</option>
+                    <option value="RECEPCION">RECEPCION</option>
+                    <option value="INVENTARIO MUELLE">INVENTARIO MUELLE</option>
+                    <option value="DESPACHO">DESPACHO</option>
+                    <option value="MANTENIMIENTO">MANTENIMIENTO</option>
                 </select>
             </div>
         </div>
@@ -242,21 +244,140 @@
                         <th>PRIORIDAD</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody">
-                    <!-- Los datos completos se cargan dinámicamente vía JS -->
+                <tbody>
+                    <tr data-sector="OPERACIONES">
+                        <td>OPERACIONES</td>
+                        <td>LIDER DE OPERACIONES</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td><span class="badge-baja">Baja</span></td>
+                    </tr>
+                    <tr data-sector="OPERACIONES">
+                        <td>OPERACIONES</td>
+                        <td>SUPERVISOR DE TURNO</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td><span class="badge-media">Media</span></td>
+                    </tr>
+                    <tr data-sector="PICKING">
+                        <td>PICKING</td>
+                        <td>PREPARADOR HB</td>
+                        <td>28</td>
+                        <td>30</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>6</td>
+                        <td>3</td>
+                        <td><span class="badge-media">Media</span></td>
+                    </tr>
+                    <tr data-sector="PICKING">
+                        <td>PICKING</td>
+                        <td>PREPARADOR PISO</td>
+                        <td>45</td>
+                        <td>60</td>
+                        <td>3</td>
+                        <td>1</td>
+                        <td>5</td>
+                        <td>10</td>
+                        <td><span class="badge-alta">Alta</span></td>
+                    </tr>
+                    <tr data-sector="PICKING">
+                        <td>PICKING</td>
+                        <td>DECANTER</td>
+                        <td>12</td>
+                        <td>15</td>
+                        <td>2</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td><span class="badge-baja">Baja</span></td>
+                    </tr>
+                    <tr data-sector="RECEPCION">
+                        <td>RECEPCION</td>
+                        <td>GUARDADO</td>
+                        <td>0</td>
+                        <td>8</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>8</td>
+                        <td><span class="badge-alta">Alta</span></td>
+                    </tr>
+                    <tr data-sector="RECEPCION">
+                        <td>RECEPCION</td>
+                        <td>CONTROL DE RECEPCIÓN</td>
+                        <td>10</td>
+                        <td>12</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td><span class="badge-media">Media</span></td>
+                    </tr>
+                    <tr data-sector="INVENTARIO MUELLE">
+                        <td>INVENTARIO MUELLE</td>
+                        <td>PRIMER CONTROL</td>
+                        <td>14</td>
+                        <td>24</td>
+                        <td>7</td>
+                        <td>1</td>
+                        <td>8</td>
+                        <td>17</td>
+                        <td><span class="badge-alta">Alta</span></td>
+                    </tr>
+                    <tr data-sector="INVENTARIO MUELLE">
+                        <td>INVENTARIO MUELLE</td>
+                        <td>SEGUNDO CONTROL</td>
+                        <td>8</td>
+                        <td>12</td>
+                        <td>4</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>4</td>
+                        <td><span class="badge-alta">Alta</span></td>
+                    </tr>
+                    <tr data-sector="DESPACHO">
+                        <td>DESPACHO</td>
+                        <td>CARGADOR DE CAMIONES</td>
+                        <td>20</td>
+                        <td>25</td>
+                        <td>2</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>4</td>
+                        <td><span class="badge-media">Media</span></td>
+                    </tr>
+                    <tr data-sector="MANTENIMIENTO">
+                        <td>MANTENIMIENTO</td>
+                        <td>TÉCNICO ELECTROMECÁNICO</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td><span class="badge-baja">Baja</span></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Función auxiliar para el filtro por Sector -->
     <script>
         function filterTable() {
             const filterValue = document.getElementById('sectorFilter').value;
             const rows = document.querySelectorAll('#dataTable tbody tr');
 
             rows.forEach(row => {
-                const sector = row.getAttribute('data-sector') || row.children[0]?.textContent.trim();
+                const sector = row.getAttribute('data-sector');
                 if (filterValue === 'ALL' || sector === filterValue) {
                     row.style.display = '';
                 } else {
@@ -265,9 +386,5 @@
             });
         }
     </script>
-
-    <!-- Enlace a tu script de datos original (Si tiene otro nombre como script.js o app.js, cámbialo aquí) -->
-    <script src="script.js"></script>
-
 </body>
 </html>
