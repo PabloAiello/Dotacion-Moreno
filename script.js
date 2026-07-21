@@ -1,23 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Obtenemos los elementos de filtro y la tabla
-  const inputBuscar = document.getElementById('inputBuscar'); // ID de tu caja de texto
-  const selectEstado = document.getElementById('selectEstado'); // ID de tu desplegable de estado
-  const filas = document.querySelectorAll('#tablaDotacion tbody tr'); // ID de tu <table>
+  // 1. Obtener elementos del DOM (Inputs, Selects y Filas de la tabla)
+  const inputBuscar = document.querySelector('input[type="text"]') || document.getElementById('inputBuscar');
+  const selectSector = document.querySelector('select') || document.getElementById('selectSector');
+  const filas = document.querySelectorAll('table tbody tr');
 
   function aplicarFiltros() {
-    const texto = inputBuscar ? inputBuscar.value.toLowerCase().trim() : '';
-    const estado = selectEstado ? selectEstado.value.toLowerCase() : '';
+    // Búsqueda por texto (minúsculas y sin espacios sobrantes)
+    const textoBusqueda = inputBuscar ? inputBuscar.value.toLowerCase().trim() : '';
+
+    // Sector seleccionado en el menú desplegable
+    const sectorSeleccionado = selectSector ? selectSector.value.toUpperCase().trim() : '';
 
     filas.forEach(fila => {
-      const contenidoFila = fila.textContent.toLowerCase();
-      
-      // Si tienes una columna de estado específica (ej. 4ª columna / índice 3)
-      const textoEstado = fila.children[3] ? fila.children[3].textContent.toLowerCase() : '';
+      // Texto completo de la fila para la búsqueda general
+      const textoFila = fila.textContent.toLowerCase();
 
-      const coincideTexto = contenidoFila.includes(texto);
-      const coincideEstado = estado === '' || textoEstado === estado;
+      // Asumiendo que el Sector/Gerencia está en la primera columna (índice 0)
+      const celdaSector = fila.children[0] ? fila.children[0].textContent.toUpperCase().trim() : '';
 
-      if (coincideTexto && coincideEstado) {
+      // Evaluar coincidencia de texto
+      const coincideTexto = textoBusqueda === '' || textoFila.includes(textoBusqueda);
+
+      // Evaluar coincidencia de sector
+      const coincideSector =
+        sectorSeleccionado === '' ||
+        sectorSeleccionado.includes('TODOS') ||
+        celdaSector === sectorSeleccionado;
+
+      // Mostrar u ocultar la fila según cumpla ambas condiciones
+      if (coincideTexto && coincideSector) {
         fila.style.display = '';
       } else {
         fila.style.display = 'none';
@@ -25,11 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 2. Escuchar los eventos de entrada
+  // 2. Escuchar los eventos cuando el usuario interactúa
   if (inputBuscar) {
     inputBuscar.addEventListener('input', aplicarFiltros);
   }
-  if (selectEstado) {
-    selectEstado.addEventListener('change', aplicarFiltros);
+
+  if (selectSector) {
+    selectSector.addEventListener('change', aplicarFiltros);
   }
 });
