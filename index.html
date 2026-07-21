@@ -6,7 +6,6 @@
     <title>Dotación Pendiente - Sede Moreno</title>
     <style>
         :root {
-            /* Paleta clara alineada con los colores corporativos de Nini */
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
             --card-border: #e2e8f0;
@@ -62,8 +61,40 @@
         header p { 
             color: var(--text-muted); 
             font-size: 1.05rem; 
-            margin: 0;
+            margin: 0 0 15px 0;
             font-weight: 500;
+        }
+
+        /* Estilos para los botones de enlace a Google Sheets */
+        .sheet-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .sheet-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background-color: #ffffff;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        .sheet-btn:hover {
+            background-color: #f0fdf4;
+            border-color: #86efac;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
         .kpi-container {
@@ -172,6 +203,16 @@
         <img src="logo.jpg" alt="Logo Nini" class="header-logo">
         <h1>Dotación Pendiente – Sede Moreno</h1>
         <p>Seguimiento operativo mapeado dinámicamente</p>
+        
+        <!-- Enlaces a las pestañas de Google Sheets -->
+        <div class="sheet-links">
+            <a href="https://docs.google.com/spreadsheets/d/1-ZjmiJVt_u5fN9We8W-JeBzIFmSyFfSH/edit#gid=0" target="_blank" class="sheet-btn">
+                📊 Nómina Julio
+            </a>
+            <a href="https://docs.google.com/spreadsheets/d/1-ZjmiJVt_u5fN9We8W-JeBzIFmSyFfSH/edit#gid=1030521285" target="_blank" class="sheet-btn">
+                🔻 Bajas
+            </a>
+        </div>
     </header>
 
     <div class="kpi-container">
