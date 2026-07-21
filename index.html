@@ -212,19 +212,13 @@
         </div>
     </div>
 
-    <!-- Tabla con Filtro de Sectores Cargado -->
+    <!-- Tabla con Filtro de Sectores -->
     <div class="table-container">
         <div class="filter-bar">
             <div class="filter-group">
                 <label for="sectorFilter">🔍 Filtrar por Sector:</label>
                 <select id="sectorFilter" onchange="filterTable()">
                     <option value="ALL">Todos los sectores</option>
-                    <option value="OPERACIONES">OPERACIONES</option>
-                    <option value="PICKING">PICKING</option>
-                    <option value="RECEPCION">RECEPCION</option>
-                    <option value="INVENTARIO MUELLE">INVENTARIO MUELLE</option>
-                    <option value="DESPACHO">DESPACHO</option>
-                    <option value="MANTENIMIENTO">MANTENIMIENTO</option>
                 </select>
             </div>
         </div>
@@ -371,7 +365,28 @@
         </div>
     </div>
 
+    <!-- Script de filtrado y autogenerado de opciones -->
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const select = document.getElementById('sectorFilter');
+            const rows = document.querySelectorAll('#dataTable tbody tr');
+            const sectores = new Set();
+
+            // Extraer automáticamente todos los sectores de la tabla
+            rows.forEach(row => {
+                const sector = row.getAttribute('data-sector');
+                if (sector) sectores.add(sector);
+            });
+
+            // Llenar el desplegable con los sectores únicos
+            sectores.forEach(sec => {
+                const option = document.createElement('option');
+                option.value = sec;
+                option.textContent = sec;
+                select.appendChild(option);
+            });
+        });
+
         function filterTable() {
             const filterValue = document.getElementById('sectorFilter').value;
             const rows = document.querySelectorAll('#dataTable tbody tr');
