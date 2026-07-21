@@ -1,7 +1,7 @@
 const baseCsvUrl = "https://docs.google.com/spreadsheets/d/1-ZjmiJVt_u5fN9We8W-JeBzIFmSyFfSH/export?format=csv&gid=1030521285";
 
 let puestosPendientes = [];
-let globales = { objetivo: 0, cubiertos: 0, medicos: 0, aptos: 0, vacantes: 0 };
+let globales = { objetivo: 0, cubiertos: 0, bajas: 0, medicos: 0, aptos: 0, vacantes: 0 };
 
 async function fetchExcelData() {
     try {
@@ -28,6 +28,11 @@ async function fetchExcelData() {
         const idxPuesto = headers.indexOf("puesto");
         const idxTenemos = headers.indexOf("tenemos");
         const idxPresupuestado = headers.indexOf("presupuestado");
+        
+        // Busca "baja", "bajas" o la columna F
+        let idxBajas = headers.findIndex(h => h.includes("baja"));
+        if (idxBajas === -1) idxBajas = 5; // Si no lo encuentra por nombre, toma la Columna F (índice 5)
+
         const idxMedico = headers.indexOf("medico");
         const idxAptos = headers.indexOf("aptos");
         const idxFalta = headers.indexOf("falta");
@@ -38,7 +43,7 @@ async function fetchExcelData() {
         }
 
         puestosPendientes = [];
-        globales = { objetivo: 0, cubiertos: 0, medicos: 0, aptos: 0, vacantes: 0 };
+        globales = { objetivo: 0, cubiertos: 0, bajas: 0, medicos: 0, aptos: 0, vacantes: 0 };
         
         for (let i = 1; i < rows.length; i++) {
             const columns = rows[i];
@@ -50,6 +55,7 @@ async function fetchExcelData() {
                 // Conversión limpia de strings numéricos a enteros
                 const tenemos = parseInt(columns[idxTenemos]?.replace(/[".]/g, '')) || 0;
                 const presupuestado = parseInt(columns[idxPresupuestado]?.replace(/[".]/g, '')) || 0;
+                const bajas = parseInt(columns[idxBajas]?.replace(/[".]/g, '')) || 0;
                 const medico = parseInt(columns[idxMedico]?.replace(/[".]/g, '')) || 0;
                 const aptos = parseInt(columns[idxAptos]?.replace(/[".]/g, '')) || 0;
                 const falta = parseInt(columns[idxFalta]?.replace(/[".]/g, '')) || 0;
@@ -58,6 +64,7 @@ async function fetchExcelData() {
 
                 globales.objetivo += presupuestado;
                 globales.cubiertos += tenemos;
+                globales.bajas += bajas;
                 globales.medicos += medico;
                 globales.aptos += aptos;
                 globales.vacantes += (falta > 0 ? falta : 0);
@@ -68,7 +75,7 @@ async function fetchExcelData() {
                     if (falta >= 5) prioridad = "Alta";
                     else if (falta >= 2) prioridad = "Media";
 
-                    puestosPendientes.push({ sector, puesto, tenemos, presupuestado, medico, aptos, falta, prioridad });
+                    puestosPendientes.push({ sector, puesto, tenemos, presupuestado, bajas, medico, aptos, falta, prioridad });
                 }
             }
         }
@@ -89,6 +96,11 @@ function renderKPIs() {
     const porcCobertura = globales.objetivo > 0 ? ((globales.cubiertos / globales.objetivo) * 100).toFixed(1) : 0;
     document.getElementById('kpi-objetivo').innerText = globales.objetivo.toLocaleString();
     document.getElementById('kpi-cubiertos').innerText = globales.cubiertos.toLocaleString();
+    
+    // Renderiza el KPI de Bajas si existe el contenedor en HTML
+    const kpiBajas = document.getElementById('kpi-bajas');
+    if (kpiBajas) kpiBajas.innerText = globales.bajas.toLocaleString();
+
     document.getElementById('kpi-medicos').innerText = globales.medicos.toLocaleString();
     document.getElementById('kpi-aptos').innerText = globales.aptos.toLocaleString();
     document.getElementById('kpi-vacantes').innerText = globales.vacantes.toLocaleString();
@@ -116,7 +128,7 @@ function renderTable(data) {
     const tableBody = document.getElementById('tableBody');
     tableBody.innerHTML = '';
     if (data.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:20px;">No se registran vacantes activas.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--text-muted); padding:20px;">No se registran vacantes activas.</td></tr>`;
         return;
     }
     data.forEach(item => {
@@ -127,6 +139,7 @@ function renderTable(data) {
             <td><strong>${item.puesto}</strong></td>
             <td>${item.tenemos}</td>
             <td>${item.presupuestado}</td>
+            <td style="color: var(--accent-gray); font-weight:600;">${item.bajas}</td>
             <td style="color: var(--accent-purple);">${item.medico}</td>
             <td style="color: #f59e0b;">${item.aptos}</td>
             <td style="color: var(--accent-red); font-weight:600;">${item.falta}</td>
