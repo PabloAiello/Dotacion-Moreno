@@ -19,6 +19,7 @@
             --accent-green: #16a34a;
             --accent-purple: #7c3aed;
             --accent-amber: #d97706;
+            --accent-gray: #475569;
             
             --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
@@ -67,7 +68,7 @@
 
         .kpi-container {
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 18px; 
             margin-bottom: 30px;
         }
@@ -98,6 +99,7 @@
         .card .value { font-size: 1.8rem; font-weight: 700; }
         .card.objetivo .value { color: var(--text-color); }
         .card.cubiertos .value { color: var(--primary-blue); }
+        .card.bajas .value { color: var(--accent-gray); }
         .card.medicos .value { color: var(--accent-purple); }
         .card.aptos .value { color: var(--accent-amber); }
         .card.vacantes .value { color: var(--accent-red); }
@@ -175,6 +177,7 @@
     <div class="kpi-container">
         <div class="card objetivo"><h3>👥 Presupuestado (D)</h3><div class="value" id="kpi-objetivo">-</div></div>
         <div class="card cubiertos"><h3>✅ Tenemos (C)</h3><div class="value" id="kpi-cubiertos">-</div></div>
+        <div class="card bajas"><h3>🔻 Bajas (F)</h3><div class="value" id="kpi-bajas">-</div></div>
         <div class="card medicos"><h3>🏥 Médico (H)</h3><div class="value" id="kpi-medicos">-</div></div>
         <div class="card aptos"><h3>👍 Aptos (I)</h3><div class="value" id="kpi-aptos">-</div></div>
         <div class="card vacantes"><h3>🔴 Falta (J)</h3><div class="value" id="kpi-vacantes">-</div></div>
@@ -197,6 +200,7 @@
                     <th>Puesto</th>
                     <th>Tenemos (C)</th>
                     <th>Presupuestado (D)</th>
+                    <th>Bajas (F)</th>
                     <th>Médico (H)</th>
                     <th>Aptos (I)</th>
                     <th>Falta (J)</th>
