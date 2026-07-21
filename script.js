@@ -23,7 +23,7 @@ async function fetchExcelData() {
         // Limpieza de nombres de cabecera reales
         const headers = rows[0].map(h => h.replace(/["]/g, '').trim().toLowerCase());
         
-        // Mapeo por índices exactos
+        // Mapeo por índices exactos basados en la vista real del Excel
         const idxSector = headers.indexOf("sector");
         const idxPuesto = headers.indexOf("puesto");
         const idxTenemos = headers.indexOf("tenemos");
@@ -47,6 +47,7 @@ async function fetchExcelData() {
                 const sector = columns[idxSector].replace(/["]/g, '').trim();
                 const puesto = columns[idxPuesto].replace(/["]/g, '').trim();
                 
+                // Conversión limpia de strings numéricos a enteros
                 const tenemos = parseInt(columns[idxTenemos]?.replace(/[".]/g, '')) || 0;
                 const presupuestado = parseInt(columns[idxPresupuestado]?.replace(/[".]/g, '')) || 0;
                 const medico = parseInt(columns[idxMedico]?.replace(/[".]/g, '')) || 0;
@@ -61,6 +62,7 @@ async function fetchExcelData() {
                 globales.aptos += aptos;
                 globales.vacantes += (falta > 0 ? falta : 0);
 
+                // Muestra en la tabla únicamente los puestos que registran vacantes abiertas
                 if (falta > 0) {
                     let prioridad = "Baja";
                     if (falta >= 5) prioridad = "Alta";
@@ -95,12 +97,17 @@ function renderKPIs() {
 
 function populateSectorFilter() {
     const sectorFilter = document.getElementById('sectorFilter');
+    if (!sectorFilter) return;
+
+    // Asigna 'Todos' como valor explícito para la opción por defecto
     sectorFilter.innerHTML = '<option value="Todos">📦 Todos los Sectores</option>';
-    const sectores = [...new Set(puestosPendientes.map(item => item.sector))];
+    
+    // Extrae y ordena sectores únicos
+    const sectores = [...new Set(puestosPendientes.map(item => item.sector).filter(Boolean))];
     sectores.sort().forEach(sector => {
         const option = document.createElement('option');
-        option.value = sector;
-        option.innerText = sector;
+        option.value = sector.trim();
+        option.innerText = sector.trim();
         sectorFilter.appendChild(option);
     });
 }
@@ -130,19 +137,39 @@ function renderTable(data) {
 }
 
 function filterData() {
-    const searchValue = document.getElementById('searchInput').value.toLowerCase();
-    const selectedSector = document.getElementById('sectorFilter').value;
+    const searchInput = document.getElementById('searchInput');
+    const sectorFilter = document.getElementById('sectorFilter');
+
+    const searchValue = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const selectedSector = sectorFilter ? sectorFilter.value.trim() : 'Todos';
+
     const filtered = puestosPendientes.filter(item => {
-        const matchesSearch = item.puesto.toLowerCase().includes(searchValue) || item.sector.toLowerCase().includes(searchValue);
-        const matchesSector = selectedSector === 'Todos' || item.sector === selectedSector;
+        // Búsqueda por texto (puesto o sector)
+        const puestoTexto = (item.puesto || '').toLowerCase();
+        const sectorTexto = (item.sector || '').toLowerCase();
+        const matchesSearch = searchValue === '' || puestoTexto.includes(searchValue) || sectorTexto.includes(searchValue);
+
+        // Comprobación flexible de sector
+        const isAllSectors = 
+            selectedSector === 'Todos' || 
+            selectedSector === '' || 
+            selectedSector.toLowerCase().includes('todos');
+
+        const matchesSector = isAllSectors || item.sector.trim().toUpperCase() === selectedSector.toUpperCase();
+
         return matchesSearch && matchesSector;
     });
+
     renderTable(filtered);
 }
 
-// Inicializar eventos
+// Inicialización de eventos e inicio de carga
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('searchInput').addEventListener('input', filterData);
-    document.getElementById('sectorFilter').addEventListener('change', filterData);
+    const searchInput = document.getElementById('searchInput');
+    const sectorFilter = document.getElementById('sectorFilter');
+
+    if (searchInput) searchInput.addEventListener('input', filterData);
+    if (sectorFilter) sectorFilter.addEventListener('change', filterData);
+
     fetchExcelData();
 });
