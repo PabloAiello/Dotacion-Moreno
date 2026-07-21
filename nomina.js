@@ -1,0 +1,53 @@
+const baseCsvUrl = "https://docs.google.com/spreadsheets/d/1-ZjmiJVt_u5fN9We8W-JeBzIFmSyFfSH/export?format=csv&gid=GID_NOMINA_AQUI";
+
+let datosNomina = [];
+
+async function fetchNominaData() {
+    try {
+        const response = await fetch(`${baseCsvUrl}&t=${new Date().getTime()}`);
+        if (!response.ok) throw new Error("Error al conectar con los datos");
+        
+        const textData = await response.text();
+        const lines = textData.split(/\r?\n/).filter(line => line.trim() !== "");
+        if (lines.length === 0) return;
+
+        const separator = lines[0].split(';').length > lines[0].split(',').length ? ';' : ',';
+        const rows = lines.map(line => line.split(new RegExp(`\\${separator}(?=(?:(?:[^"]*"){2})*[^"]*$)`)));
+
+        // Encabezados dinámicos
+        const headers = rows[0].map(h => h.replace(/["]/g, '').trim());
+        renderHeader(headers);
+
+        datosNomina = rows.slice(1).map(row => row.map(cell => cell.replace(/["]/g, '').trim()));
+
+        renderTable(datosNomina);
+        document.getElementById('loadingStatus').style.display = 'none';
+        document.getElementById('mainTable').style.display = 'table';
+    } catch (error) {
+        document.getElementById('loadingStatus').innerText = "⚠️ Error al cargar los datos de Nómina Julio.";
+    }
+}
+
+function renderHeader(headers) {
+    const thead = document.getElementById('tableHeader');
+    thead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+}
+
+function renderTable(data) {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+    data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = row.map(cell => `<td>${cell}</td>`).join('');
+        tbody.appendChild(tr);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('searchInput')?.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const filtered = datosNomina.filter(row => row.some(cell => cell.toLowerCase().includes(query)));
+        renderTable(filtered);
+    });
+    fetchNominaData();
+});
