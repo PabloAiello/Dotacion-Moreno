@@ -1,4 +1,4 @@
-// Reemplaza GID_BAJAS_AQUI con el número gid de la pestaña Bajas en tu Google Sheet
+//2110390412
 const baseCsvUrl = "https://docs.google.com/spreadsheets/d/1-ZjmiJVt_u5fN9We8W-JeBzIFmSyFfSH/export?format=csv&gid=GID_BAJAS_AQUI";
 
 let datosBajas = [];
