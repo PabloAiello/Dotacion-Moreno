@@ -26,11 +26,6 @@
             margin-bottom: 25px;
         }
 
-        .header img {
-            max-width: 120px;
-            margin-bottom: 10px;
-        }
-
         .header h1 {
             color: #1a237e;
             margin: 5px 0;
@@ -71,16 +66,15 @@
             background-color: #eef4ff;
             border-color: var(--primary);
             color: var(--primary);
-            transform: translateY(-1px);
         }
 
         /* Tarjetas de Métricas */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 15px;
-            max-width: 1100px;
-            margin: 0 auto 30px auto;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            max-width: 1200px;
+            margin: 0 auto 25px auto;
         }
 
         .metric-card {
@@ -94,25 +88,59 @@
 
         .metric-card h4 {
             margin: 0 0 8px 0;
-            font-size: 13px;
+            font-size: 12px;
             color: #555;
             text-transform: uppercase;
         }
 
         .metric-card .value {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
         }
 
-        /* Tabla Principal */
+        /* Contenedor de la Tabla y Filtros */
         .table-container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             background: var(--card-bg);
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .table-wrapper {
             overflow-x: auto;
+            max-height: 600px; /* Permite desplazamiento vertical sin cortar la página */
+            overflow-y: auto;
         }
 
         table {
@@ -131,6 +159,9 @@
             background-color: #f8f9fa;
             font-weight: 600;
             color: #444;
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
 
         tr:hover {
@@ -145,11 +176,9 @@
 <body>
 
     <div class="header">
-        <img src="https://pabloaiello.github.io/Dotacion-Moreno/" alt="Logo Nini" onerror="this.style.display='none'">
         <h1>DOTACIÓN PENDIENTE – SEDE MORENO</h1>
         <p>Seguimiento operativo mapeado dinámicamente</p>
         
-        <!-- ENLACES A LAS NUEVAS PÁGINAS HTML -->
         <div class="navigation-links">
             <a href="nomina-julio.html" class="btn-nav">📊 Nómina Julio</a>
             <a href="bajas.html" class="btn-nav">🔻 Bajas</a>
@@ -188,70 +217,100 @@
         </div>
     </div>
 
-    <!-- Tabla Resumen -->
+    <!-- Tabla con Filtro por Sector -->
     <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>SECTOR / GERENCIA</th>
-                    <th>PUESTO</th>
-                    <th>TENEMOS (C)</th>
-                    <th>PRESUPUESTADO (D)</th>
-                    <th>BAJAS (F)</th>
-                    <th>MÉDICO (H)</th>
-                    <th>APTOS (I)</th>
-                    <th>FALTA (J)</th>
-                    <th>PRIORIDAD</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>OPERACIONES</td>
-                    <td>LIDER DE OPERACIONES</td>
-                    <td>0</td>
-                    <td>1</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>1</td>
-                    <td><span class="badge-baja">Baja</span></td>
-                </tr>
-                <tr>
-                    <td>PICKING</td>
-                    <td>PREPARADOR HB</td>
-                    <td>28</td>
-                    <td>30</td>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>6</td>
-                    <td>3</td>
-                    <td><span class="badge-media">Media</span></td>
-                </tr>
-                <tr>
-                    <td>RECEPCION</td>
-                    <td>GUARDADO</td>
-                    <td>0</td>
-                    <td>8</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>8</td>
-                    <td><span class="badge-alta">Alta</span></td>
-                </tr>
-                <tr>
-                    <td>INVENTARIO MUELLE</td>
-                    <td>PRIMER CONTROL</td>
-                    <td>14</td>
-                    <td>24</td>
-                    <td>7</td>
-                    <td>1</td>
-                    <td>8</td>
-                    <td>17</td>
-                    <td><span class="badge-alta">Alta</span></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label for="sectorFilter">🔍 Filtrar por Sector:</label>
+                <select id="sectorFilter" onchange="filterTable()">
+                    <option value="ALL">Todos los sectores</option>
+                    <option value="OPERACIONES">OPERACIONES</option>
+                    <option value="PICKING">PICKING</option>
+                    <option value="RECEPCION">RECEPCION</option>
+                    <option value="INVENTARIO MUELLE">INVENTARIO MUELLE</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>SECTOR / GERENCIA</th>
+                        <th>PUESTO</th>
+                        <th>TENEMOS (C)</th>
+                        <th>PRESUPUESTADO (D)</th>
+                        <th>BAJAS (F)</th>
+                        <th>MÉDICO (H)</th>
+                        <th>APTOS (I)</th>
+                        <th>FALTA (J)</th>
+                        <th>PRIORIDAD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-sector="OPERACIONES">
+                        <td>OPERACIONES</td>
+                        <td>LIDER DE OPERACIONES</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td><span class="badge-baja">Baja</span></td>
+                    </tr>
+                    <tr data-sector="PICKING">
+                        <td>PICKING</td>
+                        <td>PREPARADOR HB</td>
+                        <td>28</td>
+                        <td>30</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>6</td>
+                        <td>3</td>
+                        <td><span class="badge-media">Media</span></td>
+                    </tr>
+                    <tr data-sector="RECEPCION">
+                        <td>RECEPCION</td>
+                        <td>GUARDADO</td>
+                        <td>0</td>
+                        <td>8</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>8</td>
+                        <td><span class="badge-alta">Alta</span></td>
+                    </tr>
+                    <tr data-sector="INVENTARIO MUELLE">
+                        <td>INVENTARIO MUELLE</td>
+                        <td>PRIMER CONTROL</td>
+                        <td>14</td>
+                        <td>24</td>
+                        <td>7</td>
+                        <td>1</td>
+                        <td>8</td>
+                        <td>17</td>
+                        <td><span class="badge-alta">Alta</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
+    <script>
+        function filterTable() {
+            const filterValue = document.getElementById('sectorFilter').value;
+            const rows = document.querySelectorAll('#dataTable tbody tr');
+
+            rows.forEach(row => {
+                const sector = row.getAttribute('data-sector');
+                if (filterValue === 'ALL' || sector === filterValue) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
