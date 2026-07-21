@@ -38,7 +38,6 @@
             font-style: italic;
         }
 
-        /* Botones de navegación principal */
         .navigation-links {
             display: flex;
             justify-content: center;
@@ -68,7 +67,6 @@
             color: var(--primary);
         }
 
-        /* Tarjetas de Métricas */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -98,7 +96,6 @@
             font-weight: bold;
         }
 
-        /* Contenedor de la Tabla y Filtros */
         .table-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -139,7 +136,7 @@
 
         .table-wrapper {
             overflow-x: auto;
-            max-height: 600px; /* Permite desplazamiento vertical sin cortar la página */
+            max-height: 70vh; /* Permite ver toda la lista con scroll cómodo */
             overflow-y: auto;
         }
 
@@ -161,7 +158,7 @@
             color: #444;
             position: sticky;
             top: 0;
-            z-index: 1;
+            z-index: 10;
         }
 
         tr:hover {
@@ -228,6 +225,8 @@
                     <option value="PICKING">PICKING</option>
                     <option value="RECEPCION">RECEPCION</option>
                     <option value="INVENTARIO MUELLE">INVENTARIO MUELLE</option>
+                    <option value="DESPACHO">DESPACHO</option>
+                    <option value="MANTENIMIENTO">MANTENIMIENTO</option>
                 </select>
             </div>
         </div>
@@ -248,6 +247,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- OPERACIONES -->
                     <tr data-sector="OPERACIONES">
                         <td>OPERACIONES</td>
                         <td>LIDER DE OPERACIONES</td>
@@ -259,6 +259,19 @@
                         <td>1</td>
                         <td><span class="badge-baja">Baja</span></td>
                     </tr>
+                    <tr data-sector="OPERACIONES">
+                        <td>OPERACIONES</td>
+                        <td>SUPERVISOR DE TURNO</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td><span class="badge-media">Media</span></td>
+                    </tr>
+
+                    <!-- PICKING -->
                     <tr data-sector="PICKING">
                         <td>PICKING</td>
                         <td>PREPARADOR HB</td>
@@ -270,6 +283,30 @@
                         <td>3</td>
                         <td><span class="badge-media">Media</span></td>
                     </tr>
+                    <tr data-sector="PICKING">
+                        <td>PICKING</td>
+                        <td>PREPARADOR PISO</td>
+                        <td>45</td>
+                        <td>60</td>
+                        <td>3</td>
+                        <td>1</td>
+                        <td>5</td>
+                        <td>10</td>
+                        <td><span class="badge-alta">Alta</span></td>
+                    </tr>
+                    <tr data-sector="PICKING">
+                        <td>PICKING</td>
+                        <td>DECANTER</td>
+                        <td>12</td>
+                        <td>15</td>
+                        <td>2</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td><span class="badge-baja">Baja</span></td>
+                    </tr>
+
+                    <!-- RECEPCION -->
                     <tr data-sector="RECEPCION">
                         <td>RECEPCION</td>
                         <td>GUARDADO</td>
@@ -281,6 +318,19 @@
                         <td>8</td>
                         <td><span class="badge-alta">Alta</span></td>
                     </tr>
+                    <tr data-sector="RECEPCION">
+                        <td>RECEPCION</td>
+                        <td>CONTROL DE RECEPCIÓN</td>
+                        <td>10</td>
+                        <td>12</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td><span class="badge-media">Media</span></td>
+                    </tr>
+
+                    <!-- INVENTARIO MUELLE -->
                     <tr data-sector="INVENTARIO MUELLE">
                         <td>INVENTARIO MUELLE</td>
                         <td>PRIMER CONTROL</td>
@@ -291,6 +341,43 @@
                         <td>8</td>
                         <td>17</td>
                         <td><span class="badge-alta">Alta</span></td>
+                    </tr>
+                    <tr data-sector="INVENTARIO MUELLE">
+                        <td>INVENTARIO MUELLE</td>
+                        <td>SEGUNDO CONTROL</td>
+                        <td>8</td>
+                        <td>12</td>
+                        <td>4</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>4</td>
+                        <td><span class="badge-alta">Alta</span></td>
+                    </tr>
+
+                    <!-- DESPACHO -->
+                    <tr data-sector="DESPACHO">
+                        <td>DESPACHO</td>
+                        <td>CARGADOR DE CAMIONES</td>
+                        <td>20</td>
+                        <td>25</td>
+                        <td>2</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>4</td>
+                        <td><span class="badge-media">Media</span></td>
+                    </tr>
+
+                    <!-- MANTENIMIENTO -->
+                    <tr data-sector="MANTENIMIENTO">
+                        <td>MANTENIMIENTO</td>
+                        <td>TÉCNICO ELECTROMECÁNICO</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td><span class="badge-baja">Baja</span></td>
                     </tr>
                 </tbody>
             </table>
