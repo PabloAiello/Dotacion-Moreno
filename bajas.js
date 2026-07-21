@@ -1,4 +1,4 @@
-//2110390412
+//1076248572
 const baseCsvUrl = "https://docs.google.com/spreadsheets/d/1-ZjmiJVt_u5fN9We8W-JeBzIFmSyFfSH/export?format=csv&gid=GID_BAJAS_AQUI";
 
 let datosBajas = [];
