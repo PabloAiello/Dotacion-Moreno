@@ -184,31 +184,31 @@
     <div class="metrics-grid">
         <div class="metric-card">
             <h4>👥 Presupuestado (D)</h4>
-            <div class="value">329</div>
+            <div class="value" id="totalPresupuestado">0</div>
         </div>
         <div class="metric-card">
             <h4>✅ Tenemos (C)</h4>
-            <div class="value" style="color: #0056b3;">239</div>
+            <div class="value" id="totalTenemos" style="color: #0056b3;">0</div>
         </div>
         <div class="metric-card">
             <h4>🔻 Bajas (F)</h4>
-            <div class="value" style="color: #d9534f;">20</div>
+            <div class="value" id="totalBajas" style="color: #d9534f;">0</div>
         </div>
         <div class="metric-card">
             <h4>🏥 Médico (H)</h4>
-            <div class="value" style="color: #8e44ad;">3</div>
+            <div class="value" id="totalMedico" style="color: #8e44ad;">0</div>
         </div>
         <div class="metric-card">
             <h4>👍 Aptos (I)</h4>
-            <div class="value" style="color: #f39c12;">21</div>
+            <div class="value" id="totalAptos" style="color: #f39c12;">0</div>
         </div>
         <div class="metric-card">
             <h4>🔴 Falta (J)</h4>
-            <div class="value" style="color: #c0392b;">118</div>
+            <div class="value" id="totalFalta" style="color: #c0392b;">0</div>
         </div>
         <div class="metric-card">
             <h4>📊 % Cobertura</h4>
-            <div class="value" style="color: #27ae60;">72.6%</div>
+            <div class="value" id="totalCobertura" style="color: #27ae60;">0%</div>
         </div>
     </div>
 
@@ -246,68 +246,79 @@
     </div>
 
     <script>
-        // Listado completo de datos
-        const dotacionData = [
-            // OPERACIONES
-            { sector: "OPERACIONES", puesto: "LIDER DE OPERACIONES", tenemos: 0, presupuestado: 1, bajas: 0, medico: 0, aptos: 0, falta: 1, prioridad: "Baja" },
-            { sector: "OPERACIONES", puesto: "SUPERVISOR DE TURNO", tenemos: 2, presupuestado: 3, bajas: 0, medico: 0, aptos: 0, falta: 1, prioridad: "Media" },
-            { sector: "OPERACIONES", puesto: "Inventario", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
+        // Datos crudos copiados directamente del listado
+        const rawData = `
+OPERACIONES	LIDER DE OPERACIONES	0	1	0	0	0	1	Baja
+OPERACIONES	SUPERVISOR DE TURNO	2	3	0	0	0	1	Media
+OPERACIONES	Inventario	0	0	0	0	0	0	Baja
+PICKING	ARMADO ROLL	0	0	0	0	0	0	Baja
+PICKING	Traslado Buffer	0	0	0	0	0	0	Baja
+PICKING	PREPARADOR HB	28	30	1	2	6	3	Media
+PICKING	PREPARADOR PISO	45	60	3	1	5	10	Alta
+PICKING	CUBY UN	0	0	0	0	0	0	Baja
+PICKING	DECANTING	12	15	2	0	1	2	Baja
+PICKING	CUBY CJ	0	0	0	0	0	0	Baja
+PICKING	CLEARING CUBY UN	0	0	0	0	0	0	Baja
+PICKING	CLEARING DECANTING	0	0	0	0	0	0	Baja
+PICKING	CLEARING CUBY CJ	0	0	0	0	0	0	Baja
+PICKING	CONTINGENCIA	0	0	0	0	0	0	Baja
+PICKING	AUXILIAR OPERATIVO PICKING	0	0	0	0	0	0	Baja
+RECEPCION	CLARCK	0	0	0	0	0	0	Baja
+RECEPCION	CONTROL	10	12	1	0	1	2	Media
+RECEPCION	DESCARGA/GUARDADO	0	0	0	0	0	0	Baja
+RECEPCION	GUARDADO	0	8	0	0	0	8	Alta
+RECEPCION	REPALETIZADOR	0	0	0	0	0	0	Baja
+RECEPCION	AUXILIAR RECEPCION	0	0	0	0	0	0	Baja
+RECEPCION	ADMINISTRATIVO DE RECEPCION	0	0	0	0	0	0	Baja
+RECEPCION	COORDINACION TURNOS Y CPR	0	0	0	0	0	0	Baja
+RECEPCION	DATOS MAESTROS	0	0	0	0	0	0	Baja
+RECEPCION	RECICLAJE	0	0	0	0	0	0	Baja
+RECEPCION	CPR	0	0	0	0	0	0	Baja
+RECEPCION	Cuby-Skan	0	0	0	0	0	0	Baja
+TRAFICO	CONTROL DE MUELLE	0	0	0	0	0	0	Baja
+TRAFICO	OPERADOR DE MUELLE	0	0	0	0	0	0	Baja
+TRAFICO	DEVOLUCIONES	0	0	0	0	0	0	Baja
+TRAFICO	CONDUCTORES	0	0	0	0	0	0	Baja
+TRAFICO	PLANEAMIENTO	0	0	0	0	0	0	Baja
+TRAFICO	OPERADOR DE TRAFICO	0	0	0	0	0	0	Baja
+TRAFICO	AUXILIAR OPERATIVO TRAFICO	0	0	0	0	0	0	Baja
+TRAFICO	RESPONSABLE DE MUELLE	0	0	0	0	0	0	Baja
+TRAFICO	RECEPCION VACIOS	0	0	0	0	0	0	Baja
+TRAFICO	CONTROL PEDIDO	0	0	0	0	0	0	Baja
+TRAFICO	MANIOBRISTA	0	0	0	0	0	0	Baja
+INVENTARIO MUELLE	AUXILIAR OPERATIVO EXPEDICION/IM	0	0	0	0	0	0	Baja
+INVENTARIO MUELLE	PRIMER CONTROL	14	24	7	1	8	17	Alta
+INVENTARIO MUELLE	SEGUNDO CONTROL	8	12	4	0	0	4	Alta
+INVENTARIO MUELLE	PM / OBOT A PULMON	0	0	0	0	0	0	Baja
+DESPACHO	CARGADOR DE CAMIONES	20	25	2	1	2	4	Media
+MANTENIMIENTO	TÉCNICO ELECTROMECÁNICO	3	4	0	0	0	1	Baja
+`;
 
-            // PICKING
-            { sector: "PICKING", puesto: "ARMADO ROLL", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "PICKING", puesto: "Traslado Buffer", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "PICKING", puesto: "PREPARADOR HB", tenemos: 28, presupuestado: 30, bajas: 1, medico: 2, aptos: 6, falta: 3, prioridad: "Media" },
-            { sector: "PICKING", puesto: "PREPARADOR PISO", tenemos: 45, presupuestado: 60, bajas: 3, medico: 1, aptos: 5, falta: 10, prioridad: "Alta" },
-            { sector: "PICKING", puesto: "CUBY UN", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "PICKING", puesto: "DECANTING", tenemos: 12, presupuestado: 15, bajas: 2, medico: 0, aptos: 1, falta: 2, prioridad: "Baja" },
-            { sector: "PICKING", puesto: "CUBY CJ", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "PICKING", puesto: "CLEARING CUBY UN", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "PICKING", puesto: "CLEARING DECANTING", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "PICKING", puesto: "CLEARING CUBY CJ", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "PICKING", puesto: "CONTINGENCIA", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "PICKING", puesto: "AUXILIAR OPERATIVO PICKING", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
+        let dotacionParsed = [];
 
-            // RECEPCION
-            { sector: "RECEPCION", puesto: "CLARCK", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "RECEPCION", puesto: "CONTROL", tenemos: 10, presupuestado: 12, bajas: 1, medico: 0, aptos: 1, falta: 2, prioridad: "Media" },
-            { sector: "RECEPCION", puesto: "DESCARGA/GUARDADO", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "RECEPCION", puesto: "GUARDADO", tenemos: 0, presupuestado: 8, bajas: 0, medico: 0, aptos: 0, falta: 8, prioridad: "Alta" },
-            { sector: "RECEPCION", puesto: "REPALETIZADOR", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "RECEPCION", puesto: "AUXILIAR RECEPCION", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "RECEPCION", puesto: "ADMINISTRATIVO DE RECEPCION", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "RECEPCION", puesto: "COORDINACION TURNOS Y CPR", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "RECEPCION", puesto: "DATOS MAESTROS", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "RECEPCION", puesto: "RECICLAJE", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "RECEPCION", puesto: "CPR", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "RECEPCION", puesto: "Cuby-Skan", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-
-            // TRAFICO
-            { sector: "TRAFICO", puesto: "CONTROL DE MUELLE", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "TRAFICO", puesto: "OPERADOR DE MUELLE", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "TRAFICO", puesto: "DEVOLUCIONES", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "TRAFICO", puesto: "CONDUCTORES", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "TRAFICO", puesto: "PLANEAMIENTO", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "TRAFICO", puesto: "OPERADOR DE TRAFICO", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "TRAFICO", puesto: "AUXILIAR OPERATIVO TRAFICO", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "TRAFICO", puesto: "RESPONSABLE DE MUELLE", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "TRAFICO", puesto: "RECEPCION VACIOS", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "TRAFICO", puesto: "CONTROL PEDIDO", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "TRAFICO", puesto: "MANIOBRISTA", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-
-            // INVENTARIO MUELLE
-            { sector: "INVENTARIO MUELLE", puesto: "AUXILIAR OPERATIVO EXPEDICION/IM", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-            { sector: "INVENTARIO MUELLE", puesto: "PRIMER CONTROL", tenemos: 14, presupuestado: 24, bajas: 7, medico: 1, aptos: 8, falta: 17, prioridad: "Alta" },
-            { sector: "INVENTARIO MUELLE", puesto: "SEGUNDO CONTROL", tenemos: 8, presupuestado: 12, bajas: 4, medico: 0, aptos: 0, falta: 4, prioridad: "Alta" },
-            { sector: "INVENTARIO MUELLE", puesto: "PM / OBOT A PULMON", tenemos: 0, presupuestado: 0, bajas: 0, medico: 0, aptos: 0, falta: 0, prioridad: "Baja" },
-
-            // OTROS
-            { sector: "DESPACHO", puesto: "CARGADOR DE CAMIONES", tenemos: 20, presupuestado: 25, bajas: 2, medico: 1, aptos: 2, falta: 4, prioridad: "Media" },
-            { sector: "MANTENIMIENTO", puesto: "TÉCNICO ELECTROMECÁNICO", tenemos: 3, presupuestado: 4, bajas: 0, medico: 0, aptos: 0, falta: 1, prioridad: "Baja" }
-        ];
+        function parseRawText(text) {
+            const lines = text.trim().split('\n');
+            return lines.map(line => {
+                const cols = line.split('\t');
+                return {
+                    sector: cols[0] ? cols[0].trim() : '',
+                    puesto: cols[1] ? cols[1].trim() : '',
+                    tenemos: parseInt(cols[2]) || 0,
+                    presupuestado: parseInt(cols[3]) || 0,
+                    bajas: parseInt(cols[4]) || 0,
+                    medico: parseInt(cols[5]) || 0,
+                    aptos: parseInt(cols[6]) || 0,
+                    falta: parseInt(cols[7]) || 0,
+                    prioridad: cols[8] ? cols[8].trim() : 'Baja'
+                };
+            }).filter(item => item.sector !== '');
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
-            renderTable(dotacionData);
-            populateSectorFilter();
+            dotacionParsed = parseRawText(rawData);
+            renderTable(dotacionParsed);
+            populateSectorFilter(dotacionParsed);
+            calcularMetricas(dotacionParsed);
         });
 
         function renderTable(data) {
@@ -319,8 +330,9 @@
                 tr.setAttribute('data-sector', row.sector);
 
                 let badgeClass = 'badge-baja';
-                if (row.prioridad === 'Alta') badgeClass = 'badge-alta';
-                if (row.prioridad === 'Media') badgeClass = 'badge-media';
+                const prio = row.prioridad.toLowerCase();
+                if (prio === 'alta') badgeClass = 'badge-alta';
+                if (prio === 'media') badgeClass = 'badge-media';
 
                 tr.innerHTML = `
                     <td>${row.sector}</td>
@@ -337,9 +349,9 @@
             });
         }
 
-        function populateSectorFilter() {
+        function populateSectorFilter(data) {
             const select = document.getElementById('sectorFilter');
-            const sectores = new Set(dotacionData.map(item => item.sector));
+            const sectores = new Set(data.map(item => item.sector));
 
             sectores.forEach(sec => {
                 const option = document.createElement('option');
@@ -349,12 +361,35 @@
             });
         }
 
+        function calcularMetricas(data) {
+            let tenemos = 0, presupuestado = 0, bajas = 0, medico = 0, aptos = 0, falta = 0;
+
+            data.forEach(item => {
+                tenemos += item.tenemos;
+                presupuestado += item.presupuestado;
+                bajas += item.bajas;
+                medico += item.medico;
+                aptos += item.aptos;
+                falta += item.falta;
+            });
+
+            document.getElementById('totalTenemos').textContent = tenemos;
+            document.getElementById('totalPresupuestado').textContent = presupuestado;
+            document.getElementById('totalBajas').textContent = bajas;
+            document.getElementById('totalMedico').textContent = medico;
+            document.getElementById('totalAptos').textContent = aptos;
+            document.getElementById('totalFalta').textContent = falta;
+
+            const cobertura = presupuestado > 0 ? ((tenemos / presupuestado) * 100).toFixed(1) : 0;
+            document.getElementById('totalCobertura').textContent = cobertura + '%';
+        }
+
         function filterTable() {
             const filterValue = document.getElementById('sectorFilter').value;
             if (filterValue === 'ALL') {
-                renderTable(dotacionData);
+                renderTable(dotacionParsed);
             } else {
-                const filtered = dotacionData.filter(item => item.sector === filterValue);
+                const filtered = dotacionParsed.filter(item => item.sector === filterValue);
                 renderTable(filtered);
             }
         }
