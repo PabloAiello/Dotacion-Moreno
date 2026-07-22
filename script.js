@@ -1,157 +1,124 @@
-document.addEventListener("DOMContentLoaded", () => {
-    // URL del Google Sheets publicado como CSV
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT.../pub?output=csv'; // REEMPLAZA CON TU URL CSV
+// REEMPLAZA ESTA URL por la URL de tu Google Sheet publicado como CSV
+// Archivo -> Compartir -> Publicar en la web -> Formato: CSV (.csv)
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-TU_LINK_AQUI/pub?output=csv";
 
-    fetch(csvUrl)
-        .then(response => response.text())
-        .then(data => {
-            const filas = parseCSV(data);
-            procesarYRenderizar(filas);
-        })
-        .catch(error => console.error("Error cargando los datos:", error));
+document.addEventListener('DOMContentLoaded', () => {
+    cargarDatosDesdeDrive();
 });
 
-// Parsea el CSV considerando comillas y comas internas
-function parseCSV(text) {
-    const lines = text.split('\n');
-    return lines.map(line => {
-        const regex = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\r\n]*)/gi;
-        const matches = [];
-        let match;
-        while ((match = regex.exec(line)) !== null) {
-            let val = match[1];
-            if (val.startsWith('"') && val.endsWith('"')) {
-                val = val.substring(1, val.length - 1).replace(/""/g, '"');
-            }
-            matches.push(val.trim());
-        }
-        return matches;
+async function cargarDatosDesdeDrive() {
+    try {
+        const response = await fetch(CSV_URL);
+        const textData = await response.text();
+        const filas = parsearCSV(textData);
+        
+        renderizarTabla(filas);
+        poblarFiltroSectores(filas);
+    } catch (error) {
+        console.error("Error al cargar la planilla desde Google Drive:", error);
+    }
+}
+
+// Convierte el CSV/TSV recibido en un array de objetos limpios
+function parsearCSV(text) {
+    const lineas = text.trim().split('\n');
+    const resultado = [];
+
+    // Omitir cabecera si la primera línea contiene encabezados
+    const inicio = lineas[0].toLowerCase().includes("sector") ? 1 : 0;
+
+    for (let i = inicio; i < lineas.length; i++) {
+        if (!lineas[i].trim()) continue;
+
+        // Soporta delimitador por TAB (\t) o COMAS (,)
+        const col = lineas[i].includes('\t') ? lineas[i].split('\t') : lineas[i].split(',');
+
+        const sector = (col[0] || '').trim();
+        const puesto = (col[1] || '').trim();
+
+        if (!sector || !puesto) continue;
+
+        resultado.push({
+            sector: sector,
+            puesto: puesto,
+            tenemos: parseInt(col[2]) || 0,
+            presupuestado: parseInt(col[3]) || 0,
+            bajas: parseInt(col[4]) || 0,
+            medico: parseInt(col[5]) || 0,
+            aptos: parseInt(col[6]) || 0,
+            falta: parseInt(col[7]) || 0,
+            prioridad: (col[8] || 'Baja').trim()
+        });
+    }
+
+    return resultado;
+}
+
+// Renderiza todas las filas procesadas en el cuerpo de la tabla
+function renderizarTabla(datos) {
+    const tbody = document.getElementById('tableBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+
+    datos.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.setAttribute('data-sector', row.sector);
+
+        let badgeClass = 'badge-baja';
+        const prio = row.prioridad.toLowerCase();
+        if (prio === 'alta') badgeClass = 'badge-alta';
+        if (prio === 'media') badgeClass = 'badge-media';
+
+        tr.innerHTML = `
+            <td>${row.sector}</td>
+            <td>${row.puesto}</td>
+            <td>${row.tenemos}</td>
+            <td>${row.presupuestado}</td>
+            <td>${row.bajas}</td>
+            <td>${row.medico}</td>
+            <td>${row.aptos}</td>
+            <td>${row.falta}</td>
+            <td><span class="${badgeClass}">${row.prioridad}</span></td>
+        `;
+        tbody.appendChild(tr);
     });
 }
 
-function procesarYRenderizar(filas) {
-    const contenedor = document.getElementById('cards-container');
-    const selectSector = document.getElementById('select-sector');
-    const buscador = document.getElementById('buscador');
+// Genera dinámicamente las opciones del filtro dropdown
+function poblarFiltroSectores(datos) {
+    const select = document.getElementById('sectorFilter');
+    if (!select) return;
 
-    if (!contenedor) return;
-    contenedor.innerHTML = '';
+    // Guardar opción seleccionada actual
+    const seleccionActual = select.value;
 
-    // Omitir cabecera si existe
-    const datos = filas.slice(1);
-    const sectoresSet = new Set();
-    const listaProcesada = [];
+    select.innerHTML = '<option value="ALL">Todos los sectores</option>';
+    const sectores = new Set(datos.map(item => item.sector));
 
-    datos.forEach(fila => {
-        // Mapeo flexible de columnas (previene errores si faltan columnas)
-        const sector = fila[0] || 'SIN SECTOR';
-        const puesto = fila[1] || 'SIN PUESTO';
-        
-        // Conversión limpia a número (convierte vacíos o texto no numérico a 0)
-        const cubiertos = parseInt(fila[2]) || 0;
-        const presupuestado = parseInt(fila[3]) || 0;
-        const licencias = parseInt(fila[7]) || 0;
-        const apto = parseInt(fila[8]) || 0;
-        const vacantes = parseInt(fila[9]) || 0;
-
-        if (sector && sector !== 'SIN SECTOR') {
-            sectoresSet.add(sector);
-        }
-
-        listaProcesada.push({
-            sector,
-            puesto,
-            cubiertos,
-            presupuestado,
-            licencias,
-            apto,
-            vacantes,
-            porcentaje: presupuestado > 0 ? Math.round((cubiertos / presupuestado) * 100) : 0
-        });
+    sectores.forEach(sec => {
+        const option = document.createElement('option');
+        option.value = sec;
+        option.textContent = sec;
+        select.appendChild(option);
     });
 
-    // Cargar select de sectores si existe en el DOM
-    if (selectSector) {
-        selectSector.innerHTML = '<option value="">Todos los Sectores</option>';
-        sectoresSet.forEach(sec => {
-            const opt = document.createElement('option');
-            opt.value = sec;
-            opt.textContent = sec;
-            selectSector.appendChild(opt);
-        });
+    if (seleccionActual) {
+        select.value = seleccionActual;
     }
+}
 
-    // Función para renderizar tarjetas en pantalla
-    function render(items) {
-        contenedor.innerHTML = '';
+// Función ejecutada por el evento onchange del filtro
+function filterTable() {
+    const filterValue = document.getElementById('sectorFilter').value;
+    const rows = document.querySelectorAll('#dataTable tbody tr');
 
-        if (items.length === 0) {
-            contenedor.innerHTML = '<p class="no-results">No se encontraron puestos o sectores.</p>';
-            return;
+    rows.forEach(row => {
+        const sector = row.getAttribute('data-sector');
+        if (filterValue === 'ALL' || sector === filterValue) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
         }
-
-        items.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'card';
-
-            card.innerHTML = `
-                <div class="card-header">
-                    <span class="badge-sector">${item.sector}</span>
-                    <h3>${item.puesto}</h3>
-                </div>
-                <div class="card-body">
-                    <div class="kpi-grid">
-                        <div class="kpi-item">
-                            <span class="kpi-label">Presupuestado</span>
-                            <span class="kpi-value">${item.presupuestado}</span>
-                        </div>
-                        <div class="kpi-item">
-                            <span class="kpi-label">Cubiertos</span>
-                            <span class="kpi-value">${item.cubiertos}</span>
-                        </div>
-                        <div class="kpi-item">
-                            <span class="kpi-label">Licencias</span>
-                            <span class="kpi-value">${item.licencias}</span>
-                        </div>
-                        <div class="kpi-item">
-                            <span class="kpi-label">Personal Apto</span>
-                            <span class="kpi-value">${item.apto}</span>
-                        </div>
-                        <div class="kpi-item highlight">
-                            <span class="kpi-label">Vacantes Faltantes</span>
-                            <span class="kpi-value">${item.vacantes}</span>
-                        </div>
-                        <div class="kpi-item">
-                            <span class="kpi-label">% Cobertura</span>
-                            <span class="kpi-value">${item.porcentaje}%</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            contenedor.appendChild(card);
-        });
-    }
-
-    // Render inicial con TODOS los elementos
-    render(listaProcesada);
-
-    // Eventos para filtrado dinámico (sin descartar ceros)
-    function aplicarFiltros() {
-        const texto = buscador ? buscador.value.toLowerCase().trim() : '';
-        const sectorSel = selectSector ? selectSector.value : '';
-
-        const filtrados = listaProcesada.filter(item => {
-            const coincideSector = !sectorSel || item.sector === sectorSel;
-            const coincideTexto = !texto || 
-                item.puesto.toLowerCase().includes(texto) || 
-                item.sector.toLowerCase().includes(texto);
-
-            return coincideSector && coincideTexto;
-        });
-
-        render(filtrados);
-    }
-
-    if (buscador) buscador.addEventListener('input', aplicarFiltros);
-    if (selectSector) selectSector.addEventListener('change', aplicarFiltros);
+    });
 }
