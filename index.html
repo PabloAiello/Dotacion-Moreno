@@ -147,7 +147,7 @@
             padding: 10px 12px;
             text-align: left;
             border-bottom: 1px solid var(--border);
-            font-size: 14px;
+            font-size: 13px;
         }
 
         th {
@@ -183,27 +183,27 @@
     <!-- Indicadores Generales -->
     <div class="metrics-grid">
         <div class="metric-card">
-            <h4>👥 Presupuestado (D)</h4>
+            <h4>👥 Presupuestado</h4>
             <div class="value" id="totalPresupuestado">0</div>
         </div>
         <div class="metric-card">
-            <h4>✅ Tenemos (C)</h4>
+            <h4>✅ Tenemos</h4>
             <div class="value" id="totalTenemos" style="color: #0056b3;">0</div>
         </div>
         <div class="metric-card">
-            <h4>🔻 Bajas (F)</h4>
+            <h4>🔻 Bajas</h4>
             <div class="value" id="totalBajas" style="color: #d9534f;">0</div>
         </div>
         <div class="metric-card">
-            <h4>🏥 Médico (H)</h4>
+            <h4>🏥 Médico</h4>
             <div class="value" id="totalMedico" style="color: #8e44ad;">0</div>
         </div>
         <div class="metric-card">
-            <h4>👍 Aptos (I)</h4>
+            <h4>👍 Aptos</h4>
             <div class="value" id="totalAptos" style="color: #f39c12;">0</div>
         </div>
         <div class="metric-card">
-            <h4>🔴 Falta (J)</h4>
+            <h4>🔴 Falta</h4>
             <div class="value" id="totalFalta" style="color: #c0392b;">0</div>
         </div>
         <div class="metric-card">
@@ -227,72 +227,68 @@
             <table id="dataTable">
                 <thead>
                     <tr>
-                        <th>SECTOR / GERENCIA</th>
+                        <th>SECTOR</th>
                         <th>PUESTO</th>
-                        <th>TENEMOS (C)</th>
-                        <th>PRESUPUESTADO (D)</th>
-                        <th>BAJAS (F)</th>
-                        <th>MÉDICO (H)</th>
-                        <th>APTOS (I)</th>
-                        <th>FALTA (J)</th>
+                        <th>TENEMOS</th>
+                        <th>PRESUPUESTADO</th>
+                        <th>HORARIO</th>
+                        <th>BAJAS</th>
+                        <th>FUTURO - BAJAS</th>
+                        <th>MÉDICO</th>
+                        <th>APTOS</th>
+                        <th>FALTA</th>
+                        <th>INGRESO</th>
                         <th>PRIORIDAD</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    <!-- Filas autogeneradas dinámicamente -->
+                    <!-- Filas generadas dinámicamente -->
                 </tbody>
             </table>
         </div>
     </div>
 
     <script>
-        // Datos crudos copiados directamente del listado
-        const rawData = `
-OPERACIONES	LIDER DE OPERACIONES	0	1	0	0	0	1	Baja
-OPERACIONES	SUPERVISOR DE TURNO	2	3	0	0	0	1	Media
-OPERACIONES	Inventario	0	0	0	0	0	0	Baja
-PICKING	ARMADO ROLL	0	0	0	0	0	0	Baja
-PICKING	Traslado Buffer	0	0	0	0	0	0	Baja
-PICKING	PREPARADOR HB	28	30	1	2	6	3	Media
-PICKING	PREPARADOR PISO	45	60	3	1	5	10	Alta
-PICKING	CUBY UN	0	0	0	0	0	0	Baja
-PICKING	DECANTING	12	15	2	0	1	2	Baja
-PICKING	CUBY CJ	0	0	0	0	0	0	Baja
-PICKING	CLEARING CUBY UN	0	0	0	0	0	0	Baja
-PICKING	CLEARING DECANTING	0	0	0	0	0	0	Baja
-PICKING	CLEARING CUBY CJ	0	0	0	0	0	0	Baja
-PICKING	CONTINGENCIA	0	0	0	0	0	0	Baja
-PICKING	AUXILIAR OPERATIVO PICKING	0	0	0	0	0	0	Baja
-RECEPCION	CLARCK	0	0	0	0	0	0	Baja
-RECEPCION	CONTROL	10	12	1	0	1	2	Media
-RECEPCION	DESCARGA/GUARDADO	0	0	0	0	0	0	Baja
-RECEPCION	GUARDADO	0	8	0	0	0	8	Alta
-RECEPCION	REPALETIZADOR	0	0	0	0	0	0	Baja
-RECEPCION	AUXILIAR RECEPCION	0	0	0	0	0	0	Baja
-RECEPCION	ADMINISTRATIVO DE RECEPCION	0	0	0	0	0	0	Baja
-RECEPCION	COORDINACION TURNOS Y CPR	0	0	0	0	0	0	Baja
-RECEPCION	DATOS MAESTROS	0	0	0	0	0	0	Baja
-RECEPCION	RECICLAJE	0	0	0	0	0	0	Baja
-RECEPCION	CPR	0	0	0	0	0	0	Baja
-RECEPCION	Cuby-Skan	0	0	0	0	0	0	Baja
-TRAFICO	CONTROL DE MUELLE	0	0	0	0	0	0	Baja
-TRAFICO	OPERADOR DE MUELLE	0	0	0	0	0	0	Baja
-TRAFICO	DEVOLUCIONES	0	0	0	0	0	0	Baja
-TRAFICO	CONDUCTORES	0	0	0	0	0	0	Baja
-TRAFICO	PLANEAMIENTO	0	0	0	0	0	0	Baja
-TRAFICO	OPERADOR DE TRAFICO	0	0	0	0	0	0	Baja
-TRAFICO	AUXILIAR OPERATIVO TRAFICO	0	0	0	0	0	0	Baja
-TRAFICO	RESPONSABLE DE MUELLE	0	0	0	0	0	0	Baja
-TRAFICO	RECEPCION VACIOS	0	0	0	0	0	0	Baja
-TRAFICO	CONTROL PEDIDO	0	0	0	0	0	0	Baja
-TRAFICO	MANIOBRISTA	0	0	0	0	0	0	Baja
-INVENTARIO MUELLE	AUXILIAR OPERATIVO EXPEDICION/IM	0	0	0	0	0	0	Baja
-INVENTARIO MUELLE	PRIMER CONTROL	14	24	7	1	8	17	Alta
-INVENTARIO MUELLE	SEGUNDO CONTROL	8	12	4	0	0	4	Alta
-INVENTARIO MUELLE	PM / OBOT A PULMON	0	0	0	0	0	0	Baja
-DESPACHO	CARGADOR DE CAMIONES	20	25	2	1	2	4	Media
-MANTENIMIENTO	TÉCNICO ELECTROMECÁNICO	3	4	0	0	0	1	Baja
-`;
+        const rawData = `OPERACIONES	LIDER DE OPERACIONES	0	1	Rotativo	0	0			1		
+OPERACIONES	Inventario	3	3	Rotativo	0	3			0		1
+PICKING	ARMADO ROLL	0	2	Rotativo	0	0			2		2
+PICKING	Traslado Buffer	2	4	Rotativo	0	2			2		
+PICKING	PREPARADOR HB	28	30	Rotativo	1	27	2	6	3		
+PICKING	CUBY UN	10	16	Rotativo	1	9			7		
+PICKING	DECANTING	12	12	Rotativo	2	10			2		
+PICKING	CUBY CJ	9	12	Rotativo	1	8			4		
+PICKING	CLEARING CUBY UN	0	0	Rotativo	0	0			0		
+PICKING	CLEARING DECANTING	0	0	Rotativo	0	0			0		
+PICKING	CLEARING CUBY CJ	0	0	Rotativo	0	0			0		
+PICKING	CONTINGENCIA	2	2	Rotativo	0	2			0		
+PICKING	AUXILIAR OPERATIVO PICKING	2	2	Rotativo	0	2			0		
+RECEPCION	CLARCK	1	3	Rotativo	1	0		1	3		
+RECEPCION	CONTROL	4	5	Rotativo	0	4			1		
+RECEPCION	DESCARGA/GUARDADO	8	3	Rotativo	0	8			-5		
+RECEPCION	GUARDADO	0	8	Rotativo	0	0			8		
+RECEPCION	REPALETIZADOR	9	12	Rotativo	1	8			4		
+RECEPCION	AUXILIAR RECEPCION	1	2	Rotativo	0	1			1		
+RECEPCION	ADMINISTRATIVO DE RECEPCION	2	2	Rotativo	0	2			0		
+RECEPCION	COORDINACION TURNOS Y CPR	0	2	Rotativo	0	0			2		
+RECEPCION	DATOS MAESTROS	1	1	Rotativo	0	1			0		
+RECEPCION	RECICLAJE	1	1	Rotativo	0	1			0		
+RECEPCION	CPR	2	3	Rotativo	0	2			1		
+RECEPCION	Cuby-Skan	1	1	Rotativo	0	1			0		
+TRAFICO	CONTROL DE MUELLE	7	8	Rotativo	1	6		2	2		
+TRAFICO	OPERADOR DE MUELLE	7	8	Rotativo	1	6			2		
+TRAFICO	DEVOLUCIONES	5	2	Rotativo	0	5			-3		
+TRAFICO	CONDUCTORES	92	120	Rotativo	0	92	3		28		
+TRAFICO	PLANEAMIENTO	3	4	Rotativo	0	3			1		
+TRAFICO	OPERADOR DE TRAFICO	4	4	Rotativo	0	4			0		
+TRAFICO	AUXILIAR OPERATIVO TRAFICO	2	2	Rotativo	0	2			0		
+TRAFICO	RESPONSABLE DE MUELLE	1	1	Rotativo	0	1			0		
+TRAFICO	RECEPCION VACIOS	0	2	Rotativo	0	0			2		
+TRAFICO	CONTROL PEDIDO	0	1	Rotativo	0	0			1		
+TRAFICO	MANIOBRISTA	2	2	Rotativo	0	2			0		
+INVENTARIO MUELLE	AUXILIAR OPERATIVO EXPEDICION/IM	0	2	Rotativo	0	0			2		
+INVENTARIO MUELLE	PRIMER CONTROL	14	24	Rotativo	7	7	1	8	17		
+INVENTARIO MUELLE	SEGUNDO CONTROL	6	16	Rotativo	4	2			14		
+INVENTARIO MUELLE	PM / OBOT A PULMON	2	6	Rotativo	0	2			4		`;
 
         let dotacionParsed = [];
 
@@ -305,11 +301,14 @@ MANTENIMIENTO	TÉCNICO ELECTROMECÁNICO	3	4	0	0	0	1	Baja
                     puesto: cols[1] ? cols[1].trim() : '',
                     tenemos: parseInt(cols[2]) || 0,
                     presupuestado: parseInt(cols[3]) || 0,
-                    bajas: parseInt(cols[4]) || 0,
-                    medico: parseInt(cols[5]) || 0,
-                    aptos: parseInt(cols[6]) || 0,
-                    falta: parseInt(cols[7]) || 0,
-                    prioridad: cols[8] ? cols[8].trim() : 'Baja'
+                    horario: cols[4] ? cols[4].trim() : 'Rotativo',
+                    bajas: parseInt(cols[5]) || 0,
+                    futuroBajas: parseInt(cols[6]) || 0,
+                    medico: parseInt(cols[7]) || 0,
+                    aptos: parseInt(cols[8]) || 0,
+                    falta: parseInt(cols[9]) || 0,
+                    ingreso: cols[10] ? cols[10].trim() : '',
+                    prioridad: cols[11] ? cols[11].trim() : 'Baja'
                 };
             }).filter(item => item.sector !== '');
         }
@@ -339,11 +338,14 @@ MANTENIMIENTO	TÉCNICO ELECTROMECÁNICO	3	4	0	0	0	1	Baja
                     <td>${row.puesto}</td>
                     <td>${row.tenemos}</td>
                     <td>${row.presupuestado}</td>
+                    <td>${row.horario}</td>
                     <td>${row.bajas}</td>
+                    <td>${row.futuroBajas}</td>
                     <td>${row.medico}</td>
                     <td>${row.aptos}</td>
                     <td>${row.falta}</td>
-                    <td><span class="${badgeClass}">${row.prioridad}</span></td>
+                    <td>${row.ingreso}</td>
+                    <td><span class="${badgeClass}">${row.prioridad || 'Baja'}</span></td>
                 `;
                 tbody.appendChild(tr);
             });
