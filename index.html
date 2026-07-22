@@ -254,7 +254,7 @@
     </div>
 
     <script>
-        // Enlace publicado en CSV desde tu Google Sheets
+        // Enlace publicado en CSV apuntando a la hoja BUSQUEDAS
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdBqkbpAzCq6Lw_jPa_Up8HWXE9_ZfGehz55oNvoT-WVwrD_J8Yqw1_OotD55NAw/pub?output=csv";
 
         let dotacionParsed = [];
@@ -272,25 +272,47 @@
             }
         }
 
+        // Función para procesar CSV estándar (admite comas dentro de textos)
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if ((char === ',' || char === '\t') && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current.trim());
+            return result;
+        }
+
         function parseCSV(text) {
             const lines = text.trim().split('\n');
             const data = [];
-            // Omitimos la primera línea si corresponde a los encabezados
+            
+            // Omitimos la primera línea si corresponde a encabezados
             const startIndex = lines[0].toLowerCase().includes('sector') ? 1 : 0;
 
             for (let i = startIndex; i < lines.length; i++) {
-                const cols = lines[i].split(/,|\t/);
+                if (!lines[i].trim()) continue;
+                const cols = parseCSVLine(lines[i]);
                 if (cols.length >= 2) {
                     data.push({
-                        sector: cols[0] ? cols[0].trim().replace(/^"(.*)"$/, '$1') : '',
-                        puesto: cols[1] ? cols[1].trim().replace(/^"(.*)"$/, '$1') : '',
+                        sector: cols[0] ? cols[0].replace(/^"(.*)"$/, '$1') : '',
+                        puesto: cols[1] ? cols[1].replace(/^"(.*)"$/, '$1') : '',
                         tenemos: parseInt(cols[2]) || 0,
                         presupuestado: parseInt(cols[3]) || 0,
                         bajas: parseInt(cols[5]) || 0,
                         medico: parseInt(cols[7]) || 0,
                         aptos: parseInt(cols[8]) || 0,
                         falta: parseInt(cols[9]) || 0,
-                        prioridad: cols[11] ? cols[11].trim().replace(/^"(.*)"$/, '$1') : 'Baja'
+                        prioridad: cols[11] ? cols[11].replace(/^"(.*)"$/, '$1') : 'Baja'
                     });
                 }
             }
@@ -308,7 +330,7 @@
                 tr.setAttribute('data-sector', row.sector);
 
                 let badgeClass = 'badge-baja';
-                const prio = row.prioridad.toLowerCase();
+                const prio = (row.prioridad || '').toLowerCase();
                 if (prio === 'alta') badgeClass = 'badge-alta';
                 if (prio === 'media') badgeClass = 'badge-media';
 
