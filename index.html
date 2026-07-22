@@ -231,13 +231,10 @@
                         <th>PUESTO</th>
                         <th>TENEMOS</th>
                         <th>PRESUPUESTADO</th>
-                        <th>HORARIO</th>
                         <th>BAJAS</th>
-                        <th>FUTURO - BAJAS</th>
                         <th>MÉDICO</th>
                         <th>APTOS</th>
                         <th>FALTA</th>
-                        <th>INGRESO</th>
                         <th>PRIORIDAD</th>
                     </tr>
                 </thead>
@@ -301,13 +298,10 @@ INVENTARIO MUELLE	PM / OBOT A PULMON	2	6	Rotativo	0	2			4		`;
                     puesto: cols[1] ? cols[1].trim() : '',
                     tenemos: parseInt(cols[2]) || 0,
                     presupuestado: parseInt(cols[3]) || 0,
-                    horario: cols[4] ? cols[4].trim() : 'Rotativo',
                     bajas: parseInt(cols[5]) || 0,
-                    futuroBajas: parseInt(cols[6]) || 0,
                     medico: parseInt(cols[7]) || 0,
                     aptos: parseInt(cols[8]) || 0,
                     falta: parseInt(cols[9]) || 0,
-                    ingreso: cols[10] ? cols[10].trim() : '',
                     prioridad: cols[11] ? cols[11].trim() : 'Baja'
                 };
             }).filter(item => item.sector !== '');
@@ -338,13 +332,10 @@ INVENTARIO MUELLE	PM / OBOT A PULMON	2	6	Rotativo	0	2			4		`;
                     <td>${row.puesto}</td>
                     <td>${row.tenemos}</td>
                     <td>${row.presupuestado}</td>
-                    <td>${row.horario}</td>
                     <td>${row.bajas}</td>
-                    <td>${row.futuroBajas}</td>
                     <td>${row.medico}</td>
                     <td>${row.aptos}</td>
                     <td>${row.falta}</td>
-                    <td>${row.ingreso}</td>
                     <td><span class="${badgeClass}">${row.prioridad || 'Baja'}</span></td>
                 `;
                 tbody.appendChild(tr);
