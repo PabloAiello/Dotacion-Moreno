@@ -1,188 +1,157 @@
-const baseCsvUrl = "https://docs.google.com/spreadsheets/d/1-ZjmiJVt_u5fN9We8W-JeBzIFmSyFfSH/export?format=csv&gid=1030521285";
+document.addEventListener("DOMContentLoaded", () => {
+    // URL del Google Sheets publicado como CSV
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT.../pub?output=csv'; // REEMPLAZA CON TU URL CSV
 
-let puestosPendientes = [];
-let globales = { objetivo: 0, cubiertos: 0, bajas: 0, medicos: 0, aptos: 0, vacantes: 0 };
+    fetch(csvUrl)
+        .then(response => response.text())
+        .then(data => {
+            const filas = parseCSV(data);
+            procesarYRenderizar(filas);
+        })
+        .catch(error => console.error("Error cargando los datos:", error));
+});
 
-async function fetchExcelData() {
-    try {
-        const response = await fetch(`${baseCsvUrl}&t=${new Date().getTime()}`);
-        if (!response.ok) throw new Error("Error de red al intentar descargar los datos");
+// Parsea el CSV considerando comillas y comas internas
+function parseCSV(text) {
+    const lines = text.split('\n');
+    return lines.map(line => {
+        const regex = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\r\n]*)/gi;
+        const matches = [];
+        let match;
+        while ((match = regex.exec(line)) !== null) {
+            let val = match[1];
+            if (val.startsWith('"') && val.endsWith('"')) {
+                val = val.substring(1, val.length - 1).replace(/""/g, '"');
+            }
+            matches.push(val.trim());
+        }
+        return matches;
+    });
+}
+
+function procesarYRenderizar(filas) {
+    const contenedor = document.getElementById('cards-container');
+    const selectSector = document.getElementById('select-sector');
+    const buscador = document.getElementById('buscador');
+
+    if (!contenedor) return;
+    contenedor.innerHTML = '';
+
+    // Omitir cabecera si existe
+    const datos = filas.slice(1);
+    const sectoresSet = new Set();
+    const listaProcesada = [];
+
+    datos.forEach(fila => {
+        // Mapeo flexible de columnas (previene errores si faltan columnas)
+        const sector = fila[0] || 'SIN SECTOR';
+        const puesto = fila[1] || 'SIN PUESTO';
         
-        const textData = await response.text();
-        const lines = textData.split(/\r?\n/).filter(line => line.trim() !== "");
-        if (lines.length === 0) return;
+        // Conversión limpia a número (convierte vacíos o texto no numérico a 0)
+        const cubiertos = parseInt(fila[2]) || 0;
+        const presupuestado = parseInt(fila[3]) || 0;
+        const licencias = parseInt(fila[7]) || 0;
+        const apto = parseInt(fila[8]) || 0;
+        const vacantes = parseInt(fila[9]) || 0;
 
-        // Detección automática de separadores de Excel (, o ;)
-        const firstLine = lines[0];
-        const separator = firstLine.split(';').length > firstLine.split(',').length ? ';' : ',';
+        if (sector && sector !== 'SIN SECTOR') {
+            sectoresSet.add(sector);
+        }
 
-        const rows = lines.map(line => {
-            return line.split(new RegExp(`\\${separator}(?=(?:(?:[^"]*"){2})*[^"]*$)`));
+        listaProcesada.push({
+            sector,
+            puesto,
+            cubiertos,
+            presupuestado,
+            licencias,
+            apto,
+            vacantes,
+            porcentaje: presupuestado > 0 ? Math.round((cubiertos / presupuestado) * 100) : 0
         });
+    });
 
-        // Limpieza de nombres de cabecera reales
-        const headers = rows[0].map(h => h.replace(/["]/g, '').trim().toLowerCase());
-        
-        // Mapeo por índices exactos basados en la vista real del Excel
-        const idxSector = headers.indexOf("sector");
-        const idxPuesto = headers.indexOf("puesto");
-        const idxTenemos = headers.indexOf("tenemos");
-        const idxPresupuestado = headers.indexOf("presupuestado");
-        
-        // Busca "baja", "bajas" o la columna F
-        let idxBajas = headers.findIndex(h => h.includes("baja"));
-        if (idxBajas === -1) idxBajas = 5; // Si no lo encuentra por nombre, toma la Columna F (índice 5)
+    // Cargar select de sectores si existe en el DOM
+    if (selectSector) {
+        selectSector.innerHTML = '<option value="">Todos los Sectores</option>';
+        sectoresSet.forEach(sec => {
+            const opt = document.createElement('option');
+            opt.value = sec;
+            opt.textContent = sec;
+            selectSector.appendChild(opt);
+        });
+    }
 
-        const idxMedico = headers.indexOf("medico");
-        const idxAptos = headers.indexOf("aptos");
-        const idxFalta = headers.indexOf("falta");
+    // Función para renderizar tarjetas en pantalla
+    function render(items) {
+        contenedor.innerHTML = '';
 
-        if (idxFalta === -1 || idxSector === -1 || idxPuesto === -1) {
-            document.getElementById('loadingStatus').innerHTML = `⚠️ Cabeceras no encontradas.<br><small>Detectadas: ${headers.join(' | ')}</small><br><br>Asegurate de que el archivo esté compartido públicamente como 'Lector'.`;
+        if (items.length === 0) {
+            contenedor.innerHTML = '<p class="no-results">No se encontraron puestos o sectores.</p>';
             return;
         }
 
-        puestosPendientes = [];
-        globales = { objetivo: 0, cubiertos: 0, bajas: 0, medicos: 0, aptos: 0, vacantes: 0 };
-        
-        for (let i = 1; i < rows.length; i++) {
-            const columns = rows[i];
-            
-            if (columns.length > Math.max(idxSector, idxFalta) && columns[idxSector].trim() !== "") {
-                const sector = columns[idxSector].replace(/["]/g, '').trim();
-                const puesto = columns[idxPuesto].replace(/["]/g, '').trim();
-                
-                // Conversión limpia de strings numéricos a enteros
-                const tenemos = parseInt(columns[idxTenemos]?.replace(/[".]/g, '')) || 0;
-                const presupuestado = parseInt(columns[idxPresupuestado]?.replace(/[".]/g, '')) || 0;
-                const bajas = parseInt(columns[idxBajas]?.replace(/[".]/g, '')) || 0;
-                const medico = parseInt(columns[idxMedico]?.replace(/[".]/g, '')) || 0;
-                const aptos = parseInt(columns[idxAptos]?.replace(/[".]/g, '')) || 0;
-                const falta = parseInt(columns[idxFalta]?.replace(/[".]/g, '')) || 0;
-                
-                if (sector.toLowerCase() === "sector" || puesto.toLowerCase() === "puesto") continue;
+        items.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
 
-                globales.objetivo += presupuestado;
-                globales.cubiertos += tenemos;
-                globales.bajas += bajas;
-                globales.medicos += medico;
-                globales.aptos += aptos;
-                globales.vacantes += (falta > 0 ? falta : 0);
-
-                // Muestra en la tabla únicamente los puestos que registran vacantes abiertas
-                if (falta > 0) {
-                    let prioridad = "Baja";
-                    if (falta >= 5) prioridad = "Alta";
-                    else if (falta >= 2) prioridad = "Media";
-
-                    puestosPendientes.push({ sector, puesto, tenemos, presupuestado, bajas, medico, aptos, falta, prioridad });
-                }
-            }
-        }
-
-        renderKPIs();
-        populateSectorFilter();
-        renderTable(puestosPendientes);
-        
-        document.getElementById('loadingStatus').style.display = 'none';
-        document.getElementById('mainTable').style.display = 'table';
-    } catch (error) {
-        document.getElementById('loadingStatus').innerHTML = "⚠️ Error al conectar con Google Sheets.<br><small>Verificá que el acceso general en 'Compartir' esté configurado como 'Cualquier persona con el enlace'.</small>";
-        console.error(error);
+            card.innerHTML = `
+                <div class="card-header">
+                    <span class="badge-sector">${item.sector}</span>
+                    <h3>${item.puesto}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="kpi-grid">
+                        <div class="kpi-item">
+                            <span class="kpi-label">Presupuestado</span>
+                            <span class="kpi-value">${item.presupuestado}</span>
+                        </div>
+                        <div class="kpi-item">
+                            <span class="kpi-label">Cubiertos</span>
+                            <span class="kpi-value">${item.cubiertos}</span>
+                        </div>
+                        <div class="kpi-item">
+                            <span class="kpi-label">Licencias</span>
+                            <span class="kpi-value">${item.licencias}</span>
+                        </div>
+                        <div class="kpi-item">
+                            <span class="kpi-label">Personal Apto</span>
+                            <span class="kpi-value">${item.apto}</span>
+                        </div>
+                        <div class="kpi-item highlight">
+                            <span class="kpi-label">Vacantes Faltantes</span>
+                            <span class="kpi-value">${item.vacantes}</span>
+                        </div>
+                        <div class="kpi-item">
+                            <span class="kpi-label">% Cobertura</span>
+                            <span class="kpi-value">${item.porcentaje}%</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            contenedor.appendChild(card);
+        });
     }
-}
 
-function renderKPIs() {
-    const porcCobertura = globales.objetivo > 0 ? ((globales.cubiertos / globales.objetivo) * 100).toFixed(1) : 0;
-    document.getElementById('kpi-objetivo').innerText = globales.objetivo.toLocaleString();
-    document.getElementById('kpi-cubiertos').innerText = globales.cubiertos.toLocaleString();
-    
-    // Renderiza el KPI de Bajas si existe el contenedor en HTML
-    const kpiBajas = document.getElementById('kpi-bajas');
-    if (kpiBajas) kpiBajas.innerText = globales.bajas.toLocaleString();
+    // Render inicial con TODOS los elementos
+    render(listaProcesada);
 
-    document.getElementById('kpi-medicos').innerText = globales.medicos.toLocaleString();
-    document.getElementById('kpi-aptos').innerText = globales.aptos.toLocaleString();
-    document.getElementById('kpi-vacantes').innerText = globales.vacantes.toLocaleString();
-    document.getElementById('kpi-cobertura').innerText = `${porcCobertura}%`;
-}
+    // Eventos para filtrado dinámico (sin descartar ceros)
+    function aplicarFiltros() {
+        const texto = buscador ? buscador.value.toLowerCase().trim() : '';
+        const sectorSel = selectSector ? selectSector.value : '';
 
-function populateSectorFilter() {
-    const sectorFilter = document.getElementById('sectorFilter');
-    if (!sectorFilter) return;
+        const filtrados = listaProcesada.filter(item => {
+            const coincideSector = !sectorSel || item.sector === sectorSel;
+            const coincideTexto = !texto || 
+                item.puesto.toLowerCase().includes(texto) || 
+                item.sector.toLowerCase().includes(texto);
 
-    // Asigna 'Todos' como valor explícito para la opción por defecto
-    sectorFilter.innerHTML = '<option value="Todos">📦 Todos los Sectores</option>';
-    
-    // Extrae y ordena sectores únicos
-    const sectores = [...new Set(puestosPendientes.map(item => item.sector).filter(Boolean))];
-    sectores.sort().forEach(sector => {
-        const option = document.createElement('option');
-        option.value = sector.trim();
-        option.innerText = sector.trim();
-        sectorFilter.appendChild(option);
-    });
-}
+            return coincideSector && coincideTexto;
+        });
 
-function renderTable(data) {
-    const tableBody = document.getElementById('tableBody');
-    tableBody.innerHTML = '';
-    if (data.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--text-muted); padding:20px;">No se registran vacantes activas.</td></tr>`;
-        return;
+        render(filtrados);
     }
-    data.forEach(item => {
-        const tr = document.createElement('tr');
-        let pClass = item.prioridad === 'Alta' ? 'alta' : (item.prioridad === 'Media' ? 'media' : 'baja');
-        tr.innerHTML = `
-            <td>${item.sector}</td>
-            <td><strong>${item.puesto}</strong></td>
-            <td>${item.tenemos}</td>
-            <td>${item.presupuestado}</td>
-            <td style="color: var(--accent-gray); font-weight:600;">${item.bajas}</td>
-            <td style="color: var(--accent-purple);">${item.medico}</td>
-            <td style="color: #f59e0b;">${item.aptos}</td>
-            <td style="color: var(--accent-red); font-weight:600;">${item.falta}</td>
-            <td><span class="badge ${pClass}">${item.prioridad}</span></td>
-        `;
-        tableBody.appendChild(tr);
-    });
+
+    if (buscador) buscador.addEventListener('input', aplicarFiltros);
+    if (selectSector) selectSector.addEventListener('change', aplicarFiltros);
 }
-
-function filterData() {
-    const searchInput = document.getElementById('searchInput');
-    const sectorFilter = document.getElementById('sectorFilter');
-
-    const searchValue = searchInput ? searchInput.value.toLowerCase().trim() : '';
-    const selectedSector = sectorFilter ? sectorFilter.value.trim() : 'Todos';
-
-    const filtered = puestosPendientes.filter(item => {
-        // Búsqueda por texto (puesto o sector)
-        const puestoTexto = (item.puesto || '').toLowerCase();
-        const sectorTexto = (item.sector || '').toLowerCase();
-        const matchesSearch = searchValue === '' || puestoTexto.includes(searchValue) || sectorTexto.includes(searchValue);
-
-        // Comprobación flexible de sector
-        const isAllSectors = 
-            selectedSector === 'Todos' || 
-            selectedSector === '' || 
-            selectedSector.toLowerCase().includes('todos');
-
-        const matchesSector = isAllSectors || item.sector.trim().toUpperCase() === selectedSector.toUpperCase();
-
-        return matchesSearch && matchesSector;
-    });
-
-    renderTable(filtered);
-}
-
-// Inicialización de eventos e inicio de carga
-document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('searchInput');
-    const sectorFilter = document.getElementById('sectorFilter');
-
-    if (searchInput) searchInput.addEventListener('input', filterData);
-    if (sectorFilter) sectorFilter.addEventListener('change', filterData);
-
-    fetchExcelData();
-});
