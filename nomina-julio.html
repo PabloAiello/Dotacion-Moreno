@@ -3,435 +3,381 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nómina Julio - Sede Moreno</title>
+    <title>Nómina Julio - Moreno (245 Legajos)</title>
     <style>
-        :root {
-            --primary: #0056b3;
-            --bg: #f4f6f9;
-            --card-bg: #ffffff;
-            --text: #333333;
-            --border: #e0e0e0;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f6f9;
+            color: #333;
         }
-
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
+        h1, h2 {
+            color: #1a365d;
         }
-
-        .header h1 {
-            color: #1a237e;
-            margin: 5px 0;
-            font-size: 26px;
-        }
-
-        .header p {
-            color: #666;
-            margin: 0 0 15px 0;
-            font-style: italic;
-        }
-
-        .navigation-links {
+        .metrics-container {
             display: flex;
-            justify-content: center;
+            flex-wrap: wrap;
             gap: 15px;
             margin-bottom: 25px;
         }
-
-        .btn-nav {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background-color: #ffffff;
-            color: #333;
-            border: 1px solid #ccc;
+        .card {
+            background: #ffffff;
+            padding: 15px 20px;
             border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            flex: 1;
+            min-width: 200px;
         }
-
-        .btn-nav:hover {
-            background-color: #eef4ff;
-            border-color: var(--primary);
-            color: var(--primary);
+        .card h3 {
+            margin-top: 0;
+            color: #2b6cb0;
+            font-size: 16px;
         }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-            max-width: 1200px;
-            margin: 0 auto 20px auto;
+        .card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
         }
-
-        .metric-card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border: 1px solid var(--border);
-        }
-
-        .metric-card h4 {
-            margin: 0 0 8px 0;
-            font-size: 12px;
-            color: #555;
-            text-transform: uppercase;
-        }
-
-        .metric-card .value {
-            font-size: 22px;
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        .table-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .filter-bar {
+        .card li {
+            padding: 4px 0;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            gap: 10px;
+            border-bottom: 1px solid #edf2f7;
         }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .card li:last-child {
+            border-bottom: none;
         }
-
-        .filter-group label {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        select, input[type="text"] {
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            font-size: 14px;
-            background-color: #fff;
-        }
-
-        .table-wrapper {
+        .table-container {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             overflow-x: auto;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
             font-size: 13px;
         }
-
-        th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: #444;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
         }
-
+        th {
+            background-color: #2b6cb0;
+            color: white;
+            white-space: nowrap;
+        }
+        tr:nth-child(even) {
+            background-color: #f7fafc;
+        }
         tr:hover {
-            background-color: #f1f5f9;
+            background-color: #edf2f7;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>NÓMINA JULIO – SEDE MORENO</h1>
-        <p>Listado del personal activo y asignación por sectores</p>
-        
-        <div class="navigation-links">
-            <a href="index.html" class="btn-nav">📌 Dotación Pendiente</a>
-            <a href="bajas.html" class="btn-nav">🔻 Bajas</a>
+    <h1>Dotación Moreno - Nómina Julio</h1>
+    <p><strong>Total Registros:</strong> 245 Legajos | <strong>Sucursal:</strong> MO</p>
+
+    <!-- RESUMEN ESTADÍSTICO -->
+    <div class="metrics-container">
+        <div class="card">
+            <h3>Por Sector</h3>
+            <ul>
+                <li><span>Tráfico:</span> <strong>120</strong></li>
+                <li><span>Picking:</span> <strong>56</strong></li>
+                <li><span>Recepción:</span> <strong>33</strong></li>
+                <li><span>Inventario Muelle:</span> <strong>22</strong></li>
+                <li><span>Operaciones:</span> <strong>14</strong></li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>Por Convenio</h3>
+            <ul>
+                <li><span>DC (Dentro):</span> <strong>231</strong></li>
+                <li><span>FC (Fuera):</span> <strong>14</strong></li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>Por Horario</h3>
+            <ul>
+                <li><span>Rotativo:</span> <strong>161</strong></li>
+                <li><span>06:00 a 14:00:</span> <strong>75</strong></li>
+                <li><span>08:00 a 16:00:</span> <strong>5</strong></li>
+                <li><span>14:00 a 22:00:</span> <strong>3</strong></li>
+                <li><span>07:00 a 15:00:</span> <strong>1</strong></li>
+            </ul>
         </div>
     </div>
 
-    <!-- Indicadores por Sector -->
-    <div class="metrics-grid">
-        <div class="metric-card">
-            <h4>👥 Total Personal</h4>
-            <div class="value" id="totalNominaCount" style="color: #27ae60;">0</div>
-        </div>
-        <div class="metric-card">
-            <h4>📦 Picking</h4>
-            <div class="value" id="countPicking">0</div>
-        </div>
-        <div class="metric-card">
-            <h4>📥 Recepción</h4>
-            <div class="value" id="countRecepcion">0</div>
-        </div>
-        <div class="metric-card">
-            <h4>🚚 Tráfico</h4>
-            <div class="value" id="countTrafico">0</div>
-        </div>
-        <div class="metric-card">
-            <h4>🔍 Inventario (IM)</h4>
-            <div class="value" id="countIM">0</div>
-        </div>
-        <div class="metric-card">
-            <h4>⚙️ Operaciones</h4>
-            <div class="value" id="countOperaciones">0</div>
-        </div>
-    </div>
-
-    <!-- Tabla con Filtros -->
+    <!-- TABLA DE DATOS -->
     <div class="table-container">
-        <div class="filter-bar">
-            <div class="filter-group">
-                <label for="sectorFilter">🔍 Sector:</label>
-                <select id="sectorFilter" onchange="filterTable()">
-                    <option value="ALL">Todos los sectores</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="searchInput">🔎 Buscar:</label>
-                <input type="text" id="searchInput" placeholder="Nombre o Legajo..." onkeyup="filterTable()">
-            </div>
-        </div>
-
-        <div class="table-wrapper">
-            <table id="dataTable">
-                <thead>
-                    <tr>
-                        <th>LEGAJO</th>
-                        <th>APELLIDO Y NOMBRE</th>
-                        <th>FECHA INGRESO</th>
-                        <th>FIN PP</th>
-                        <th>SECTOR</th>
-                        <th>TAREA</th>
-                        <th>CONVENIO</th>
-                        <th>HORARIO</th>
-                        <th>CONOCIMIENTOS ADICIONALES</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <!-- Filas autogeneradas dinámicamente -->
-                </tbody>
-            </table>
-        </div>
+        <h2>Detalle de Personal</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Legajo</th>
+                    <th>Apellido y Nombre</th>
+                    <th>Fecha de Ingreso</th>
+                    <th>Sector</th>
+                    <th>Tarea</th>
+                    <th>Convenio</th>
+                    <th>Horario</th>
+                    <th>Grado</th>
+                    <th>Sucursal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>4990</td><td>ESTEVEZ AGUSTIN EZEQUIEL</td><td>1/10/2021</td><td>OPERACIONES</td><td>DATOS MAESTROS</td><td>FC</td><td>Rotativo</td><td>Nivel 1</td><td>MO</td></tr>
+                <tr><td>4996</td><td>VELASCO HERNAN RODRIGO EZEQUIEL</td><td>1/10/2021</td><td>RECEPCION</td><td>Control Recepcion</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>4998</td><td>LEITON DARIO GABRIEL</td><td>1/10/2021</td><td>RECEPCION</td><td>Clarck</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>4999</td><td>HILARION DAMIAN NICOLAS</td><td>1/10/2021</td><td>OPERACIONES</td><td>OPERADOR DE TRAFICO</td><td>FC</td><td>14:00 a 22:00</td><td>Nivel 2</td><td>MO</td></tr>
+                <tr><td>5001</td><td>BARRAZA ARIEL RODRIGO</td><td>1/10/2021</td><td>OPERACIONES</td><td>COOR. DE TURNOS Y CPR</td><td>FC</td><td>Rotativo</td><td>Nivel 1</td><td>MO</td></tr>
+                <tr><td>5005</td><td>AGUIRRE ERNESTO ISMAEL</td><td>1/10/2021</td><td>OPERACIONES</td><td>COOR. DE TURNOS Y CPR</td><td>FC</td><td>Rotativo</td><td>Nivel 1</td><td>MO</td></tr>
+                <tr><td>5012</td><td>MALLO DIAZ FEDERICO JAVIER</td><td>1/10/2021</td><td>OPERACIONES</td><td>INVENTARIO</td><td>FC</td><td>Rotativo</td><td>Nivel 1</td><td>MO</td></tr>
+                <tr><td>5022</td><td>CARRANZA BRIAN EZEQUIEL</td><td>1/10/2021</td><td>TRAFICO</td><td>AUXILIAR OPERACIONES TRAFICO</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>5029</td><td>CABRERA FRANCO NAHUEL</td><td>1/10/2021</td><td>OPERACIONES</td><td>OPERADOR DE TRAFICO</td><td>FC</td><td>06:00 a 14:00</td><td>Nivel 1</td><td>MO</td></tr>
+                <tr><td>5030</td><td>YEDRO BRANDON SANTIAGO</td><td>1/10/2021</td><td>RECEPCION</td><td>ADMINISTRATIVO DE RECEPCION</td><td>FC</td><td>Rotativo</td><td>Nivel 1</td><td>MO</td></tr>
+                <tr><td>5137</td><td>ARIAS OSCAR EMANUEL</td><td>6/1/2022</td><td>TRAFICO</td><td>ANALISTA DE PLANEAMIENTO DE TRAFICO</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>5260</td><td>CARREÑO PONCE ALFREDO GABRIEL</td><td>7/2/2022</td><td>TRAFICO</td><td>ANALISTA DE PLANEAMIENTO DE TRAFICO</td><td>FC</td><td>Rotativo</td><td>Nivel 2</td><td>MO</td></tr>
+                <tr><td>5304</td><td>ENRIQUEZ RODRIGO NAHUEL</td><td>21/2/2022</td><td>INVENTARIO MUELLE (IM)</td><td>PM/OBOT DISTRI/OBOT ADUANA</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>5371</td><td>EVIS DYLAN JOEL</td><td>2/3/2022</td><td>TRAFICO</td><td>Control de Muelle</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>5410</td><td>DOS SANTOS GRISELDA NOEMI</td><td>9/3/2022</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Segundo Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>5670</td><td>LUNA RUIZ FRANCO EDUARDO</td><td>21/3/2023</td><td>PICKING</td><td>Cuby UN</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>5713</td><td>RAVINA ALEJO AGUSTIN</td><td>3/4/2023</td><td>OPERACIONES</td><td>INVENTARIO</td><td>FC</td><td>Rotativo</td><td>Nivel 2</td><td>MO</td></tr>
+                <tr><td>5785</td><td>FARIA LAZARO MATIAS</td><td>7/6/2023</td><td>TRAFICO</td><td>Maniobrista</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>5895</td><td>PAZ DIEGO</td><td>1/9/2023</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Primer Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>5949</td><td>SUELDO CLAUDIO</td><td>9/11/2023</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>5955</td><td>CARTOSCIELLO GONZALO JOEL</td><td>15/11/2023</td><td>TRAFICO</td><td>ANALISTA DE PLANEAMIENTO DE TRAFICO</td><td>FC</td><td>Rotativo</td><td>Nivel 2</td><td>MO</td></tr>
+                <tr><td>5957</td><td>ROJAS JOEL AGUSTIN</td><td>15/11/2023</td><td>PICKING</td><td>Traslado Buffer</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>5959</td><td>FRUTO NICOLAS EZEQUIEL</td><td>21/11/2023</td><td>RECEPCION</td><td>Descarga/Guardado</td><td>DC</td><td>07:00 a 15:00</td><td></td><td>MO</td></tr>
+                <tr><td>6017</td><td>CIFARELLI RIOS MATIAS EZEQUIEL</td><td>4/12/2023</td><td>OPERACIONES</td><td>AUXILIAR OPERACIONES PICKING</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6027</td><td>MAMANI MARCOS DEMIAN</td><td>2/1/2024</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6203</td><td>LALLANA LEANDRO LEONEL</td><td>7/10/2024</td><td>PICKING</td><td>Cuby Cj</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6214</td><td>OTTOLO NAHUEL AGUSTIN</td><td>17/10/2024</td><td>RECEPCION</td><td>AUXILIAR OPERACIONES RECEPCION</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6298</td><td>QUINTANA DYLAN VALENTIN</td><td>2/1/2025</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6369</td><td>PAYE SANTIAGO AGUSTIN</td><td>1/4/2025</td><td>RECEPCION</td><td>Control Recepcion</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6370</td><td>GAUNA BRIAN URIEL</td><td>1/4/2025</td><td>PICKING</td><td>Cuby Cj</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6397</td><td>CEPEDA NICOLAS ALEXIS</td><td>1/7/2025</td><td>PICKING</td><td>Traslado Buffer</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6398</td><td>RIOS SANTIAGO NAHUEL</td><td>1/7/2025</td><td>PICKING</td><td>Cuby Cj</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6402</td><td>FARIAS LAUTARO MAXIMIIANO</td><td>17/7/2025</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6403</td><td>LOPEZ WALTER EZEQUIEL</td><td>17/7/2025</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6404</td><td>CASTAÑEDA MARIO ESTEBAN</td><td>17/7/2025</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6408</td><td>DYFORT LUCAS RAFAEL</td><td>17/7/2025</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6412</td><td>AMAYA JOSE LUIS</td><td>17/7/2025</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6418</td><td>CASTRO LEANDRO NICOLAS</td><td>17/7/2025</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6422</td><td>BURELA ARNOLD DANIEL ALEJANDRO</td><td>17/7/2025</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6424</td><td>DELLUTRI GERMAN SALVADOR</td><td>17/7/2025</td><td>TRAFICO</td><td>AUXILIAR OPERACIONES TRAFICO</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6426</td><td>DA SILVA EMILIANO JOSE</td><td>25/7/2025</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Segundo Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6427</td><td>PATRON QUIROGA DYLAN MARTIN</td><td>25/7/2025</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Segundo Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6428</td><td>ORDUÑA AARON NAHUEL</td><td>25/7/2025</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Segundo Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6429</td><td>MARTIN IBARRA SEBASTIAN RUBEN</td><td>25/7/2025</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Segundo Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6431</td><td>GODOY DEMIAN AGUSTIN</td><td>25/7/2025</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Primer Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6438</td><td>AREVALOS IBARRA IVAN EMANUEL</td><td>1/8/2025</td><td>PICKING</td><td>Decanting</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6439</td><td>LASTRA DANIEL NICOLAS</td><td>1/8/2025</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6440</td><td>PREZIOSA VERDUN VALENTINO LEON</td><td>1/8/2025</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6441</td><td>AGUERO AGUSTIN GABRIEL</td><td>1/8/2025</td><td>PICKING</td><td>Cuby UN</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6445</td><td>TORRES FRANCO DANIEL</td><td>1/8/2025</td><td>INVENTARIO MUELLE (IM)</td><td>PM/OBOT DISTRI/OBOT ADUANA</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6447</td><td>MARTINEZ LUCAS ANDRES</td><td>1/8/2025</td><td>RECEPCION</td><td>Cuby-Skan</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6461</td><td>OLGUIN NICOLAS EZEQUIEL</td><td>14/8/2025</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Primer Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6462</td><td>PASTORE NICOLAS EZEQUIEL</td><td>14/8/2025</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Segundo Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6477</td><td>DIAZ KONIG LEONEL MARCELO</td><td>1/9/2025</td><td>PICKING</td><td>Contingencia</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6480</td><td>MEDINA NICOLAS NAHUEL</td><td>1/9/2025</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>08:00 a 16:00</td><td></td><td>MO</td></tr>
+                <tr><td>6482</td><td>GEREZ CRISTIAN NAHUEL</td><td>1/9/2025</td><td>PICKING</td><td>Decanting</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6483</td><td>MESA MARTIN ALBERTO</td><td>1/9/2025</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6485</td><td>REYNOSO GONZALO ARIEL</td><td>1/9/2025</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6486</td><td>VAZQUEZ DANTE MARCELO</td><td>1/9/2025</td><td>PICKING</td><td>Cuby Cj</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6488</td><td>RAMIREZ DIAZ CRISTIAN IVAN</td><td>1/9/2025</td><td>PICKING</td><td>Decanting</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6497</td><td>BRIZUELA TIAGO EZEQUIEL</td><td>11/9/2025</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6499</td><td>MEDISA TOBIAS RODRIGO</td><td>11/9/2025</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6500</td><td>REVIRIEGO GONZALO LAUTARO</td><td>11/9/2025</td><td>PICKING</td><td>Contingencia</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6502</td><td>ROSSI AGUSTIN</td><td>11/9/2025</td><td>PICKING</td><td>Cuby UN</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6503</td><td>GALLEGUILLO IVAN ELIAS</td><td>11/9/2025</td><td>PICKING</td><td>Decanting</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6504</td><td>NAVARRO JOSE DAMIAN</td><td>11/9/2025</td><td>TRAFICO</td><td>OPERADOR DE TRAFICO</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6509</td><td>LEZCANO JOSE ANTONIO</td><td>16/9/2025</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6512</td><td>FRANCO SANTIAGO IVAN</td><td>16/9/2025</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6514</td><td>NICOLINI EZEQUIEL LEONARDO</td><td>16/9/2025</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6518</td><td>FARIAS AXEL IVAN</td><td>1/10/2025</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6519</td><td>AMARILLA ELIAS</td><td>1/10/2025</td><td>RECEPCION</td><td>CPR</td><td>DC</td><td>14:00 a 22:00</td><td></td><td>MO</td></tr>
+                <tr><td>6522</td><td>RODRIGUEZ EZEQUIEL ALEJANDRO</td><td>1/10/2025</td><td>RECEPCION</td><td>Reciclaje de Carton/nylon</td><td>DC</td><td>08:00 a 16:00</td><td></td><td>MO</td></tr>
+                <tr><td>6523</td><td>BLACEN HECTOR</td><td>1/10/2025</td><td>RECEPCION</td><td>CPR</td><td>DC</td><td>08:00 a 16:00</td><td></td><td>MO</td></tr>
+                <tr><td>6525</td><td>LATORRE JONATAN EZEQUIEL</td><td>1/10/2025</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6526</td><td>CHIPOLINI ADRIAN PABLO</td><td>1/10/2025</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6527</td><td>TORRES WALTER NICOLAS</td><td>1/10/2025</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6528</td><td>RAFFAELE MATIAS</td><td>1/10/2025</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6529</td><td>TELLECHEA FRANCO</td><td>1/10/2025</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6584</td><td>CABRERA NAHUEL ESTEBAN</td><td>5/1/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6585</td><td>GALARZA GUSTAVO ADRIAN</td><td>5/1/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6586</td><td>ROLDAN FABIAN OSCAR</td><td>5/1/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6589</td><td>RIVAROLA JONATHAN DAMIAN</td><td>5/1/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6592</td><td>ESPINOLA LEONARDO DAVID</td><td>5/1/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6613</td><td>MARTINEZ ADRIAN RODRIGO</td><td>2/3/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6614</td><td>ZAZZALI FRANCO MATIAS</td><td>2/3/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6615</td><td>PEREZ CESAR EZEQUIEL</td><td>2/3/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6616</td><td>SAWOSZ ERIK EZEQUIEL</td><td>2/3/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6617</td><td>AGUIRRE FRANCISCO EMILIANO</td><td>2/3/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6623</td><td>BALBUENA LEANDRO MARTIN</td><td>2/3/2026</td><td>PICKING</td><td>Cuby Cj</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6624</td><td>BARRIOS FRANCISCO DANIEL</td><td>2/3/2026</td><td>RECEPCION</td><td>Descarga/Guardado</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6625</td><td>MORE MATIAS NICOLAS</td><td>2/3/2026</td><td>PICKING</td><td>Cuby UN</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6626</td><td>HERRERA PABLO LEONEL</td><td>2/3/2026</td><td>RECEPCION</td><td>Repaletizador</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6631</td><td>MAZZA JUAN SEBASTIAN</td><td>6/3/2026</td><td>PICKING</td><td>Cuby Cj</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6632</td><td>IBARRA PATRICIO</td><td>6/3/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6633</td><td>VERGARA MILTON ALEJANDRO</td><td>6/3/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6635</td><td>SANCHEZ ALEJO MILTON</td><td>6/3/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6636</td><td>CASAS TOMAS ALEJANDRO</td><td>6/3/2026</td><td>RECEPCION</td><td>Repaletizador</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6637</td><td>SOSA FACUNDO DAMIAN</td><td>6/3/2026</td><td>RECEPCION</td><td>Repaletizador</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6638</td><td>DIAZ JULIAN ARIEL</td><td>6/3/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6639</td><td>GOMEZ JUAN IGNACIO</td><td>6/3/2026</td><td>PICKING</td><td>Cuby UN</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6640</td><td>CRISTIANO JOAQUIN JOEL</td><td>6/3/2026</td><td>RECEPCION</td><td>Repaletizador</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6641</td><td>BAEZ ORTIZ FERNANDO RICARDO</td><td>6/3/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6643</td><td>SEGOVIA FRANCO AGUSTIN</td><td>6/3/2026</td><td>RECEPCION</td><td>Repaletizador</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6644</td><td>FERNANDEZ CEJAS GEREMIAS JOAQUIN</td><td>6/3/2026</td><td>PICKING</td><td>Cuby Cj</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6645</td><td>DI RINO TOMAS ALEXIS</td><td>6/3/2026</td><td>PICKING</td><td>Cuby UN</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6646</td><td>LALLAMPA ALONSO LUCIANO</td><td>6/3/2026</td><td>PICKING</td><td>Cuby Cj</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6647</td><td>BORDA ALEJANDRO JULIO</td><td>6/3/2026</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Primer Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6648</td><td>AGUILAR TOMAS EZEQUIEL</td><td>6/3/2026</td><td>PICKING</td><td>Cuby CJ</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6649</td><td>PALMA FEDERICO MANUEL</td><td>6/3/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6650</td><td>CABAÑA ALEJANDRO ARIEL</td><td>6/3/2026</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Primer Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6651</td><td>ALVAREZ CARLOS ALBERTO</td><td>10/3/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6658</td><td>FERNANDEZ EMANUEL</td><td>16/3/2026</td><td>TRAFICO</td><td>Control de Muelle</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6660</td><td>CORDERO TOMAS AGUSTIN</td><td>16/3/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6661</td><td>ALVAREZ THIAGO BENJAMIN</td><td>16/3/2026</td><td>TRAFICO</td><td>Operador de Muelle</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6662</td><td>FERRO KEVIN NICOLAS</td><td>16/3/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6663</td><td>BARRIOS LUCAS FABRIZIO</td><td>16/3/2026</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Primer Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6664</td><td>HUANCA QUISPE ABRAHAN</td><td>16/3/2026</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Primer Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6666</td><td>NIETO FAUSTO AGUSTIN</td><td>16/3/2026</td><td>TRAFICO</td><td>Maniobrista</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6669</td><td>MOYANO CALEB ARCANGEL</td><td>16/3/2026</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Primer Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6672</td><td>VIGIL GUSTAVO</td><td>16/3/2026</td><td>TRAFICO</td><td>Operador de Muelle</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6676</td><td>LUNA BRAIAN FRANCO</td><td>16/3/2026</td><td>PICKING</td><td>Cuby UN</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6677</td><td>LOPEZ GABRIEL</td><td>16/3/2026</td><td>TRAFICO</td><td>Responsable de Muelle</td><td>DC</td><td>14:00 a 22:00</td><td></td><td>MO</td></tr>
+                <tr><td>6679</td><td>ERRAMOUSPE MARCELO</td><td>16/3/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6681</td><td>ORTEGON LOZANO CRISTHIAN DANIEL</td><td>16/3/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6682</td><td>IBARROLA BRIAN NICOLAS</td><td>16/3/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6685</td><td>KECHICHIAN JORGE NICOLAS</td><td>16/3/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6687</td><td>CONTRERA LUIS ALEJANDRO</td><td>23/3/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6688</td><td>AGUIRRE ANGEL GUSTAVO</td><td>23/3/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6691</td><td>VELA PABLO EMANUEL</td><td>23/3/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6693</td><td>RODAS TOMAS</td><td>26/3/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6695</td><td>MACIEL GUILLERMO</td><td>26/3/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6696</td><td>JIMENEZ PABLO</td><td>26/3/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6698</td><td>CANTERO FEDERICO</td><td>26/3/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6699</td><td>VERON LEONEL</td><td>26/3/2026</td><td>PICKING</td><td>Decanting</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6700</td><td>SERRATO BRYAN</td><td>26/3/2026</td><td>PICKING</td><td>Decanting</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6701</td><td>ANDAUR BRIAN</td><td>26/3/2026</td><td>PICKING</td><td>Decanting</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6704</td><td>BAEZ DANIEL ANTONIO</td><td>26/3/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6706</td><td>BUSTAMANTE MAXIMILIANO</td><td>26/3/2026</td><td>TRAFICO</td><td>Control de Muelle</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6708</td><td>NAVARRO CHRISTIAN FERNANDO</td><td>26/3/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6709</td><td>RODRIGUEZ TABORDA OSCAR MARTIN</td><td>26/3/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6712</td><td>MOREIRA NICOLAS EZEQUIEL</td><td>26/3/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6714</td><td>SENA MAURO NAHUEL</td><td>7/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6716</td><td>ESCUDERO HERNAN EXEQUIEL</td><td>7/4/2026</td><td>PICKING</td><td>Cuby UN</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6717</td><td>ARTAZA LEONEL SEBASTIAN</td><td>7/4/2026</td><td>PICKING</td><td>Cuby UN</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6722</td><td>ARROYO AGUSTIN NORBERTO</td><td>9/4/2026</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Primer Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6723</td><td>HAYLAN EUGENIO GERMAN</td><td>9/4/2026</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Primer Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6724</td><td>SCHIMPF FEDERICO HERNAN</td><td>9/4/2026</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Primer Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6727</td><td>ESCOCAN SAAVEDRA KEVIN ALAN</td><td>11/4/2026</td><td>OPERACIONES</td><td>OPERADOR DE TRAFICO</td><td>FC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6730</td><td>ALVAREZ CRISTIAN EZEQUIEL</td><td>14/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6731</td><td>KALMAR GUSTAVO VICTOR</td><td>14/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6732</td><td>CUEVA GONZALO EMANUEL</td><td>14/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6733</td><td>ALBORNOZ AUGUSTO ARIEL</td><td>14/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6734</td><td>TEJERO SEBASTIAN RODRIGO</td><td>14/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6735</td><td>DIAZ DE FLEITAS LEONARDO ADRIAN</td><td>14/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6738</td><td>CANTERO ISAIAS DANIEL</td><td>14/4/2026</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Primer Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6741</td><td>MAMMARELLA TOMAS SAMUEL</td><td>15/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6742</td><td>MERLO RICARDO MIGUEL ANGEL</td><td>15/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6745</td><td>RODRIGUEZ CARLOS ALBERTO</td><td>20/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6746</td><td>GABRIEL LEANDRO ALEJO</td><td>20/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6747</td><td>FA KEVIN MATIAS MIGUEL</td><td>20/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6751</td><td>ASISA ESTEBAN GABRIEL</td><td>21/4/2026</td><td>OPERACIONES</td><td>AUXILIAR DE OPERACIONES</td><td>FC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6753</td><td>DUTIL BRIAN LEONARDO</td><td>28/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6754</td><td>SALINA CRISTIAN DAVID EZEQUIEL</td><td>28/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6756</td><td>BENITEZ NELSON EZEQUIEL</td><td>28/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6757</td><td>BENITEZ JORGE ORLANDO</td><td>28/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6758</td><td>RUIZ MATIAS IVAN</td><td>28/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6759</td><td>PALACIOS MATIAS ARIEL</td><td>28/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6761</td><td>CUELLO LUCAS EZEQUIEL</td><td>28/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6762</td><td>GOMEZ GUILLERMO SERGIO</td><td>28/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6763</td><td>RAMOS FEDERICO ANTONIO</td><td>28/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6765</td><td>TORRES OLIVERA MARCOLS ISMAEL</td><td>28/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6766</td><td>FERREYRA MARCELO NAUEL</td><td>28/4/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6769</td><td>CARRIQUIRY GABB RUBEN EDUARDO</td><td>5/5/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6771</td><td>LUQUE PABLO JOAQUIN</td><td>5/5/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6774</td><td>DIAZ NICOLAS DANIEL</td><td>5/5/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6775</td><td>JUAREZ ANIBAL DAMIAN</td><td>5/5/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6777</td><td>UÑATES SEBASTIAN DAVID</td><td>5/5/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6778</td><td>VALENZUELA CRISTIAN EMANUEL</td><td>5/5/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6781</td><td>FLORES LUCAS RAMON</td><td>5/5/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6782</td><td>FRANCO BRAIAN ALEJANDRO</td><td>5/5/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6783</td><td>LAZARTE GABRIEL OMAR</td><td>5/5/2026</td><td>RECEPCION</td><td>Control Recepcion</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6784</td><td>SIFRFRE ALEJANDRO GUILLERMO</td><td>5/5/2026</td><td>RECEPCION</td><td>Repaletizador</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6785</td><td>ALDERETE JULIAN MATEO</td><td>5/5/2026</td><td>RECEPCION</td><td>Repaletizador</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6786</td><td>LUNA LAUTARO TOMAS</td><td>5/5/2026</td><td>RECEPCION</td><td>Repaletizador</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6787</td><td>TOPART CLAUDIO HERNAN</td><td>5/5/2026</td><td>RECEPCION</td><td>Control Recepcion</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6791</td><td>TABOADA GONZALO EZEQUIEL</td><td>5/5/2026</td><td>TRAFICO</td><td>Devoluciones</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6793</td><td>QUINTEROS FERNANDO LORENZO</td><td>5/5/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6796</td><td>MEDINA PEREZ AARON SANTINO</td><td>14/5/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6797</td><td>ENCINA AXEL FERNANDO</td><td>14/5/2026</td><td>TRAFICO</td><td>Operador de Muelle</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6798</td><td>QUIROGA JONATAN RICARDO</td><td>14/5/2026</td><td>RECEPCION</td><td>Repaletizador</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6800</td><td>LUCERO IVAN LEONARDO</td><td>14/5/2026</td><td>TRAFICO</td><td>Control de Muelle</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6801</td><td>PONCE MARIO EZEQUIEL</td><td>14/5/2026</td><td>RECEPCION</td><td>Descarga/Guardado</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6802</td><td>DE LAS HERAS AGUSTIN</td><td>14/5/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6803</td><td>PESCE LUCAS MARCELO</td><td>14/5/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6804</td><td>SERRANO VICTOR HUGO</td><td>14/5/2026</td><td>RECEPCION</td><td>Descarga/Guardado</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6805</td><td>GONZALEZ NICOLAS ALEJANDRO</td><td>14/5/2026</td><td>RECEPCION</td><td>Descarga/Guardado</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6806</td><td>SALAS DIEGO MAXIMILIANO</td><td>14/5/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6807</td><td>MARTINEZ ALEXIS NAHUEL</td><td>14/5/2026</td><td>RECEPCION</td><td>Descarga/Guardado</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6808</td><td>FIGUEROA D´AVINO PATRICIO BJERMAN</td><td>14/5/2026</td><td>PICKING</td><td>Decanting</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6809</td><td>LEDESMA ADRIAN LAUTARO</td><td>14/5/2026</td><td>PICKING</td><td>Decanting</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6812</td><td>BERON JOEL</td><td>14/5/2026</td><td>PICKING</td><td>Decanting</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6813</td><td>ABACA BRIAN GABRIEL</td><td>14/5/2026</td><td>RECEPCION</td><td>Descarga/Guardado</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6814</td><td>AGUIRRE CRISTIAN GABRIEL</td><td>14/5/2026</td><td>PICKING</td><td>Decanting</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6815</td><td>JACIUK LAUREANO</td><td>14/5/2026</td><td>TRAFICO</td><td>Control de Muelle</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6816</td><td>MADEO IGNACIO MIGUEL</td><td>18/5/2026</td><td>OPERACIONES</td><td>INVENTARIO</td><td>FC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6817</td><td>DEL GROSSO CARLOS MIGUEL</td><td>19/5/2026</td><td>RECEPCION</td><td>ADMINISTRATIVO DE RECEPCION</td><td>FC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6819</td><td>GALLO AGUSTIN SEBASTIAN</td><td>19/5/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6820</td><td>BURGOS FRANCO JOSE</td><td>19/5/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6821</td><td>ROMERO WALTER RAMON</td><td>19/5/2026</td><td>RECEPCION</td><td>Descarga/Guardado</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6822</td><td>MERCADO MERCADO SEBASTIAN</td><td>19/5/2026</td><td>PICKING</td><td>Preparador HB</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6824</td><td>MATELUNA LAUTARO AGUSTIN</td><td>19/5/2026</td><td>PICKING</td><td>Decanting</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6827</td><td>ROCA AGUSTIN DANIEL</td><td>19/5/2026</td><td>PICKING</td><td>Cuby UN</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6830</td><td>TORO NAHUEL NICOLAS</td><td>2/6/2026</td><td>TRAFICO</td><td>Control de Muelle</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6832</td><td>BALCEDA EMANUEL</td><td>2/6/2026</td><td>TRAFICO</td><td>Operador de Muelle</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6833</td><td>LASA LEMOS MIRKO</td><td>2/6/2026</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Primer Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6834</td><td>TORREZ DEMIAN ADRIEL</td><td>2/6/2026</td><td>TRAFICO</td><td>Operador de Muelle</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6835</td><td>BUSTOS QUINTERO PABLO ERNESTO</td><td>2/6/2026</td><td>TRAFICO</td><td>Operador de Muelle</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6836</td><td>VERON GABRIEL BRIAN</td><td>2/6/2026</td><td>INVENTARIO MUELLE (IM)</td><td>Inventario Primer Control</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6837</td><td>NIEDFELD LUCAS</td><td>10/6/2026</td><td>TRAFICO</td><td>Operador de Muelle</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6838</td><td>MELLADO LEONEL ANDRES</td><td>10/6/2026</td><td>OPERACIONES</td><td>AUXILIAR OPERACIONES PICKING</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6839</td><td>ARAUJO BRIAN JAVIER</td><td>10/6/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6840</td><td>GOMEZ PABLO DANIEL</td><td>10/6/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6841</td><td>VILLAVICENCIO ALFREDO LUCIANO</td><td>10/6/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6842</td><td>SILVA GONZALEZ MATIAS NAHUEL</td><td>10/6/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6843</td><td>RODRIGUEZ IGNACIO ADRIAN</td><td>10/6/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6844</td><td>AGUIRRE PACHECO JONATAN ARIEL</td><td>10/6/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6848</td><td>CASTRO JULIO ADRIAN</td><td>17/6/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6849</td><td>VINNICHUK PABLO JORGE</td><td>17/6/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6850</td><td>VILLALBA SANTIAGO HERNAN</td><td>17/6/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6851</td><td>PARRA BERNAL MAXIMO ALFREDO</td><td>17/6/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6852</td><td>SERRANO ALBERTO XAVIER</td><td>17/6/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6853</td><td>CUELLO MARIANO THOMAS</td><td>17/6/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6854</td><td>VALDEZ MARCOS IVAN</td><td>17/6/2026</td><td>TRAFICO</td><td>Control de Muelle</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6858</td><td>ROJAS IAN JOSE MANUEL</td><td>1/6/2026</td><td>OPERACIONES</td><td>COORDINADOR DE RECEPCION</td><td>FC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6861</td><td>GULAM IGNACIO MARTIN</td><td>6/7/2026</td><td>OPERACIONES</td><td>COORDINADOR DE TRAFICO</td><td>FC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6863</td><td>ARAYA JONATHAN WALTER RICARDO</td><td>6/7/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6864</td><td>GOMEZ FRANCO ARIEL</td><td>6/7/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6865</td><td>SISELLIA LEANDRO SEBASTIAN</td><td>6/7/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6866</td><td>MANGUSSI AXEL EZEQUIEL</td><td>6/7/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6867</td><td>ALDANA FACUNDO GUSTAVO</td><td>6/7/2026</td><td>TRAFICO</td><td>Conductor</td><td>DC</td><td>06:00 a 14:00</td><td></td><td>MO</td></tr>
+                <tr><td>6871</td><td>FERRONI FRANCO OMAR ANDRES</td><td>13/7/2026</td><td>TRAFICO</td><td>Devoluciones</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6872</td><td>CAÑETE LEANDRO AGUSTIN</td><td>13/7/2026</td><td>TRAFICO</td><td>Devoluciones</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6873</td><td>BUSQUETS JUAN CRUZ</td><td>13/7/2026</td><td>TRAFICO</td><td>Devoluciones</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+                <tr><td>6874</td><td>BALDI AGUSTIN FEDERICO</td><td>13/7/2026</td><td>TRAFICO</td><td>Devoluciones</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
+            </tbody>
+        </table>
     </div>
 
-    <script>
-        const rawNominaData = `6689	ACUÑA BRAIAN NAHUEL	26/3/2026	22/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	cuby/control im/uniddaes
-6687	AGUILERA BAEZ JORGE	26/3/2026	22/9/2026	RECEPCION	REPALETIZADOR	DC	Rotativo	
-6783	AGUIRRE BAEZ ENZO EMANUEL	11/5/2026	7/11/2026	IM	PRIMER CONTROL	DC	Rotativo	
-6710	AGUIRRE DANIEL OSVALDO	1/4/2026	28/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6648	AGUIRRE LUCAS GABRIEL	6/3/2026	2/9/2026	TRAFICO	CONDUCTORES	DC	Rotativo	
-6662	ALBORNOZ MATIAS EXEQUIEL	16/3/2026	12/9/2026	RECEPCION	REPALETIZADOR	DC	Rotativo	
-6668	ALVAREZ IGNACIO SEBASTIAN	16/3/2026	12/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6644	ALVAREZ TOMAS AGUSTIN	6/3/2026	2/9/2026	IM	PRIMER CONTROL	DC	Rotativo	
-6692	ARGAÑARAZ BENJAMIN BENITO	26/3/2026	22/9/2026	PICKING	CUBY UN	DC	Rotativo	
-6694	AZAMBUUJA RAMIRO JOSE LUIS	26/3/2026	22/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6646	BAEZ CARLOS MATIAS	6/3/2026	2/9/2026	RECEPCION	DESCARGA/GUARDADO	DC	Rotativo	
-6667	BARAIBAR TOMAS BENJAMIN	16/3/2026	12/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6720	BARETTO IVAN JOAQUIN	9/4/2026	6/10/2026	PICKING	DECANTING	DC	Rotativo	
-6649	BENITEZ EZEQUIEL HECTOR	6/3/2026	2/9/2026	TRAFICO	CONDUCTORES	DC	Rotativo	
-6651	BOGADO LAUTARO FEDERICO	6/3/2026	2/9/2026	PICKING	DECANTING	DC	Rotativo	
-6780	BORDENAVE FACUNDO DAVID	11/5/2026	7/11/2026	PICKING	DECANTING	DC	Rotativo	
-6684	CABRAL JOSE OMAR	26/3/2026	22/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6721	CAMPOS DANTE FACUNDO	9/4/2026	6/10/2026	RECEPCION	DESCARGA/GUARDADO	DC	Rotativo	
-6654	CANDIA BRIAN NICOLAS	6/3/2026	2/9/2026	TRAFICO	OPERADOR DE MUELLE	DC	Rotativo	
-6655	CASAS TOMAS FACUNDO	6/3/2026	2/9/2026	PICKING	DECANTING	DC	Rotativo	
-6778	CORBALAN GONZALO JOSE	11/5/2026	7/11/2026	TRAFICO	DEVOLUCIONES	DC	Rotativo	
-6695	CORREA MARIANO ROBERTO	26/3/2026	22/9/2026	RECEPCION	DESCARGA/GUARDADO	DC	Rotativo	
-6690	COSTA CRISTIAN SAMUEL	26/3/2026	22/9/2026	RECEPCION	DESCARGA/GUARDADO	DC	Rotativo	
-6708	DAVILA BRANDON ALEXIS	1/4/2026	28/9/2026	PICKING	CUBY CJ	DC	Rotativo	
-6704	DEL VALLE NAHUEL MATIAS	1/4/2026	28/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6652	DELFINO ELIAS AGUSTIN	6/3/2026	2/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6782	DUARTE AXEL SAMUEL	11/5/2026	7/11/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6707	DURAN JOAN FABRIZIO	1/4/2026	28/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6658	ESCANDARANI BRAIAN OSVALDO	16/3/2026	12/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6784	EUGENIO LISANDRO NAHUEL	11/5/2026	7/11/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6697	FERNANDEZ MATIAS EZEQUIEL	26/3/2026	22/9/2026	PICKING	DECANTING	DC	Rotativo	
-6781	FIGUEROA TOMAS ALBERTO	11/5/2026	7/11/2026	TRAFICO	DEVOLUCIONES	DC	Rotativo	
-6699	FORTUNATO JOEL ERNESTO	26/3/2026	22/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6702	FRETES SANTIAGO MATIAS	26/3/2026	22/9/2026	RECEPCION	REPALETIZADOR	DC	Rotativo	
-6700	FRUTOS NICOLAS	26/3/2026	22/9/2026	RECEPCION	DESCARGA/GUARDADO	DC	Rotativo	
-6659	GALLO DAMIAN HORACIO	16/3/2026	12/9/2026	PICKING	CUBY CJ	DC	Rotativo	
-6653	GARCIA EZEQUIEL ALEJANDRO	6/3/2026	2/9/2026	RECEPCION	REPALETIZADOR	DC	Rotativo	
-6779	GIMENEZ LAUTARO JULIAN	11/5/2026	7/11/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6660	GOMEZ AXEL ADRIAN	16/3/2026	12/9/2026	TRAFICO	CONTROL DE MUELLE	DC	Rotativo	
-6661	GONZALEZ DYLAN OMAR	16/3/2026	12/9/2026	PICKING	CUBY CJ	DC	Rotativo	
-6712	GONZALEZ FABRICIO DANIEL	1/4/2026	28/9/2026	PICKING	CUBY CJ	DC	Rotativo	
-6686	GUZMAN LAUTARO MARCELO	26/3/2026	22/9/2026	PICKING	CUBY UN	DC	Rotativo	
-6685	JUAREZ DYLAN BENJAMIN	26/3/2026	22/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6688	LACASA DYLAN BENJAMIN	26/3/2026	22/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6693	LEISECER DANTE JULIAN	26/3/2026	22/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6705	LEYES MAURICIO FACUNDO	1/4/2026	28/9/2026	PICKING	CUBY CJ	DC	Rotativo	
-6665	LOMBARDO LAUTARO EMANUEL	16/3/2026	12/9/2026	TRAFICO	CONDUCTORES	DC	Rotativo	
-6703	LUCENA MARCOS EMILIANO	26/3/2026	22/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6683	LUNA MENDOZA BRIAN AXEL	26/3/2026	22/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6657	MARTINEZ FEDERICO	6/3/2026	2/9/2026	PICKING	CUBY CJ	DC	Rotativo	
-6664	MOLINA BRANDON DANIEL	16/3/2026	12/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6706	MOLINA ENZO	1/4/2026	28/9/2026	RECEPCION	DESCARGA/GUARDADO	DC	Rotativo	
-6666	MONTES MARIO VALENTIN	16/3/2026	12/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6670	MOYA LAUTARO DAMIAN	16/3/2026	12/9/2026	PICKING	CUBY UN	DC	Rotativo	
-6698	OCHOA BRANDON FACUNDO	26/3/2026	22/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6725	OVIEDO LUCAS EMANUEL	9/4/2026	6/10/2026	TRAFICO	CONDUCTORES	DC	Rotativo	
-6709	PALLEROS SANTIAGO RUBEN	1/4/2026	28/9/2026	PICKING	DECANTING	DC	Rotativo	
-6713	PIEGARI TOBIAS ADRIAN	1/4/2026	28/9/2026	PICKING	DECANTING	DC	Rotativo	
-6711	PONCE GABRIEL OSVALDO	1/4/2026	28/9/2026	RECEPCION	REPALETIZADOR	DC	Rotativo	
-6671	QUINTERO SEBASTIAN ROBERTO	16/3/2026	12/9/2026	PICKING	CUBY CJ	DC	Rotativo	
-6680	QUINTOS DYLAN MATIAS	16/3/2026	12/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6673	RAMIREZ BRIAN MARCELO	16/3/2026	12/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6674	RAMIREZ BRANDON DAVID	16/3/2026	12/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6714	RECALDE FACUNDO ROBERTO	1/4/2026	28/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6675	REGUEIRO FACUNDO	16/3/2026	12/9/2026	TRAFICO	CONTROL DE MUELLE	DC	Rotativo	
-6723	RISSO PATRON LAUTARO DANIEL	9/4/2026	6/10/2026	PICKING	CUBY CJ	DC	Rotativo	
-6676	RIVAS GONZALEZ JESUS MANUEL	16/3/2026	12/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6696	RODRIGUEZ SANTIAGO EMANUEL	26/3/2026	22/9/2026	PICKING	DECANTING	DC	Rotativo	
-6691	ROLDAN DILAN TIZIANO	26/3/2026	22/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6677	ROLON CARLOS ALBERTO	16/3/2026	12/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6715	ROMAN EZEQUIEL AGUSTIN	1/4/2026	28/9/2026	RECEPCION	DESCARGA/GUARDADO	DC	Rotativo	
-6716	SANCHEZ ALEXIS ERNESTO	1/4/2026	28/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6726	SANCHEZ TOMAS	9/4/2026	6/10/2026	PICKING	DECANTING	DC	Rotativo	
-6678	SANCHEZ SEBASTIAN EMANUEL	16/3/2026	12/9/2026	PICKING	CUBY UN	DC	Rotativo	
-6679	SCHLEGEL FABRIZIO IVAN	16/3/2026	12/9/2026	PICKING	DECANTING	DC	Rotativo	
-6717	SOLIS FRANCO AGUSTIN	1/4/2026	28/9/2026	RECEPCION	DESCARGA/GUARDADO	DC	Rotativo	
-6718	SOULIA DARIO DAMIAN	1/4/2026	28/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6785	TARABELLI THIAGO ERMANNO	11/5/2026	7/11/2026	RECEPCION	REPALETIZADOR	DC	Rotativo	
-6682	TARRAGONA IVAN FEDERICO	16/3/2026	12/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6786	TOLEDO LAUTARO DAMIAN	11/5/2026	7/11/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6643	TORANZO LISANDRO GABRIEL	6/3/2026	2/9/2026	RECEPCION	REPALETIZADOR	DC	Rotativo	
-6719	VALLEJOS MATIAS ALBERTO	1/4/2026	28/9/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6727	VAN DEN BRANDE BRANDON DANIEL	9/4/2026	6/10/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6787	VARGAS IVAN GONZALO	11/5/2026	7/11/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6788	VASALLO LEANDRO GABRIEL	11/5/2026	7/11/2026	TRAFICO	DEVOLUCIONES	DC	Rotativo	
-6789	VERA NAHUEL IVAN	11/5/2026	7/11/2026	RECEPCION	DESCARGA/GUARDADO	DC	Rotativo	
-6790	VILLALBA EMANUEL AGUSTIN	11/5/2026	7/11/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6791	ZACARIAS MATIAS EXEQUIEL	11/5/2026	7/11/2026	TRAFICO	DEVOLUCIONES	DC	Rotativo	
-6792	ZALAZAR LUCAS MARTIN	11/5/2026	7/11/2026	PICKING	PREPARADOR HB	DC	Rotativo	
-6793	ZAPATA BRIAN EZEQUIEL	11/5/2026	7/11/2026	PICKING	PREPARADOR HB	DC	Rotativo	`;
-
-        let nominaParsed = [];
-
-        function parseNominaText(text) {
-            const lines = text.trim().split('\n');
-            return lines.map(line => {
-                const cols = line.split('\t');
-                return {
-                    legajo: cols[0] ? cols[0].trim() : '',
-                    nombre: cols[1] ? cols[1].trim() : '',
-                    ingreso: cols[2] ? cols[2].trim() : '',
-                    finPp: cols[3] ? cols[3].trim() : '',
-                    sector: cols[4] ? cols[4].trim() : '',
-                    tarea: cols[5] ? cols[5].trim() : '',
-                    convenio: cols[6] ? cols[6].trim() : '',
-                    horario: cols[7] ? cols[7].trim() : '',
-                    conocimientos: cols[8] ? cols[8].trim() : '-'
-                };
-            }).filter(item => item.legajo !== '');
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            nominaParsed = parseNominaText(rawNominaData);
-            renderTable(nominaParsed);
-            populateSectorFilter(nominaParsed);
-            calculateMetrics(nominaParsed);
-        });
-
-        function renderTable(data) {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.setAttribute('data-sector', row.sector);
-
-                tr.innerHTML = `
-                    <td><strong>${row.legajo}</strong></td>
-                    <td>${row.nombre}</td>
-                    <td>${row.ingreso}</td>
-                    <td>${row.finPp}</td>
-                    <td>${row.sector}</td>
-                    <td>${row.tarea}</td>
-                    <td>${row.convenio}</td>
-                    <td>${row.horario}</td>
-                    <td>${row.conocimientos}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function populateSectorFilter(data) {
-            const select = document.getElementById('sectorFilter');
-            const sectores = new Set(data.map(item => item.sector));
-
-            sectores.forEach(sec => {
-                const option = document.createElement('option');
-                option.value = sec;
-                option.textContent = sec;
-                select.appendChild(option);
-            });
-        }
-
-        function calculateMetrics(data) {
-            document.getElementById('totalNominaCount').textContent = data.length;
-
-            const sectorCounts = {
-                'PICKING': 0,
-                'RECEPCION': 0,
-                'TRAFICO': 0,
-                'IM': 0,
-                'OPERACIONES': 0
-            };
-
-            data.forEach(item => {
-                const sec = item.sector.toUpperCase();
-                if (sectorCounts.hasOwnProperty(sec)) {
-                    sectorCounts[sec]++;
-                }
-            });
-
-            document.getElementById('countPicking').textContent = sectorCounts['PICKING'];
-            document.getElementById('countRecepcion').textContent = sectorCounts['RECEPCION'];
-            document.getElementById('countTrafico').textContent = sectorCounts['TRAFICO'];
-            document.getElementById('countIM').textContent = sectorCounts['IM'];
-            document.getElementById('countOperaciones').textContent = sectorCounts['OPERACIONES'];
-        }
-
-        function filterTable() {
-            const sectorValue = document.getElementById('sectorFilter').value;
-            const searchValue = document.getElementById('searchInput').value.toLowerCase();
-
-            const filtered = nominaParsed.filter(item => {
-                const matchesSector = sectorValue === 'ALL' || item.sector === sectorValue;
-                const matchesSearch = item.nombre.toLowerCase().includes(searchValue) || item.legajo.includes(searchValue);
-                return matchesSector && matchesSearch;
-            });
-
-            renderTable(filtered);
-        }
-    </script>
 </body>
 </html>
