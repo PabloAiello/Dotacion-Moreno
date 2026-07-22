@@ -178,9 +178,7 @@
 <body>
 
     <div class="header">
-        <!-- Logo de la Sede/Empresa -->
         <img src="logo.jpg" alt="Logo Nini" class="header-logo">
-        
         <h1>DOTACIÓN PENDIENTE – SEDE MORENO</h1>
         <p>Seguimiento operativo mapeado dinámicamente</p>
         
@@ -256,73 +254,50 @@
     </div>
 
     <script>
-        const rawData = `OPERACIONES	LIDER DE OPERACIONES	0	1	Rotativo	0	0			1		
-OPERACIONES	Inventario	3	3	Rotativo	0	3			0		1
-PICKING	ARMADO ROLL	0	2	Rotativo	0	0			2		2
-PICKING	Traslado Buffer	2	4	Rotativo	0	2			2		
-PICKING	PREPARADOR HB	28	30	Rotativo	1	27	2	6	3		
-PICKING	CUBY UN	10	16	Rotativo	1	9			7		
-PICKING	DECANTING	12	12	Rotativo	2	10			2		
-PICKING	CUBY CJ	9	12	Rotativo	1	8			4		
-PICKING	CLEARING CUBY UN	0	0	Rotativo	0	0			0		
-PICKING	CLEARING DECANTING	0	0	Rotativo	0	0			0		
-PICKING	CLEARING CUBY CJ	0	0	Rotativo	0	0			0		
-PICKING	CONTINGENCIA	2	2	Rotativo	0	2			0		
-PICKING	AUXILIAR OPERATIVO PICKING	2	2	Rotativo	0	2			0		
-RECEPCION	CLARCK	1	3	Rotativo	1	0		1	3		
-RECEPCION	CONTROL	4	5	Rotativo	0	4			1		
-RECEPCION	DESCARGA/GUARDADO	8	3	Rotativo	0	8			-5		
-RECEPCION	GUARDADO	0	8	Rotativo	0	0			8		
-RECEPCION	REPALETIZADOR	9	12	Rotativo	1	8			4		
-RECEPCION	AUXILIAR RECEPCION	1	2	Rotativo	0	1			1		
-RECEPCION	ADMINISTRATIVO DE RECEPCION	2	2	Rotativo	0	2			0		
-RECEPCION	COORDINACION TURNOS Y CPR	0	2	Rotativo	0	0			2		
-RECEPCION	DATOS MAESTROS	1	1	Rotativo	0	1			0		
-RECEPCION	RECICLAJE	1	1	Rotativo	0	1			0		
-RECEPCION	CPR	2	3	Rotativo	0	2			1		
-RECEPCION	Cuby-Skan	1	1	Rotativo	0	1			0		
-TRAFICO	CONTROL DE MUELLE	7	8	Rotativo	1	6		2	2		
-TRAFICO	OPERADOR DE MUELLE	7	8	Rotativo	1	6			2		
-TRAFICO	DEVOLUCIONES	5	2	Rotativo	0	5			-3		
-TRAFICO	CONDUCTORES	92	120	Rotativo	0	92	3		28		
-TRAFICO	PLANEAMIENTO	3	4	Rotativo	0	3			1		
-TRAFICO	OPERADOR DE TRAFICO	4	4	Rotativo	0	4			0		
-TRAFICO	AUXILIAR OPERATIVO TRAFICO	2	2	Rotativo	0	2			0		
-TRAFICO	RESPONSABLE DE MUELLE	1	1	Rotativo	0	1			0		
-TRAFICO	RECEPCION VACIOS	0	2	Rotativo	0	0			2		
-TRAFICO	CONTROL PEDIDO	0	1	Rotativo	0	0			1		
-TRAFICO	MANIOBRISTA	2	2	Rotativo	0	2			0		
-INVENTARIO MUELLE	AUXILIAR OPERATIVO EXPEDICION/IM	0	2	Rotativo	0	0			2		
-INVENTARIO MUELLE	PRIMER CONTROL	14	24	Rotativo	7	7	1	8	17		
-INVENTARIO MUELLE	SEGUNDO CONTROL	6	16	Rotativo	4	2			14		
-INVENTARIO MUELLE	PM / OBOT A PULMON	2	6	Rotativo	0	2			4		`;
+        // Enlace publicado en CSV desde tu Google Sheets
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdBqkbpAzCq6Lw_jPa_Up8HWXE9_ZfGehz55oNvoT-WVwrD_J8Yqw1_OotD55NAw/pub?output=csv";
 
         let dotacionParsed = [];
 
-        function parseRawText(text) {
-            const lines = text.trim().split('\n');
-            return lines.map(line => {
-                const cols = line.split('\t');
-                return {
-                    sector: cols[0] ? cols[0].trim() : '',
-                    puesto: cols[1] ? cols[1].trim() : '',
-                    tenemos: parseInt(cols[2]) || 0,
-                    presupuestado: parseInt(cols[3]) || 0,
-                    bajas: parseInt(cols[5]) || 0,
-                    medico: parseInt(cols[7]) || 0,
-                    aptos: parseInt(cols[8]) || 0,
-                    falta: parseInt(cols[9]) || 0,
-                    prioridad: cols[11] ? cols[11].trim() : 'Baja'
-                };
-            }).filter(item => item.sector !== '');
+        async function fetchDriveData() {
+            try {
+                const response = await fetch(SHEET_CSV_URL);
+                const csvText = await response.text();
+                dotacionParsed = parseCSV(csvText);
+                renderTable(dotacionParsed);
+                populateSectorFilter(dotacionParsed);
+                calcularMetricas(dotacionParsed);
+            } catch (error) {
+                console.error("Error al cargar los datos desde Google Drive:", error);
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            dotacionParsed = parseRawText(rawData);
-            renderTable(dotacionParsed);
-            populateSectorFilter(dotacionParsed);
-            calcularMetricas(dotacionParsed);
-        });
+        function parseCSV(text) {
+            const lines = text.trim().split('\n');
+            const data = [];
+            // Omitimos la primera línea si corresponde a los encabezados
+            const startIndex = lines[0].toLowerCase().includes('sector') ? 1 : 0;
+
+            for (let i = startIndex; i < lines.length; i++) {
+                const cols = lines[i].split(/,|\t/);
+                if (cols.length >= 2) {
+                    data.push({
+                        sector: cols[0] ? cols[0].trim().replace(/^"(.*)"$/, '$1') : '',
+                        puesto: cols[1] ? cols[1].trim().replace(/^"(.*)"$/, '$1') : '',
+                        tenemos: parseInt(cols[2]) || 0,
+                        presupuestado: parseInt(cols[3]) || 0,
+                        bajas: parseInt(cols[5]) || 0,
+                        medico: parseInt(cols[7]) || 0,
+                        aptos: parseInt(cols[8]) || 0,
+                        falta: parseInt(cols[9]) || 0,
+                        prioridad: cols[11] ? cols[11].trim().replace(/^"(.*)"$/, '$1') : 'Baja'
+                    });
+                }
+            }
+            return data.filter(item => item.sector !== '');
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchDriveData);
 
         function renderTable(data) {
             const tbody = document.getElementById('tableBody');
@@ -354,6 +329,7 @@ INVENTARIO MUELLE	PM / OBOT A PULMON	2	6	Rotativo	0	2			4		`;
 
         function populateSectorFilter(data) {
             const select = document.getElementById('sectorFilter');
+            select.innerHTML = '<option value="ALL">Todos los sectores</option>';
             const sectores = new Set(data.map(item => item.sector));
 
             sectores.forEach(sec => {
