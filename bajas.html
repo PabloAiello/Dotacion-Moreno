@@ -72,7 +72,7 @@
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 12px;
             max-width: 1200px;
-            margin: 0 auto 25px auto;
+            margin: 0 auto 20px auto;
         }
 
         .metric-card {
@@ -95,6 +95,52 @@
             font-size: 22px;
             font-weight: bold;
             color: #d9534f;
+        }
+
+        /* Sección de Bajas por Tarea */
+        .task-summary-container {
+            max-width: 1200px;
+            margin: 0 auto 25px auto;
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .task-summary-container h3 {
+            margin: 0 0 12px 0;
+            font-size: 15px;
+            color: #1a237e;
+            text-transform: uppercase;
+        }
+
+        .task-tags-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .task-tag {
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .task-tag .count {
+            background-color: #d9534f;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 2px 7px;
+            border-radius: 12px;
         }
 
         .table-container {
@@ -184,6 +230,14 @@
         </div>
     </div>
 
+    <!-- Indicador Detallado: Bajas por Tarea -->
+    <div class="task-summary-container">
+        <h3>📌 Cantidad de Bajas por Tarea</h3>
+        <div class="task-tags-grid" id="taskSummaryGrid">
+            <!-- Etiquetas generadas dinámicamente por JS -->
+        </div>
+    </div>
+
     <!-- Tabla con Filtros -->
     <div class="table-container">
         <div class="filter-bar">
@@ -267,6 +321,7 @@
             bajasParsed = parseBajasText(rawBajasData);
             renderTable(bajasParsed);
             populateSectorFilter(bajasParsed);
+            renderTaskSummary(bajasParsed);
             document.getElementById('totalBajasCount').textContent = bajasParsed.length;
         });
 
@@ -302,6 +357,26 @@
                 option.value = sec;
                 option.textContent = sec;
                 select.appendChild(option);
+            });
+        }
+
+        // Calcula y renderiza el conteo de bajas por tarea
+        function renderTaskSummary(data) {
+            const container = document.getElementById('taskSummaryGrid');
+            container.innerHTML = '';
+
+            const taskCounts = {};
+            data.forEach(item => {
+                const tarea = item.tarea || 'Sin Especificar';
+                taskCounts[tarea] = (taskCounts[tarea] || 0) + 1;
+            });
+
+            // Generar etiquetas badge por cada tarea
+            Object.entries(taskCounts).forEach(([tarea, cantidad]) => {
+                const tag = document.createElement('div');
+                tag.className = 'task-tag';
+                tag.innerHTML = `<span>${tarea}</span> <span class="count">${cantidad}</span>`;
+                container.appendChild(tag);
             });
         }
 
