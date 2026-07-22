@@ -3,216 +3,389 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dotación Moreno - Dashboard Principal</title>
+    <title>Dotación Pendiente - Sede Moreno</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        :root {
+            --primary: #0056b3;
+            --bg: #f4f6f9;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --border: #e0e0e0;
         }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
             padding: 20px;
         }
-        header {
-            display: flex;
-            align-items: center;
-            gap: 20px;
+
+        .header {
+            text-align: center;
             margin-bottom: 25px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
         }
-        .header-logo {
-            height: 60px;
-            width: auto;
-            object-fit: contain;
+
+        .header h1 {
+            color: #1a237e;
+            margin: 5px 0;
+            font-size: 26px;
         }
-        .header-title h1 {
-            color: #1a365d;
-            font-size: 24px;
-            margin-bottom: 5px;
+
+        .header p {
+            color: #666;
+            margin: 0 0 15px 0;
+            font-style: italic;
         }
-        .header-title p {
-            color: #4a5568;
-            font-size: 14px;
-        }
-        
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+        .navigation-links {
+            display: flex;
+            justify-content: center;
             gap: 15px;
             margin-bottom: 25px;
         }
-        .metric-card {
-            background: white;
-            padding: 15px 20px;
+
+        .btn-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            color: #333;
+            border: 1px solid #ccc;
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            border-left: 5px solid #2b6cb0;
-        }
-        .metric-card.green { border-left-color: #38a169; }
-        .metric-card.orange { border-left-color: #dd6b20; }
-        .metric-card.purple { border-left-color: #805ad5; }
-        
-        .metric-card h3 {
-            font-size: 13px;
-            color: #718096;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-        .metric-card .number {
-            font-size: 28px;
-            font-weight: bold;
-            color: #1a202c;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
         }
 
-        .tables-grid {
+        .btn-nav:hover {
+            background-color: #eef4ff;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 20px;
-            margin-bottom: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            max-width: 1200px;
+            margin: 0 auto 25px auto;
         }
-        .card-table {
-            background: white;
+
+        .metric-card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .metric-card h4 {
+            margin: 0 0 8px 0;
+            font-size: 12px;
+            color: #555;
+            text-transform: uppercase;
+        }
+
+        .metric-card .value {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .table-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 10px;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        .card-table h2 {
-            font-size: 18px;
-            color: #1a365d;
+
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-bottom: 15px;
-            border-bottom: 2px solid #edf2f7;
-            padding-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
         }
+
         th, td {
-            border: 1px solid #e2e8f0;
-            padding: 8px 12px;
+            padding: 10px 12px;
             text-align: left;
-            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
         }
+
         th {
-            background-color: #f7fafc;
-            color: #4a5568;
+            background-color: #f8f9fa;
             font-weight: 600;
+            color: #444;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
-        tr:nth-child(even) {
-            background-color: #f8fafc;
+
+        tr:hover {
+            background-color: #f1f5f9;
         }
-        .text-right {
-            text-align: right;
-        }
-        .total-row {
-            font-weight: bold;
-            background-color: #edf2f7 !important;
-        }
+
+        .badge-alta { color: #d32f2f; font-weight: bold; }
+        .badge-media { color: #f57c00; font-weight: bold; }
+        .badge-baja { color: #388e3c; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <!-- Header con Logo Nini -->
-    <header>
-        <img src="logo.jpg" alt="Logo Nini" class="header-logo">
-        <div class="header-title">
-            <h1>Dotación Moreno - Resumen General</h1>
-            <p><strong>Total Registros:</strong> 245 Legajos | <strong>Sucursal:</strong> MO</p>
+    <div class="header">
+        <h1>DOTACIÓN PENDIENTE – SEDE MORENO</h1>
+        <p>Seguimiento operativo mapeado dinámicamente</p>
+        
+        <div class="navigation-links">
+            <a href="nomina-julio.html" class="btn-nav">📊 Nómina Julio</a>
+            <a href="bajas.html" class="btn-nav">🔻 Bajas</a>
         </div>
-    </header>
+    </div>
 
-    <!-- Tarjetas de Métricas -->
+    <!-- Indicadores Generales -->
     <div class="metrics-grid">
         <div class="metric-card">
-            <h3>Total Legajos</h3>
-            <div class="number">245</div>
+            <h4>👥 Presupuestado</h4>
+            <div class="value" id="totalPresupuestado">0</div>
         </div>
-        <div class="metric-card green">
-            <h3>En Convenio (DC)</h3>
-            <div class="number">231</div>
+        <div class="metric-card">
+            <h4>✅ Tenemos</h4>
+            <div class="value" id="totalTenemos" style="color: #0056b3;">0</div>
         </div>
-        <div class="metric-card orange">
-            <h3>Fuera Convenio (FC)</h3>
-            <div class="number">14</div>
+        <div class="metric-card">
+            <h4>🔻 Bajas</h4>
+            <div class="value" id="totalBajas" style="color: #d9534f;">0</div>
         </div>
-        <div class="metric-card purple">
-            <h3>Horario Rotativo</h3>
-            <div class="number">161</div>
+        <div class="metric-card">
+            <h4>🏥 Médico</h4>
+            <div class="value" id="totalMedico" style="color: #8e44ad;">0</div>
+        </div>
+        <div class="metric-card">
+            <h4>👍 Aptos</h4>
+            <div class="value" id="totalAptos" style="color: #f39c12;">0</div>
+        </div>
+        <div class="metric-card">
+            <h4>🔴 Falta</h4>
+            <div class="value" id="totalFalta" style="color: #c0392b;">0</div>
+        </div>
+        <div class="metric-card">
+            <h4>📊 % Cobertura</h4>
+            <div class="value" id="totalCobertura" style="color: #27ae60;">0%</div>
         </div>
     </div>
 
-    <!-- Tablas de Resumen -->
-    <div class="tables-grid">
-        <!-- Resumen Sector -->
-        <div class="card-table">
-            <h2>Distribución por Sector</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Sector</th>
-                        <th class="text-right">Cantidad</th>
-                        <th class="text-right">% Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>TRAFICO</td><td class="text-right">120</td><td class="text-right">49.0%</td></tr>
-                    <tr><td>PICKING</td><td class="text-right">56</td><td class="text-right">22.9%</td></tr>
-                    <tr><td>RECEPCION</td><td class="text-right">33</td><td class="text-right">13.5%</td></tr>
-                    <tr><td>INVENTARIO MUELLE (IM)</td><td class="text-right">22</td><td class="text-right">9.0%</td></tr>
-                    <tr><td>OPERACIONES</td><td class="text-right">14</td><td class="text-right">5.7%</td></tr>
-                    <tr class="total-row"><td>TOTAL</td><td class="text-right">245</td><td class="text-right">100.0%</td></tr>
-                </tbody>
-            </table>
+    <!-- Tabla con Filtro de Sectores -->
+    <div class="table-container">
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label for="sectorFilter">🔍 Filtrar por Sector:</label>
+                <select id="sectorFilter" onchange="filterTable()">
+                    <option value="ALL">Todos los sectores</option>
+                </select>
+            </div>
         </div>
 
-        <!-- Resumen Convenio -->
-        <div class="card-table">
-            <h2>Distribución por Convenio</h2>
-            <table>
+        <div class="table-wrapper">
+            <table id="dataTable">
                 <thead>
                     <tr>
-                        <th>Convenio</th>
-                        <th class="text-right">Cantidad</th>
-                        <th class="text-right">% Total</th>
+                        <th>SECTOR</th>
+                        <th>PUESTO</th>
+                        <th>TENEMOS</th>
+                        <th>PRESUPUESTADO</th>
+                        <th>BAJAS</th>
+                        <th>MÉDICO</th>
+                        <th>APTOS</th>
+                        <th>FALTA</th>
+                        <th>PRIORIDAD</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr><td>DC (Dentro Convenio)</td><td class="text-right">231</td><td class="text-right">94.3%</td></tr>
-                    <tr><td>FC (Fuera Convenio)</td><td class="text-right">14</td><td class="text-right">5.7%</td></tr>
-                    <tr class="total-row"><td>TOTAL</td><td class="text-right">245</td><td class="text-right">100.0%</td></tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Resumen Horarios -->
-        <div class="card-table">
-            <h2>Distribución por Horario</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Horario</th>
-                        <th class="text-right">Cantidad</th>
-                        <th class="text-right">% Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Rotativo</td><td class="text-right">161</td><td class="text-right">65.7%</td></tr>
-                    <tr><td>06:00 a 14:00</td><td class="text-right">75</td><td class="text-right">30.6%</td></tr>
-                    <tr><td>08:00 a 16:00</td><td class="text-right">5</td><td class="text-right">2.0%</td></tr>
-                    <tr><td>14:00 a 22:00</td><td class="text-right">3</td><td class="text-right">1.2%</td></tr>
-                    <tr><td>07:00 a 15:00</td><td class="text-right">1</td><td class="text-right">0.4%</td></tr>
-                    <tr class="total-row"><td>TOTAL</td><td class="text-right">245</td><td class="text-right">100.0%</td></tr>
+                <tbody id="tableBody">
+                    <!-- Filas generadas dinámicamente -->
                 </tbody>
             </table>
         </div>
     </div>
 
+    <script>
+        const rawData = `OPERACIONES	LIDER DE OPERACIONES	0	1	Rotativo	0	0			1		
+OPERACIONES	Inventario	3	3	Rotativo	0	3			0		1
+PICKING	ARMADO ROLL	0	2	Rotativo	0	0			2		2
+PICKING	Traslado Buffer	2	4	Rotativo	0	2			2		
+PICKING	PREPARADOR HB	28	30	Rotativo	1	27	2	6	3		
+PICKING	CUBY UN	10	16	Rotativo	1	9			7		
+PICKING	DECANTING	12	12	Rotativo	2	10			2		
+PICKING	CUBY CJ	9	12	Rotativo	1	8			4		
+PICKING	CLEARING CUBY UN	0	0	Rotativo	0	0			0		
+PICKING	CLEARING DECANTING	0	0	Rotativo	0	0			0		
+PICKING	CLEARING CUBY CJ	0	0	Rotativo	0	0			0		
+PICKING	CONTINGENCIA	2	2	Rotativo	0	2			0		
+PICKING	AUXILIAR OPERATIVO PICKING	2	2	Rotativo	0	2			0		
+RECEPCION	CLARCK	1	3	Rotativo	1	0		1	3		
+RECEPCION	CONTROL	4	5	Rotativo	0	4			1		
+RECEPCION	DESCARGA/GUARDADO	8	3	Rotativo	0	8			-5		
+RECEPCION	GUARDADO	0	8	Rotativo	0	0			8		
+RECEPCION	REPALETIZADOR	9	12	Rotativo	1	8			4		
+RECEPCION	AUXILIAR RECEPCION	1	2	Rotativo	0	1			1		
+RECEPCION	ADMINISTRATIVO DE RECEPCION	2	2	Rotativo	0	2			0		
+RECEPCION	COORDINACION TURNOS Y CPR	0	2	Rotativo	0	0			2		
+RECEPCION	DATOS MAESTROS	1	1	Rotativo	0	1			0		
+RECEPCION	RECICLAJE	1	1	Rotativo	0	1			0		
+RECEPCION	CPR	2	3	Rotativo	0	2			1		
+RECEPCION	Cuby-Skan	1	1	Rotativo	0	1			0		
+TRAFICO	CONTROL DE MUELLE	7	8	Rotativo	1	6		2	2		
+TRAFICO	OPERADOR DE MUELLE	7	8	Rotativo	1	6			2		
+TRAFICO	DEVOLUCIONES	5	2	Rotativo	0	5			-3		
+TRAFICO	CONDUCTORES	92	120	Rotativo	0	92	3		28		
+TRAFICO	PLANEAMIENTO	3	4	Rotativo	0	3			1		
+TRAFICO	OPERADOR DE TRAFICO	4	4	Rotativo	0	4			0		
+TRAFICO	AUXILIAR OPERATIVO TRAFICO	2	2	Rotativo	0	2			0		
+TRAFICO	RESPONSABLE DE MUELLE	1	1	Rotativo	0	1			0		
+TRAFICO	RECEPCION VACIOS	0	2	Rotativo	0	0			2		
+TRAFICO	CONTROL PEDIDO	0	1	Rotativo	0	0			1		
+TRAFICO	MANIOBRISTA	2	2	Rotativo	0	2			0		
+INVENTARIO MUELLE	AUXILIAR OPERATIVO EXPEDICION/IM	0	2	Rotativo	0	0			2		
+INVENTARIO MUELLE	PRIMER CONTROL	14	24	Rotativo	7	7	1	8	17		
+INVENTARIO MUELLE	SEGUNDO CONTROL	6	16	Rotativo	4	2			14		
+INVENTARIO MUELLE	PM / OBOT A PULMON	2	6	Rotativo	0	2			4		`;
+
+        let dotacionParsed = [];
+
+        function parseRawText(text) {
+            const lines = text.trim().split('\n');
+            return lines.map(line => {
+                const cols = line.split('\t');
+                return {
+                    sector: cols[0] ? cols[0].trim() : '',
+                    puesto: cols[1] ? cols[1].trim() : '',
+                    tenemos: parseInt(cols[2]) || 0,
+                    presupuestado: parseInt(cols[3]) || 0,
+                    bajas: parseInt(cols[5]) || 0,
+                    medico: parseInt(cols[7]) || 0,
+                    aptos: parseInt(cols[8]) || 0,
+                    falta: parseInt(cols[9]) || 0,
+                    prioridad: cols[11] ? cols[11].trim() : 'Baja'
+                };
+            }).filter(item => item.sector !== '');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            dotacionParsed = parseRawText(rawData);
+            renderTable(dotacionParsed);
+            populateSectorFilter(dotacionParsed);
+            calcularMetricas(dotacionParsed);
+        });
+
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.setAttribute('data-sector', row.sector);
+
+                let badgeClass = 'badge-baja';
+                const prio = row.prioridad.toLowerCase();
+                if (prio === 'alta') badgeClass = 'badge-alta';
+                if (prio === 'media') badgeClass = 'badge-media';
+
+                tr.innerHTML = `
+                    <td>${row.sector}</td>
+                    <td>${row.puesto}</td>
+                    <td>${row.tenemos}</td>
+                    <td>${row.presupuestado}</td>
+                    <td>${row.bajas}</td>
+                    <td>${row.medico}</td>
+                    <td>${row.aptos}</td>
+                    <td>${row.falta}</td>
+                    <td><span class="${badgeClass}">${row.prioridad || 'Baja'}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function populateSectorFilter(data) {
+            const select = document.getElementById('sectorFilter');
+            const sectores = new Set(data.map(item => item.sector));
+
+            sectores.forEach(sec => {
+                const option = document.createElement('option');
+                option.value = sec;
+                option.textContent = sec;
+                select.appendChild(option);
+            });
+        }
+
+        function calcularMetricas(data) {
+            let tenemos = 0, presupuestado = 0, bajas = 0, medico = 0, aptos = 0, falta = 0;
+
+            data.forEach(item => {
+                tenemos += item.tenemos;
+                presupuestado += item.presupuestado;
+                bajas += item.bajas;
+                medico += item.medico;
+                aptos += item.aptos;
+                falta += item.falta;
+            });
+
+            document.getElementById('totalTenemos').textContent = tenemos;
+            document.getElementById('totalPresupuestado').textContent = presupuestado;
+            document.getElementById('totalBajas').textContent = bajas;
+            document.getElementById('totalMedico').textContent = medico;
+            document.getElementById('totalAptos').textContent = aptos;
+            document.getElementById('totalFalta').textContent = falta;
+
+            const cobertura = presupuestado > 0 ? ((tenemos / presupuestado) * 100).toFixed(1) : 0;
+            document.getElementById('totalCobertura').textContent = cobertura + '%';
+        }
+
+        function filterTable() {
+            const filterValue = document.getElementById('sectorFilter').value;
+            if (filterValue === 'ALL') {
+                renderTable(dotacionParsed);
+            } else {
+                const filtered = dotacionParsed.filter(item => item.sector === filterValue);
+                renderTable(filtered);
+            }
+        }
+    </script>
 </body>
 </html>
