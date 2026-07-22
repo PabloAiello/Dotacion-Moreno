@@ -55,6 +55,32 @@
             font-weight: bold;
             background-color: #e2e8f0 !important;
         }
+        
+        /* Estilos del Buscador */
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 14px;
+            font-size: 15px;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+        .search-input:focus {
+            border-color: #2b6cb0;
+        }
+        .counter {
+            font-size: 14px;
+            color: #4a5568;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -119,7 +145,13 @@
 
     <h2>2. Detalle Completo de Personal (245 Legajos)</h2>
 
-    <table class="table-main">
+    <!-- Buscador Integrado -->
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Buscar por legajo, nombre, sector, tarea..." onkeyup="filtrarTabla()">
+        <span id="recordCount" class="counter">Mostrando 245 de 245 legajos</span>
+    </div>
+
+    <table class="table-main" id="tablaLegajos">
         <thead>
             <tr>
                 <th>Legajo</th>
@@ -380,6 +412,31 @@
             <tr><td>6874</td><td>BALDI AGUSTIN FEDERICO</td><td>13/7/2026</td><td>TRAFICO</td><td>Devoluciones</td><td>DC</td><td>Rotativo</td><td></td><td>MO</td></tr>
         </tbody>
     </table>
+
+    <script>
+        function filtrarTabla() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('tablaLegajos');
+            const tr = table.getElementsByTagName('tr');
+            const counter = document.getElementById('recordCount');
+            
+            let visibleCount = 0;
+            const totalCount = tr.length - 1; // Descontar encabezado
+
+            for (let i = 1; i < tr.length; i++) {
+                const rowText = tr[i].textContent || tr[i].innerText;
+                if (rowText.toLowerCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                    visibleCount++;
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+
+            counter.textContent = `Mostrando ${visibleCount} de ${totalCount} legajos`;
+        }
+    </script>
 
 </body>
 </html>
