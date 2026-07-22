@@ -5,104 +5,166 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Bajas - Sede Moreno</title>
     <style>
+        :root {
+            --primary: #0056b3;
+            --danger: #d9534f;
+            --bg: #f4f6f9;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --border: #e0e0e0;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
             padding: 20px;
-            color: #333;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1000px;
             margin: 0 auto;
-            background: #ffffff;
+            background: var(--card-bg);
             padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
-        .btn-volver {
-            display: inline-block;
-            margin-bottom: 20px;
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             padding: 8px 16px;
-            background-color: #d9534f;
-            color: #ffffff;
+            background-color: var(--danger);
+            color: white;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 6px;
             font-weight: 600;
             font-size: 14px;
+            margin-bottom: 20px;
+            transition: background-color 0.2s;
         }
 
-        .btn-volver:hover {
+        .btn-back:hover {
             background-color: #c9302c;
         }
 
         h1 {
-            color: #d9534f;
+            color: #c0392b;
             margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        p.description {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
 
         th, td {
-            border: 1px solid #e0e0e0;
-            padding: 12px;
+            padding: 12px 15px;
             text-align: left;
+            border-bottom: 1px solid var(--border);
             font-size: 14px;
         }
 
         th {
             background-color: #d9534f;
             color: white;
+            font-weight: 600;
         }
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
+        tr:hover {
+            background-color: #fcf8f8;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #f8d7da;
+            color: #721c24;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <a href="index.html" class="btn-volver">← Volver al Panel Principal</a>
-        <h1>🔻 Registro de Bajas</h1>
-        <p>Historial detallado de las 20 bajas registradas en la sede.</p>
+        <a href="index.html" class="btn-back">← Volver al Panel Principal</a>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Sector</th>
-                    <th>Puesto</th>
-                    <th>Bajas Registradas (F)</th>
-                    <th>Observaciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>INVENTARIO MUELLE</td>
-                    <td>PRIMER CONTROL</td>
-                    <td>7</td>
-                    <td>Baja operativa</td>
-                </tr>
-                <tr>
-                    <td>INVENTARIO MUELLE</td>
-                    <td>SEGUNDO CONTROL</td>
-                    <td>4</td>
-                    <td>Reorganización de equipo</td>
-                </tr>
-                <tr>
-                    <td>PICKING</td>
-                    <td>DECANTER</td>
-                    <td>2</td>
-                    <td>Renuncia voluntaria</td>
-                </tr>
-            </tbody>
-        </table>
+        <h1>🔻 Registro de Bajas</h1>
+        <p class="description">Historial detallado de las 20 bajas registradas en la sede.</p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sector</th>
+                        <th>Puesto</th>
+                        <th>Bajas Registradas (F)</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>INVENTARIO MUELLE</td>
+                        <td>PRIMER CONTROL</td>
+                        <td>7</td>
+                        <td>Baja operativa</td>
+                    </tr>
+                    <tr>
+                        <td>INVENTARIO MUELLE</td>
+                        <td>SEGUNDO CONTROL</td>
+                        <td>4</td>
+                        <td>Reorganización de equipo</td>
+                    </tr>
+                    <tr>
+                        <td>PICKING</td>
+                        <td>PREPARADOR PISO</td>
+                        <td>3</td>
+                        <td>Renuncia voluntaria / Desvinculación</td>
+                    </tr>
+                    <tr>
+                        <td>PICKING</td>
+                        <td>DECANTER</td>
+                        <td>2</td>
+                        <td>Renuncia voluntaria</td>
+                    </tr>
+                    <tr>
+                        <td>DESPACHO</td>
+                        <td>CARGADOR DE CAMIONES</td>
+                        <td>2</td>
+                        <td>Ajuste de dotación</td>
+                    </tr>
+                    <tr>
+                        <td>PICKING</td>
+                        <td>PREPARADOR HB</td>
+                        <td>1</td>
+                        <td>Baja médica / Operativa</td>
+                    </tr>
+                    <tr>
+                        <td>RECEPCION</td>
+                        <td>CONTROL DE RECEPCIÓN</td>
+                        <td>1</td>
+                        <td>Fin de contrato</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="2">TOTAL BAJAS REGISTRADAS</td>
+                        <td>20</td>
+                        <td>Suma total general de la sede</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
 </body>
