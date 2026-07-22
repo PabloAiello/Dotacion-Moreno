@@ -5,104 +5,205 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nómina Julio - Sede Moreno</title>
     <style>
+        :root {
+            --primary: #0056b3;
+            --bg: #f4f6f9;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --border: #e0e0e0;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
             padding: 20px;
-            color: #333;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1000px;
             margin: 0 auto;
-            background: #ffffff;
+            background: var(--card-bg);
             padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
-        .btn-volver {
-            display: inline-block;
-            margin-bottom: 20px;
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             padding: 8px 16px;
-            background-color: #0056b3;
-            color: #ffffff;
+            background-color: var(--primary);
+            color: white;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 6px;
             font-weight: 600;
             font-size: 14px;
+            margin-bottom: 20px;
+            transition: background-color 0.2s;
         }
 
-        .btn-volver:hover {
-            background-color: #003d80;
+        .btn-back:hover {
+            background-color: #004085;
         }
 
         h1 {
             color: #0056b3;
             margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        p.description {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
 
         th, td {
-            border: 1px solid #e0e0e0;
-            padding: 12px;
+            padding: 12px 15px;
             text-align: left;
+            border-bottom: 1px solid var(--border);
             font-size: 14px;
         }
 
         th {
             background-color: #0056b3;
             color: white;
+            font-weight: 600;
         }
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
+        tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        .badge-activo {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .badge-vacante {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #e3f2fd;
+            color: #0d47a1;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <a href="index.html" class="btn-volver">← Volver al Panel Principal</a>
-        <h1>📊 Nómina Julio - Sede Moreno</h1>
-        <p>Detalle del personal correspondiente al periodo de Julio.</p>
+        <a href="index.html" class="btn-back">← Volver al Panel Principal</a>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Sector / Gerencia</th>
-                    <th>Puesto</th>
-                    <th>Empleado / Legajo</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>OPERACIONES</td>
-                    <td>LIDER DE OPERACIONES</td>
-                    <td>-</td>
-                    <td>Vacante</td>
-                </tr>
-                <tr>
-                    <td>PICKING</td>
-                    <td>PREPARADOR HB</td>
-                    <td>Juan Pérez</td>
-                    <td>Activo</td>
-                </tr>
-                <tr>
-                    <td>RECEPCION</td>
-                    <td>CONTROL</td>
-                    <td>Carlos Gómez</td>
-                    <td>Activo</td>
-                </tr>
-            </tbody>
-        </table>
+        <h1>📊 Nómina Julio - Sede Moreno</h1>
+        <p class="description">Resumen consolidado del personal y puestos asignados durante el período de Julio.</p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sector / Gerencia</th>
+                        <th>Puesto</th>
+                        <th>Dotación Activa / Tenemos (C)</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>OPERACIONES</td>
+                        <td>LIDER DE OPERACIONES</td>
+                        <td>0</td>
+                        <td><span class="badge-vacante">Vacante</span></td>
+                    </tr>
+                    <tr>
+                        <td>OPERACIONES</td>
+                        <td>SUPERVISOR DE TURNO</td>
+                        <td>2</td>
+                        <td><span class="badge-activo">Activo</span></td>
+                    </tr>
+                    <tr>
+                        <td>PICKING</td>
+                        <td>PREPARADOR PISO</td>
+                        <td>45</td>
+                        <td><span class="badge-activo">Activo</span></td>
+                    </tr>
+                    <tr>
+                        <td>PICKING</td>
+                        <td>PREPARADOR HB</td>
+                        <td>28</td>
+                        <td><span class="badge-activo">Activo</span></td>
+                    </tr>
+                    <tr>
+                        <td>DESPACHO</td>
+                        <td>CARGADOR DE CAMIONES</td>
+                        <td>20</td>
+                        <td><span class="badge-activo">Activo</span></td>
+                    </tr>
+                    <tr>
+                        <td>INVENTARIO MUELLE</td>
+                        <td>PRIMER CONTROL</td>
+                        <td>14</td>
+                        <td><span class="badge-activo">Activo</span></td>
+                    </tr>
+                    <tr>
+                        <td>PICKING</td>
+                        <td>DECANTER</td>
+                        <td>12</td>
+                        <td><span class="badge-activo">Activo</span></td>
+                    </tr>
+                    <tr>
+                        <td>RECEPCION</td>
+                        <td>CONTROL DE RECEPCIÓN</td>
+                        <td>10</td>
+                        <td><span class="badge-activo">Activo</span></td>
+                    </tr>
+                    <tr>
+                        <td>INVENTARIO MUELLE</td>
+                        <td>SEGUNDO CONTROL</td>
+                        <td>8</td>
+                        <td><span class="badge-activo">Activo</span></td>
+                    </tr>
+                    <tr>
+                        <td>MANTENIMIENTO</td>
+                        <td>TÉCNICO ELECTROMECÁNICO</td>
+                        <td>3</td>
+                        <td><span class="badge-activo">Activo</span></td>
+                    </tr>
+                    <tr>
+                        <td>RECEPCION</td>
+                        <td>GUARDADO</td>
+                        <td>0</td>
+                        <td><span class="badge-vacante">Vacante</span></td>
+                    </tr>
+                    <tr>
+                        <td>VARIOS SECTORES</td>
+                        <td>PERSONAL ADICIONAL Y OPERATIVO</td>
+                        <td>97</td>
+                        <td><span class="badge-activo">Activo</span></td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="2">TOTAL NÓMINA ACTIVA</td>
+                        <td>239</td>
+                        <td>Tenemos (C)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
 </body>
