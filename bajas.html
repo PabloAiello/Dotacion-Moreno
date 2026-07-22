@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Bajas - Sede Moreno</title>
+    <title>Bajas de Personal - Sede Moreno</title>
     <style>
         :root {
             --primary: #0056b3;
-            --danger: #d9534f;
             --bg: #f4f6f9;
             --card-bg: #ffffff;
             --text: #333333;
@@ -22,45 +21,117 @@
             padding: 20px;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
         }
 
-        .btn-back {
+        .header h1 {
+            color: #1a237e;
+            margin: 5px 0;
+            font-size: 26px;
+        }
+
+        .header p {
+            color: #666;
+            margin: 0 0 15px 0;
+            font-style: italic;
+        }
+
+        .navigation-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .btn-nav {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 16px;
-            background-color: var(--danger);
-            color: white;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 8px;
             text-decoration: none;
-            border-radius: 6px;
             font-weight: 600;
             font-size: 14px;
-            margin-bottom: 20px;
-            transition: background-color 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
         }
 
-        .btn-back:hover {
-            background-color: #c9302c;
+        .btn-nav:hover {
+            background-color: #eef4ff;
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
-        h1 {
-            color: #c0392b;
-            margin-top: 0;
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            max-width: 1200px;
+            margin: 0 auto 25px auto;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .metric-card h4 {
+            margin: 0 0 8px 0;
+            font-size: 12px;
+            color: #555;
+            text-transform: uppercase;
+        }
+
+        .metric-card .value {
+            font-size: 22px;
+            font-weight: bold;
+            color: #d9534f;
+        }
+
+        .table-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-group {
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        p.description {
-            color: #666;
-            margin-bottom: 20px;
+        .filter-group label {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        select, input[type="text"] {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            background-color: #fff;
         }
 
         .table-wrapper {
@@ -73,99 +144,179 @@
         }
 
         th, td {
-            padding: 12px 15px;
+            padding: 10px 12px;
             text-align: left;
             border-bottom: 1px solid var(--border);
-            font-size: 14px;
+            font-size: 13px;
         }
 
         th {
-            background-color: #d9534f;
-            color: white;
+            background-color: #f8f9fa;
             font-weight: 600;
+            color: #444;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         tr:hover {
-            background-color: #fcf8f8;
-        }
-
-        .total-row {
-            font-weight: bold;
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: #f1f5f9;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <a href="index.html" class="btn-back">← Volver al Panel Principal</a>
+    <div class="header">
+        <h1>REGISTRO DE BAJAS – SEDE MORENO</h1>
+        <p>Listado de bajas y conocimientos adicionales</p>
+        
+        <div class="navigation-links">
+            <a href="index.html" class="btn-nav">📌 Dotación Pendiente</a>
+            <a href="nomina-julio.html" class="btn-nav">📊 Nómina Julio</a>
+        </div>
+    </div>
 
-        <h1>🔻 Registro de Bajas</h1>
-        <p class="description">Historial detallado de las 20 bajas registradas en la sede por sector y puesto.</p>
+    <!-- Indicador General -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <h4>🔻 Total Bajas Registradas</h4>
+            <div class="value" id="totalBajasCount">0</div>
+        </div>
+    </div>
+
+    <!-- Tabla con Filtros -->
+    <div class="table-container">
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label for="sectorFilter">🔍 Sector:</label>
+                <select id="sectorFilter" onchange="filterTable()">
+                    <option value="ALL">Todos los sectores</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="searchInput">🔎 Buscar:</label>
+                <input type="text" id="searchInput" placeholder="Nombre o Legajo..." onkeyup="filterTable()">
+            </div>
+        </div>
 
         <div class="table-wrapper">
-            <table>
+            <table id="dataTable">
                 <thead>
                     <tr>
-                        <th>Sector / Gerencia</th>
-                        <th>Puesto</th>
-                        <th>Bajas Registradas (F)</th>
-                        <th>Estado / Observaciones</th>
+                        <th>LEGAJO</th>
+                        <th>APELLIDO Y NOMBRE</th>
+                        <th>FECHA INGRESO</th>
+                        <th>FIN PP</th>
+                        <th>SECTOR</th>
+                        <th>TAREA</th>
+                        <th>CONVENIO</th>
+                        <th>HORARIO</th>
+                        <th>CONOCIMIENTOS ADICIONALES</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>INVENTARIO MUELLE</td>
-                        <td>PRIMER CONTROL</td>
-                        <td>7</td>
-                        <td>Registradas en Muelle</td>
-                    </tr>
-                    <tr>
-                        <td>INVENTARIO MUELLE</td>
-                        <td>SEGUNDO CONTROL</td>
-                        <td>4</td>
-                        <td>Registradas en Control</td>
-                    </tr>
-                    <tr>
-                        <td>PICKING</td>
-                        <td>PREPARADOR PISO</td>
-                        <td>3</td>
-                        <td>Bajas operativas</td>
-                    </tr>
-                    <tr>
-                        <td>PICKING</td>
-                        <td>DECANTER</td>
-                        <td>2</td>
-                        <td>Renuncias/Desvinculaciones</td>
-                    </tr>
-                    <tr>
-                        <td>DESPACHO</td>
-                        <td>CARGADOR DE CAMIONES</td>
-                        <td>2</td>
-                        <td>Ajuste de sector</td>
-                    </tr>
-                    <tr>
-                        <td>PICKING</td>
-                        <td>PREPARADOR HB</td>
-                        <td>1</td>
-                        <td>Baja operativa</td>
-                    </tr>
-                    <tr>
-                        <td>RECEPCION</td>
-                        <td>CONTROL DE RECEPCIÓN</td>
-                        <td>1</td>
-                        <td>Finalización de contrato</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td colspan="2">TOTAL GENERAL DE BAJAS</td>
-                        <td>20</td>
-                        <td>Dotación acumulada de bajas (F)</td>
-                    </tr>
+                <tbody id="tableBody">
+                    <!-- Filas autogeneradas dinámicamente -->
                 </tbody>
             </table>
         </div>
     </div>
 
+    <script>
+        const rawBajasData = `6636	CASAS TOMAS ALEJANDRO	6/3/2026	2/9/2026	RECEPCION	Repaletizador	DC	Rotativo	Repaletizador
+4998	LEITON DARIO GABRIEL	1/10/2021	30/3/2022	RECEPCION	Clarck	DC	Rotativo	Clarck
+6672	VIGIL GUSTAVO	16/3/2026	12/9/2026	TRAFICO	Operador de muelle	DC	Rotativo	Carga/Descarga
+6800	LUCERO IVAN LEONARDO	14/5/2026	10/11/2026	TRAFICO	Control de Muelle	DC	Rotativo	
+6701	ANDAUR BRIAN	26/3/2026	22/9/2026	PICKING	Decanting	DC	Rotativo	cuby/control im/uniddaes
+6645	DI RINO TOMAS ALEXIS	6/3/2026	2/9/2026	PICKING	Cuby UN	DC	Rotativo	cuby/control im/uniddaes/hb
+6486	VAZQUEZ DANTE MARCELO	1/9/2025	28/2/2026	PICKING	Cuby Cj	DC	Rotativo	cuby/control im/uniddaes/hb/recepcion
+6503	GALLEGUILLO IVAN ELIAS	11/9/2025	10/3/2026	PICKING	Decanting	DC	Rotativo	cuby/control im/uniddaes/hb/recepcion
+6681	ORTEGON LOZANO CRISTHIAN DANIEL	16/3/2026	12/9/2026	PICKING	Preparador HB	DC	Rotativo	cuby/control im/uniddaes/hb
+6738	CANTERO ISAIAS DANIEL 	14/4/2026	11/10/2026	IM	Inventario Primer Control	DC	Rotativo	
+6650	CABAÑA ALEJANDRO ARIEL	6/3/2026	2/9/2026	IM	Inventario Primer Control	DC	Rotativo	
+6663	BARRIOS LUCAS FABRIZIO	16/3/2026	12/9/2026	IM	Inventario Primer Control	DC	Rotativo	
+6669	MOYANO CALEB ARCANGEL	16/3/2026	12/9/2026	IM	Inventario Primer Control	DC	Rotativo	
+6724	SCHIMPF FEDERICO HERNAN	9/4/2026	6/10/2026	IM	Inventario Primer Control	DC	Rotativo	
+6426	DA SILVA EMILIANO JOSE	25/7/2025	21/1/2026	IM	Inventario Segundo Control 	DC	Rotativo	
+6427	PATRON QUIROGA DYLAN MARTIN	25/7/2025	21/1/2026	IM	Inventario Segundo Control 	DC	Rotativo	
+6428	ORDUÑA AARON NAHUEL	25/7/2025	21/1/2026	IM	Inventario Segundo Control 	DC	Rotativo	
+6429	MARTIN IBARRA SEBASTIAN RUBEN	25/7/2025	21/1/2026	IM	Inventario Segundo Control 	DC	Rotativo	
+6647	BORDA ALEJANDRO JULIO	6/3/2026	2/9/2026	IM	Inventario Primer Control	DC	Rotativo	
+6722	ARROYO AGUSTIN NORBERTO	9/4/2026	6/10/2026	IM	Inventario Primer Control	DC	Rotativo	`;
+
+        let bajasParsed = [];
+
+        function parseBajasText(text) {
+            const lines = text.trim().split('\n');
+            return lines.map(line => {
+                const cols = line.split('\t');
+                return {
+                    legajo: cols[0] ? cols[0].trim() : '',
+                    nombre: cols[1] ? cols[1].trim() : '',
+                    ingreso: cols[2] ? cols[2].trim() : '',
+                    finPp: cols[3] ? cols[3].trim() : '',
+                    sector: cols[4] ? cols[4].trim() : '',
+                    tarea: cols[5] ? cols[5].trim() : '',
+                    convenio: cols[6] ? cols[6].trim() : '',
+                    horario: cols[7] ? cols[7].trim() : '',
+                    conocimientos: cols[8] ? cols[8].trim() : '-'
+                };
+            }).filter(item => item.legajo !== '');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            bajasParsed = parseBajasText(rawBajasData);
+            renderTable(bajasParsed);
+            populateSectorFilter(bajasParsed);
+            document.getElementById('totalBajasCount').textContent = bajasParsed.length;
+        });
+
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.setAttribute('data-sector', row.sector);
+
+                tr.innerHTML = `
+                    <td><strong>${row.legajo}</strong></td>
+                    <td>${row.nombre}</td>
+                    <td>${row.ingreso}</td>
+                    <td>${row.finPp}</td>
+                    <td>${row.sector}</td>
+                    <td>${row.tarea}</td>
+                    <td>${row.convenio}</td>
+                    <td>${row.horario}</td>
+                    <td>${row.conocimientos}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function populateSectorFilter(data) {
+            const select = document.getElementById('sectorFilter');
+            const sectores = new Set(data.map(item => item.sector));
+
+            sectores.forEach(sec => {
+                const option = document.createElement('option');
+                option.value = sec;
+                option.textContent = sec;
+                select.appendChild(option);
+            });
+        }
+
+        function filterTable() {
+            const sectorValue = document.getElementById('sectorFilter').value;
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+
+            const filtered = bajasParsed.filter(item => {
+                const matchesSector = sectorValue === 'ALL' || item.sector === sectorValue;
+                const matchesSearch = item.nombre.toLowerCase().includes(searchValue) || item.legajo.includes(searchValue);
+                return matchesSector && matchesSearch;
+            });
+
+            renderTable(filtered);
+        }
+    </script>
 </body>
 </html>
