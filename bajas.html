@@ -293,6 +293,18 @@
             fetchBajasCSV();
         });
 
+        // Función auxiliar para buscar valores en las columnas sin importar variaciones de nombre
+        function getFieldValue(row, possibleNames) {
+            for (const name of possibleNames) {
+                // Busca coincidencia exacta o ignorando mayúsculas/espacios
+                const foundKey = Object.keys(row).find(key => key.trim().toLowerCase() === name.trim().toLowerCase());
+                if (foundKey && row[foundKey] !== undefined && row[foundKey] !== null) {
+                    return row[foundKey].toString().trim();
+                }
+            }
+            return '';
+        }
+
         async function fetchBajasCSV() {
             try {
                 const response = await fetch(CSV_URL);
@@ -302,18 +314,17 @@
                     header: true,
                     skipEmptyLines: true,
                     complete: function(results) {
-                        // Normalizamos la estructura de los objetos devueltos por PapaParse
                         bajasParsed = results.data.map(row => ({
-                            legajo: row['LEGAJO'] || row['Legajo'] || '',
-                            nombre: row['APELLIDO Y NOMBRE'] || row['Apellido y Nombre'] || row['NOMBRE'] || '',
-                            ingreso: row['FECHA INGRESO'] || row['Fecha Ingreso'] || '',
-                            finPp: row['FIN PP'] || row['Fin PP'] || '',
-                            sector: row['SECTOR'] || row['Sector'] || '',
-                            tarea: row['TAREA'] || row['Tarea'] || '',
-                            convenio: row['CONVENIO'] || row['Convenio'] || '',
-                            horario: row['HORARIO'] || row['Horario'] || '',
-                            conocimientos: row['CONOCIMIENTOS ADICIONALES'] || row['Conocimientos Adicionales'] || '-'
-                        })).filter(item => item.legajo.trim() !== '');
+                            legajo: getFieldValue(row, ['LEGAJO', 'Legajo']),
+                            nombre: getFieldValue(row, ['APELLIDO Y NOMBRE', 'Apellido y Nombre', 'NOMBRE', 'Nombre']),
+                            ingreso: getFieldValue(row, ['FECHA INGRESO', 'FECHA DE INGRESO', 'Fecha Ingreso', 'Fecha de Ingreso', 'INGRESO', 'Ingreso']),
+                            finPp: getFieldValue(row, ['FIN PP', 'Fin PP', 'FIN P.P.', 'Fin P.P.']),
+                            sector: getFieldValue(row, ['SECTOR', 'Sector']),
+                            tarea: getFieldValue(row, ['TAREA', 'Tarea']),
+                            convenio: getFieldValue(row, ['CONVENIO', 'Convenio']),
+                            horario: getFieldValue(row, ['HORARIO', 'Horario']),
+                            conocimientos: getFieldValue(row, ['CONOCIMIENTOS ADICIONALES', 'Conocimientos Adicionales', 'CONOCIMIENTOS']) || '-'
+                        })).filter(item => item.legajo !== '' || item.nombre !== '');
 
                         renderTable(bajasParsed);
                         populateSectorFilter(bajasParsed);
@@ -343,8 +354,8 @@
                 tr.innerHTML = `
                     <td><strong>${row.legajo}</strong></td>
                     <td>${row.nombre}</td>
-                    <td>${row.ingreso}</td>
-                    <td>${row.finPp}</td>
+                    <td>${row.ingreso || '-'}</td>
+                    <td>${row.finPp || '-'}</td>
                     <td>${row.sector}</td>
                     <td>${row.tarea}</td>
                     <td>${row.convenio}</td>
@@ -357,7 +368,6 @@
 
         function populateSectorFilter(data) {
             const select = document.getElementById('sectorFilter');
-            // Mantiene la primera opción "Todos los sectores"
             select.innerHTML = '<option value="ALL">Todos los sectores</option>';
 
             const sectores = new Set(data.map(item => item.sector).filter(s => s));
@@ -370,18 +380,16 @@
             });
         }
 
-        // Calcula y renderiza el conteo de bajas por tarea
         function renderTaskSummary(data) {
             const container = document.getElementById('taskSummaryGrid');
             container.innerHTML = '';
 
             const taskCounts = {};
             data.forEach(item => {
-                const tarea = item.tarea.trim() || 'Sin Especificar';
+                const tarea = item.tarea ? item.tarea.trim() : 'Sin Especificar';
                 taskCounts[tarea] = (taskCounts[tarea] || 0) + 1;
             });
 
-            // Generar etiquetas badge por cada tarea
             Object.entries(taskCounts).forEach(([tarea, cantidad]) => {
                 const tag = document.createElement('div');
                 tag.className = 'task-tag';
@@ -401,6 +409,8 @@
             });
 
             renderTable(filtered);
+            renderTaskSummary(filtered);
+            document.getElementById('totalBajasCount').textContent = filtered.length;
         }
     </script>
 </body>
