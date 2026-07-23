@@ -6,6 +6,7 @@
     --primary: #1e1b4b;
     --primary-hover: #312e81;
     --accent: #2563eb;
+    --accent-glow: rgba(37, 99, 235, 0.25);
     --bg: #f8fafc;
     --card-bg: #ffffff;
     --text: #0f172a;
@@ -16,7 +17,7 @@
     --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.03);
     --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.05);
     --shadow-lg: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
-    --shadow-hover: 0 12px 20px -3px rgba(37, 99, 235, 0.15);
+    --shadow-hover: 0 12px 20px -3px rgba(37, 99, 235, 0.18);
     
     --radius-sm: 8px;
     --radius-md: 12px;
@@ -25,6 +26,22 @@
 
 * {
     box-sizing: border-box;
+}
+
+/* Scrollbar Personalizado Moderno */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 
 /* Fondo y Tipografía General */
@@ -38,6 +55,26 @@ html, body {
     -webkit-font-smoothing: antialiased;
 }
 
+/* === ANIMACIONES DE ENTRADA === */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.header, 
+.metrics-grid, 
+.task-summary-container, 
+.table-container, 
+.stats-container {
+    animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* Encabezado */
 .header {
     text-align: center;
@@ -49,7 +86,11 @@ html, body {
     height: auto;
     margin-bottom: 16px;
     display: inline-block;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.04));
+    transition: transform 0.3s ease;
+}
+
+.header-logo:hover {
+    transform: scale(1.03);
 }
 
 .header h1 {
@@ -67,7 +108,7 @@ html, body {
     font-weight: 400;
 }
 
-/* Botones de Navegación Modernizados */
+/* Botones de Navegación Modernizados con Micro-interacción */
 .navigation-links {
     display: flex;
     justify-content: center;
@@ -89,6 +130,8 @@ html, body {
     font-size: 14px;
     box-shadow: var(--shadow-sm);
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
 
 .btn-nav:hover {
@@ -99,7 +142,11 @@ html, body {
     box-shadow: var(--shadow-hover);
 }
 
-/* --- MÉTRICAS MODERNAS EN UNA SOLA FILA --- */
+.btn-nav:active {
+    transform: translateY(0);
+}
+
+/* --- MÉTRICAS MODERNAS --- */
 .metrics-grid {
     display: flex;
     flex-wrap: nowrap;
@@ -108,7 +155,7 @@ html, body {
     max-width: 1200px;
     margin: 0 auto 30px auto;
     overflow-x: auto;
-    padding-bottom: 6px;
+    padding: 4px 4px 10px 4px;
 }
 
 .metric-card {
@@ -124,12 +171,12 @@ html, body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    transition: all 0.25s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .metric-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
     border-color: #cbd5e1;
 }
 
@@ -144,10 +191,15 @@ html, body {
 }
 
 .metric-card .value {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 700;
     line-height: 1.1;
     letter-spacing: -0.02em;
+    transition: transform 0.2s ease;
+}
+
+.metric-card:hover .value {
+    transform: scale(1.05);
 }
 
 /* Tarjetas y Contenedores */
@@ -160,22 +212,28 @@ html, body {
     border: 1px solid var(--border);
     box-shadow: var(--shadow-md);
     margin-bottom: 24px;
+    transition: box-shadow 0.3s ease;
 }
 
-/* Tablas Limpias y Elegantes */
+.task-summary-container:hover, 
+.table-container:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+/* Tablas Limpias, Resaltadas y Elegantes */
 .table-wrapper {
     overflow-x: auto;
     border-radius: var(--radius-md);
+    border: 1px solid var(--border);
 }
 
 table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
+    border-collapse: collapse;
 }
 
 th {
-    background-color: #f1f5f9;
+    background-color: #f8fafc;
     color: var(--text-muted);
     font-weight: 600;
     font-size: 12px;
@@ -191,18 +249,22 @@ td {
     font-size: 14px;
     color: var(--text);
     border-bottom: 1px solid var(--border);
-    transition: background-color 0.15s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 tr:last-child td {
     border-bottom: none;
 }
 
-tr:hover td {
-    background-color: #f8fafc;
+tr {
+    transition: background-color 0.2s ease;
 }
 
-/* Controles, Buscadores y Selectores */
+tr:hover td {
+    background-color: #f1f5f9;
+}
+
+/* Controles, Buscadores y Selectores con Efecto Glow */
 .filter-bar, .search-container {
     display: flex;
     align-items: center;
@@ -221,15 +283,16 @@ select, input[type="text"], .search-input {
     color: var(--text);
     box-shadow: var(--shadow-sm);
     outline: none;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
 }
 
 select:focus, input[type="text"]:focus, .search-input:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 0 0 4px var(--accent-glow);
+    transform: translateY(-1px);
 }
 
-/* Tags Interáctivos de Tarea */
+/* Tags Interactivos de Tarea */
 .task-tag {
     background-color: #f1f5f9;
     border: 1px solid var(--border);
@@ -242,18 +305,20 @@ select:focus, input[type="text"]:focus, .search-input:focus {
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: var(--shadow-sm);
 }
 
 .task-tag:hover {
     background-color: #e2e8f0;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
 }
 
 .task-tag.active {
     background-color: var(--primary);
     color: #ffffff;
     border-color: var(--primary);
-    box-shadow: 0 4px 12px rgba(30, 27, 75, 0.25);
+    box-shadow: 0 4px 14px rgba(30, 27, 75, 0.3);
+    transform: translateY(-1px);
 }
