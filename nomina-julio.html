@@ -7,52 +7,124 @@
     <!-- PapaParse CDN para procesar CSV de forma rápida y confiable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
+        :root {
+            --primary: #0056b3;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --border: #cbd5e0;
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            background-color: #f8f9fa;
-            color: #333;
+            background-color: var(--bg);
+            color: var(--text);
         }
-        h1, h2, h3 {
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        /* Logo de Nini */
+        .header-logo {
+            max-width: 180px;
+            height: auto;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .header h1 {
+            color: #1a365d;
+            margin: 5px 0;
+            font-size: 26px;
+        }
+
+        .header p {
+            color: #666;
+            margin: 5px 0 15px 0;
+        }
+
+        /* Botones de navegación */
+        .navigation-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .btn-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        .btn-nav:hover {
+            background-color: #eef4ff;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        h2, h3 {
             color: #1a365d;
         }
+
         .stats-container {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
             margin-bottom: 30px;
         }
+
         .table-summary {
             border-collapse: collapse;
             width: 300px;
             background: white;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
+
         .table-main {
             border-collapse: collapse;
             width: 100%;
             background: white;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
+
         th, td {
-            border: 1px solid #cbd5e0;
+            border: 1px solid var(--border);
             padding: 8px 12px;
             text-align: left;
             font-size: 14px;
         }
+
         th {
             background-color: #2b6cb0;
             color: white;
         }
+
         tr:nth-child(even) {
             background-color: #f7fafc;
         }
+
         tr:hover {
             background-color: #edf2f7;
         }
+
         .text-right {
             text-align: right;
         }
+
         .total-row {
             font-weight: bold;
             background-color: #e2e8f0 !important;
@@ -65,24 +137,28 @@
             align-items: center;
             gap: 10px;
         }
+
         .search-input {
             width: 100%;
             max-width: 400px;
             padding: 10px 14px;
             font-size: 15px;
-            border: 2px solid #cbd5e0;
+            border: 2px solid var(--border);
             border-radius: 6px;
             outline: none;
             transition: border-color 0.2s ease;
         }
+
         .search-input:focus {
             border-color: #2b6cb0;
         }
+
         .counter {
             font-size: 14px;
             color: #4a5568;
             font-weight: bold;
         }
+
         .loading {
             font-style: italic;
             color: #718096;
@@ -92,8 +168,18 @@
 </head>
 <body>
 
-    <h1>Dotación Moreno - Nómina Completa Julio</h1>
-    <p><strong id="totalHeader">Total Registros:</strong> <span id="totalLegajosCount">Cargando...</span> | <strong>Sucursal:</strong> MO</p>
+    <div class="header">
+        <!-- Logo Nini cargado desde el repositorio -->
+        <img src="https://raw.githubusercontent.com/PabloAiello/Dotacion-Moreno/main/logo.jpg" alt="Logo Nini" class="header-logo">
+        <h1>Dotación Moreno - Nómina Completa Julio</h1>
+        <p><strong id="totalHeader">Total Registros:</strong> <span id="totalLegajosCount">Cargando...</span> | <strong>Sucursal:</strong> MO</p>
+
+        <!-- Botones de navegación -->
+        <div class="navigation-links">
+            <a href="index.html" class="btn-nav">📌 Dotación Pendiente</a>
+            <a href="bajas.html" class="btn-nav">🔻 Registro de Bajas</a>
+        </div>
+    </div>
 
     <h2>1. Resumen Estadístico</h2>
     
@@ -238,7 +324,6 @@
             const container = document.getElementById(containerId);
             container.innerHTML = '';
 
-            // Ordenar de mayor a menor cantidad
             const entradasOrdenadas = Object.entries(conteoObj).sort((a, b) => b[1] - a[1]);
 
             entradasOrdenadas.forEach(([clave, cantidad]) => {
@@ -252,7 +337,6 @@
                 container.appendChild(tr);
             });
 
-            // Fila de Total
             const totalRow = document.createElement('tr');
             totalRow.className = 'total-row';
             totalRow.innerHTML = `
@@ -271,7 +355,7 @@
             const counter = document.getElementById('recordCount');
             
             let visibleCount = 0;
-            const totalCount = tr.length - 1; // Descontar encabezado
+            const totalCount = tr.length - 1;
 
             for (let i = 1; i < tr.length; i++) {
                 const rowText = tr[i].textContent || tr[i].innerText;
