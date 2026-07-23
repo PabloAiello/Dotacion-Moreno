@@ -1,105 +1,122 @@
-/* Variables Globales de Diseño */
+/* Importación de fuente moderna */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Variables Globales de Diseño Moderno */
 :root {
-    --primary: #1a237e;
-    --primary-hover: #2b6cb0;
+    --primary: #1e1b4b;
+    --primary-hover: #312e81;
     --accent: #2563eb;
-    --bg: #ffffff;
+    --bg: #f8fafc;
     --card-bg: #ffffff;
-    --text: #1e293b;
+    --text: #0f172a;
     --text-muted: #64748b;
     --border: #e2e8f0;
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    --radius: 12px;
+    
+    /* Sombras Modernas y Elevadas */
+    --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.03);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.05);
+    --shadow-lg: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+    --shadow-hover: 0 12px 20px -3px rgba(37, 99, 235, 0.15);
+    
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
 }
 
 * {
     box-sizing: border-box;
 }
 
-/* Fondo Blanco General para TODA la web */
+/* Fondo y Tipografía General */
 html, body {
     background-color: var(--bg) !important;
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     margin: 0;
-    padding: 20px;
+    padding: 24px 16px;
     line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
 }
 
 /* Encabezado */
 .header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 35px;
 }
 
 .header-logo {
-    max-width: 170px;
+    max-width: 160px;
     height: auto;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
     display: inline-block;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.04));
 }
 
 .header h1 {
     color: var(--primary);
-    margin: 5px 0;
-    font-size: 26px;
+    margin: 6px 0;
+    font-size: 28px;
     font-weight: 700;
+    letter-spacing: -0.02em;
 }
 
 .header p {
     color: var(--text-muted);
-    margin: 0 0 15px 0;
+    margin: 0 0 20px 0;
+    font-size: 15px;
+    font-weight: 400;
 }
 
-/* Navegación Modernizada */
+/* Botones de Navegación Modernizados */
 .navigation-links {
     display: flex;
     justify-content: center;
     gap: 12px;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
 .btn-nav {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 20px;
-    background-color: #f8fafc;
+    padding: 10px 22px;
+    background-color: var(--card-bg);
     color: var(--text);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-md);
     text-decoration: none;
     font-weight: 600;
     font-size: 14px;
     box-shadow: var(--shadow-sm);
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-nav:hover {
-    background-color: #f1f5f9;
-    border-color: var(--primary);
-    color: var(--primary);
-    transform: translateY(-1px);
+    background-color: #ffffff;
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
 }
 
-/* --- MÉTRICAS: TODAS UNA AL LADO DE LA OTRA --- */
+/* --- MÉTRICAS MODERNAS EN UNA SOLA FILA --- */
 .metrics-grid {
     display: flex;
-    flex-wrap: nowrap; /* Evita que caigan abajo */
+    flex-wrap: nowrap;
     justify-content: space-between;
-    gap: 10px;
+    gap: 12px;
     max-width: 1200px;
-    margin: 0 auto 25px auto;
-    overflow-x: auto; /* Permite scroll horizontal si la pantalla es muy chica */
+    margin: 0 auto 30px auto;
+    overflow-x: auto;
+    padding-bottom: 6px;
 }
 
 .metric-card {
     flex: 1;
-    min-width: 110px; /* Tamaño mínimo adecuado */
+    min-width: 120px;
     background: var(--card-bg);
-    padding: 12px 6px;
-    border-radius: var(--radius);
+    padding: 16px 12px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
     text-align: center;
@@ -107,21 +124,30 @@ html, body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    transition: all 0.25s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: #cbd5e1;
 }
 
 .metric-card h4 {
-    margin: 0 0 6px 0;
+    margin: 0 0 8px 0;
     font-size: 11px;
+    font-weight: 600;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.05em;
     white-space: nowrap;
 }
 
 .metric-card .value {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     line-height: 1.1;
+    letter-spacing: -0.02em;
 }
 
 /* Tarjetas y Contenedores */
@@ -129,14 +155,19 @@ html, body {
 .table-container,
 .stats-container > div {
     background: var(--card-bg);
-    padding: 20px;
-    border-radius: var(--radius);
+    padding: 24px;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--border);
     box-shadow: var(--shadow-md);
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
-/* Tablas Limpias y Modernas */
+/* Tablas Limpias y Elegantes */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: var(--radius-md);
+}
+
 table {
     width: 100%;
     border-collapse: separate;
@@ -144,50 +175,66 @@ table {
 }
 
 th {
-    background-color: #f8fafc;
+    background-color: #f1f5f9;
     color: var(--text-muted);
     font-weight: 600;
     font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 12px 14px;
-    border-bottom: 2px solid var(--border);
+    letter-spacing: 0.05em;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
     text-align: left;
 }
 
 td {
-    padding: 12px 14px;
+    padding: 14px 16px;
     font-size: 14px;
+    color: var(--text);
     border-bottom: 1px solid var(--border);
+    transition: background-color 0.15s ease;
+}
+
+tr:last-child td {
+    border-bottom: none;
 }
 
 tr:hover td {
     background-color: #f8fafc;
 }
 
-/* Controles, Buscadores y Filtros */
+/* Controles, Buscadores y Selectores */
+.filter-bar, .search-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
 select, input[type="text"], .search-input {
-    padding: 10px 14px;
-    border-radius: 8px;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--border);
     font-size: 14px;
-    background-color: #f8fafc;
+    font-family: inherit;
+    background-color: #ffffff;
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
     outline: none;
     transition: all 0.2s ease;
 }
 
 select:focus, input[type="text"]:focus, .search-input:focus {
-    background-color: #ffffff;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-/* Tags de Tarea (Página Bajas) */
+/* Tags Interáctivos de Tarea */
 .task-tag {
-    background-color: #f8fafc;
+    background-color: #f1f5f9;
     border: 1px solid var(--border);
-    padding: 6px 12px;
-    border-radius: 20px;
+    padding: 8px 16px;
+    border-radius: 9999px;
     font-size: 13px;
     font-weight: 600;
     color: #334155;
@@ -195,9 +242,18 @@ select:focus, input[type="text"]:focus, .search-input:focus {
     align-items: center;
     gap: 8px;
     cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.task-tag:hover {
+    background-color: #e2e8f0;
+    transform: translateY(-1px);
 }
 
 .task-tag.active {
     background-color: var(--primary);
     color: #ffffff;
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(30, 27, 75, 0.25);
 }
