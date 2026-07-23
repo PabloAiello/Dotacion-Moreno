@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bajas de Personal - Sede Moreno</title>
+    <!-- PapaParse CDN para procesar el CSV publicado desde Google Sheets -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         :root {
             --primary: #0056b3;
@@ -209,6 +211,12 @@
         tr:hover {
             background-color: #f1f5f9;
         }
+
+        .loading {
+            font-style: italic;
+            color: #718096;
+            padding: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -227,7 +235,7 @@
     <div class="metrics-grid">
         <div class="metric-card">
             <h4>🔻 Total Bajas Registradas</h4>
-            <div class="value" id="totalBajasCount">0</div>
+            <div class="value" id="totalBajasCount">...</div>
         </div>
     </div>
 
@@ -235,7 +243,7 @@
     <div class="task-summary-container">
         <h3>📌 Cantidad de Bajas por Tarea</h3>
         <div class="task-tags-grid" id="taskSummaryGrid">
-            <!-- Etiquetas generadas dinámicamente por JS -->
+            <span class="loading">Cargando tareas...</span>
         </div>
     </div>
 
@@ -270,65 +278,63 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    <!-- Filas autogeneradas dinámicamente -->
+                    <tr><td colspan="9" class="loading">Cargando datos desde Google Sheets...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
     <script>
-        const rawBajasData = `6636	CASAS TOMAS ALEJANDRO	6/3/2026	2/9/2026	RECEPCION	Repaletizador	DC	Rotativo	Repaletizador
-4998	LEITON DARIO GABRIEL	1/10/2021	30/3/2022	RECEPCION	Clarck	DC	Rotativo	Clarck
-6672	VIGIL GUSTAVO	16/3/2026	12/9/2026	TRAFICO	Operador de muelle	DC	Rotativo	Carga/Descarga
-6800	LUCERO IVAN LEONARDO	14/5/2026	10/11/2026	TRAFICO	Control de Muelle	DC	Rotativo	
-6701	ANDAUR BRIAN	26/3/2026	22/9/2026	PICKING	Decanting	DC	Rotativo	cuby/control im/uniddaes
-6645	DI RINO TOMAS ALEXIS	6/3/2026	2/9/2026	PICKING	Cuby UN	DC	Rotativo	cuby/control im/uniddaes/hb
-6486	VAZQUEZ DANTE MARCELO	1/9/2025	28/2/2026	PICKING	Cuby Cj	DC	Rotativo	cuby/control im/uniddaes/hb/recepcion
-6503	GALLEGUILLO IVAN ELIAS	11/9/2025	10/3/2026	PICKING	Decanting	DC	Rotativo	cuby/control im/uniddaes/hb/recepcion
-6681	ORTEGON LOZANO CRISTHIAN DANIEL	16/3/2026	12/9/2026	PICKING	Preparador HB	DC	Rotativo	cuby/control im/uniddaes/hb
-6738	CANTERO ISAIAS DANIEL 	14/4/2026	11/10/2026	IM	Inventario Primer Control	DC	Rotativo	
-6650	CABAÑA ALEJANDRO ARIEL	6/3/2026	2/9/2026	IM	Inventario Primer Control	DC	Rotativo	
-6663	BARRIOS LUCAS FABRIZIO	16/3/2026	12/9/2026	IM	Inventario Primer Control	DC	Rotativo	
-6669	MOYANO CALEB ARCANGEL	16/3/2026	12/9/2026	IM	Inventario Primer Control	DC	Rotativo	
-6724	SCHIMPF FEDERICO HERNAN	9/4/2026	6/10/2026	IM	Inventario Primer Control	DC	Rotativo	
-6426	DA SILVA EMILIANO JOSE	25/7/2025	21/1/2026	IM	Inventario Segundo Control 	DC	Rotativo	
-6427	PATRON QUIROGA DYLAN MARTIN	25/7/2025	21/1/2026	IM	Inventario Segundo Control 	DC	Rotativo	
-6428	ORDUÑA AARON NAHUEL	25/7/2025	21/1/2026	IM	Inventario Segundo Control 	DC	Rotativo	
-6429	MARTIN IBARRA SEBASTIAN RUBEN	25/7/2025	21/1/2026	IM	Inventario Segundo Control 	DC	Rotativo	
-6647	BORDA ALEJANDRO JULIO	6/3/2026	2/9/2026	IM	Inventario Primer Control	DC	Rotativo	
-6722	ARROYO AGUSTIN NORBERTO	9/4/2026	6/10/2026	IM	Inventario Primer Control	DC	Rotativo	`;
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSdBqkbpAzCq6Lw_jPa_Up8HWXE9_ZfGehz55oNvoT-WVwrD_J8Yqw1_OotD55NAw/pub?gid=1076248572&single=true&output=csv';
 
         let bajasParsed = [];
 
-        function parseBajasText(text) {
-            const lines = text.trim().split('\n');
-            return lines.map(line => {
-                const cols = line.split('\t');
-                return {
-                    legajo: cols[0] ? cols[0].trim() : '',
-                    nombre: cols[1] ? cols[1].trim() : '',
-                    ingreso: cols[2] ? cols[2].trim() : '',
-                    finPp: cols[3] ? cols[3].trim() : '',
-                    sector: cols[4] ? cols[4].trim() : '',
-                    tarea: cols[5] ? cols[5].trim() : '',
-                    convenio: cols[6] ? cols[6].trim() : '',
-                    horario: cols[7] ? cols[7].trim() : '',
-                    conocimientos: cols[8] ? cols[8].trim() : '-'
-                };
-            }).filter(item => item.legajo !== '');
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
-            bajasParsed = parseBajasText(rawBajasData);
-            renderTable(bajasParsed);
-            populateSectorFilter(bajasParsed);
-            renderTaskSummary(bajasParsed);
-            document.getElementById('totalBajasCount').textContent = bajasParsed.length;
+            fetchBajasCSV();
         });
+
+        async function fetchBajasCSV() {
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        // Normalizamos la estructura de los objetos devueltos por PapaParse
+                        bajasParsed = results.data.map(row => ({
+                            legajo: row['LEGAJO'] || row['Legajo'] || '',
+                            nombre: row['APELLIDO Y NOMBRE'] || row['Apellido y Nombre'] || row['NOMBRE'] || '',
+                            ingreso: row['FECHA INGRESO'] || row['Fecha Ingreso'] || '',
+                            finPp: row['FIN PP'] || row['Fin PP'] || '',
+                            sector: row['SECTOR'] || row['Sector'] || '',
+                            tarea: row['TAREA'] || row['Tarea'] || '',
+                            convenio: row['CONVENIO'] || row['Convenio'] || '',
+                            horario: row['HORARIO'] || row['Horario'] || '',
+                            conocimientos: row['CONOCIMIENTOS ADICIONALES'] || row['Conocimientos Adicionales'] || '-'
+                        })).filter(item => item.legajo.trim() !== '');
+
+                        renderTable(bajasParsed);
+                        populateSectorFilter(bajasParsed);
+                        renderTaskSummary(bajasParsed);
+                        document.getElementById('totalBajasCount').textContent = bajasParsed.length;
+                    }
+                });
+            } catch (error) {
+                console.error("Error al obtener el CSV de Google Sheets:", error);
+                document.getElementById('tableBody').innerHTML = `<tr><td colspan="9" style="color:red;">Error al cargar la información desde Google Sheets. Verifique la URL o la conexión.</td></tr>`;
+            }
+        }
 
         function renderTable(data) {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9">No se encontraron registros.</td></tr>`;
+                return;
+            }
 
             data.forEach(row => {
                 const tr = document.createElement('tr');
@@ -343,7 +349,7 @@
                     <td>${row.tarea}</td>
                     <td>${row.convenio}</td>
                     <td>${row.horario}</td>
-                    <td>${row.conocimientos}</td>
+                    <td>${row.conocimientos || '-'}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -351,7 +357,10 @@
 
         function populateSectorFilter(data) {
             const select = document.getElementById('sectorFilter');
-            const sectores = new Set(data.map(item => item.sector));
+            // Mantiene la primera opción "Todos los sectores"
+            select.innerHTML = '<option value="ALL">Todos los sectores</option>';
+
+            const sectores = new Set(data.map(item => item.sector).filter(s => s));
 
             sectores.forEach(sec => {
                 const option = document.createElement('option');
@@ -368,7 +377,7 @@
 
             const taskCounts = {};
             data.forEach(item => {
-                const tarea = item.tarea || 'Sin Especificar';
+                const tarea = item.tarea.trim() || 'Sin Especificar';
                 taskCounts[tarea] = (taskCounts[tarea] || 0) + 1;
             });
 
