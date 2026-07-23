@@ -3,309 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bajas de Personal - Sede Moreno</title>
-    <!-- PapaParse CDN para procesar el CSV publicado desde Google Sheets -->
+    <title>Nómina Julio - Dotación Moreno</title>
+    <!-- PapaParse CDN para procesar CSV de forma rápida y confiable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
-        :root {
-            --primary: #0056b3;
-            --bg: #f4f6f9;
-            --card-bg: #ffffff;
-            --text: #333333;
-            --border: #e0e0e0;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .header h1 {
-            color: #1a237e;
-            margin: 5px 0;
-            font-size: 26px;
-        }
-
-        .header p {
-            color: #666;
-            margin: 0 0 15px 0;
-            font-style: italic;
-        }
-
-        .navigation-links {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .btn-nav {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background-color: #ffffff;
-            color: #333;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: all 0.2s ease;
-        }
-
-        .btn-nav:hover {
-            background-color: #eef4ff;
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
-            max-width: 1200px;
-            margin: 0 auto 20px auto;
-        }
-
-        .metric-card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border: 1px solid var(--border);
-        }
-
-        .metric-card h4 {
-            margin: 0 0 8px 0;
-            font-size: 12px;
-            color: #555;
-            text-transform: uppercase;
-        }
-
-        .metric-card .value {
-            font-size: 22px;
-            font-weight: bold;
-            color: #d9534f;
-        }
-
-        /* Sección de Bajas por Tarea */
-        .task-summary-container {
-            max-width: 1200px;
-            margin: 0 auto 25px auto;
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 18px 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border: 1px solid var(--border);
-        }
-
-        .task-summary-container h3 {
-            margin: 0 0 12px 0;
-            font-size: 14px;
-            color: #1a237e;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .task-tags-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .task-tag {
-            background-color: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #334155;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .task-tag .count {
-            background-color: #d9534f;
-            color: #ffffff;
-            font-weight: bold;
-            font-size: 12px;
-            padding: 2px 8px;
-            border-radius: 12px;
-        }
-
-        .table-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .filter-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .filter-group label {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        select, input[type="text"] {
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            font-size: 14px;
-            background-color: #fff;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-            font-size: 13px;
-        }
-
-        th {
+            font-family: Arial, sans-serif;
+            margin: 20px;
             background-color: #f8f9fa;
-            font-weight: 600;
-            color: #444;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            color: #333;
         }
-
+        h1, h2, h3 {
+            color: #1a365d;
+        }
+        .stats-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        .table-summary {
+            border-collapse: collapse;
+            width: 300px;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .table-main {
+            border-collapse: collapse;
+            width: 100%;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #cbd5e0;
+            padding: 8px 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+        th {
+            background-color: #2b6cb0;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f7fafc;
+        }
         tr:hover {
-            background-color: #f1f5f9;
+            background-color: #edf2f7;
         }
-
+        .text-right {
+            text-align: right;
+        }
+        .total-row {
+            font-weight: bold;
+            background-color: #e2e8f0 !important;
+        }
+        
+        /* Estilos del Buscador */
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 14px;
+            font-size: 15px;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+        .search-input:focus {
+            border-color: #2b6cb0;
+        }
+        .counter {
+            font-size: 14px;
+            color: #4a5568;
+            font-weight: bold;
+        }
         .loading {
             font-style: italic;
             color: #718096;
-            padding: 10px 0;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>REGISTRO DE BAJAS – SEDE MORENO</h1>
-        <p>Listado de bajas y conocimientos adicionales</p>
-        
-        <div class="navigation-links">
-            <a href="index.html" class="btn-nav">📌 Dotación Pendiente</a>
-            <a href="nomina-julio.html" class="btn-nav">📊 Nómina Julio</a>
-        </div>
-    </div>
+    <h1>Dotación Moreno - Nómina Completa Julio</h1>
+    <p><strong id="totalHeader">Total Registros:</strong> <span id="totalLegajosCount">Cargando...</span> | <strong>Sucursal:</strong> MO</p>
 
-    <!-- Indicador General -->
-    <div class="metrics-grid">
-        <div class="metric-card">
-            <h4>🔻 Total Bajas Registradas</h4>
-            <div class="value" id="totalBajasCount">...</div>
-        </div>
-    </div>
-
-    <!-- Indicador Detallado: Bajas por Tarea -->
-    <div class="task-summary-container">
-        <h3>📌 Cantidad de Bajas por Tarea</h3>
-        <div class="task-tags-grid" id="taskSummaryGrid">
-            <span class="loading">Cargando tareas...</span>
-        </div>
-    </div>
-
-    <!-- Tabla con Filtros -->
-    <div class="table-container">
-        <div class="filter-bar">
-            <div class="filter-group">
-                <label for="sectorFilter">🔍 Sector:</label>
-                <select id="sectorFilter" onchange="filterTable()">
-                    <option value="ALL">Todos los sectores</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="searchInput">🔎 Buscar:</label>
-                <input type="text" id="searchInput" placeholder="Nombre o Legajo..." onkeyup="filterTable()">
-            </div>
-        </div>
-
-        <div class="table-wrapper">
-            <table id="dataTable">
+    <h2>1. Resumen Estadístico</h2>
+    
+    <div class="stats-container">
+        <!-- Resumen Sector -->
+        <div>
+            <h3>Resumen por Sector</h3>
+            <table class="table-summary">
                 <thead>
-                    <tr>
-                        <th>LEGAJO</th>
-                        <th>APELLIDO Y NOMBRE</th>
-                        <th>FECHA INGRESO</th>
-                        <th>FIN PP</th>
-                        <th>SECTOR</th>
-                        <th>TAREA</th>
-                        <th>CONVENIO</th>
-                        <th>HORARIO</th>
-                        <th>CONOCIMIENTOS ADICIONALES</th>
-                    </tr>
+                    <tr><th>Sector</th><th class="text-right">Cantidad</th><th class="text-right">%</th></tr>
                 </thead>
-                <tbody id="tableBody">
-                    <tr><td colspan="9" class="loading">Cargando datos desde Google Sheets...</td></tr>
+                <tbody id="summarySector">
+                    <tr><td colspan="3" class="loading">Cargando datos...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Resumen Convenio -->
+        <div>
+            <h3>Resumen por Convenio</h3>
+            <table class="table-summary">
+                <thead>
+                    <tr><th>Convenio</th><th class="text-right">Cantidad</th><th class="text-right">%</th></tr>
+                </thead>
+                <tbody id="summaryConvenio">
+                    <tr><td colspan="3" class="loading">Cargando datos...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Resumen Horario -->
+        <div>
+            <h3>Resumen por Horario</h3>
+            <table class="table-summary">
+                <thead>
+                    <tr><th>Horario</th><th class="text-right">Cantidad</th><th class="text-right">%</th></tr>
+                </thead>
+                <tbody id="summaryHorario">
+                    <tr><td colspan="3" class="loading">Cargando datos...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
+    <h2>2. Detalle Completo de Personal</h2>
+
+    <!-- Buscador Integrado -->
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Buscar por legajo, nombre, sector, tarea..." onkeyup="filtrarTabla()">
+        <span id="recordCount" class="counter">Cargando...</span>
+    </div>
+
+    <table class="table-main" id="tablaLegajos">
+        <thead>
+            <tr>
+                <th>Legajo</th>
+                <th>Apellido y Nombre</th>
+                <th>Fecha Ingreso</th>
+                <th>Sector</th>
+                <th>Tarea</th>
+                <th>Convenio</th>
+                <th>Horario</th>
+                <th>Grado</th>
+                <th>Sucursal</th>
+            </tr>
+        </thead>
+        <tbody id="tablaCuerpo">
+            <tr><td colspan="9" class="loading">Cargando legajos desde Google Sheets...</td></tr>
+        </tbody>
+    </table>
+
     <script>
-        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSdBqkbpAzCq6Lw_jPa_Up8HWXE9_ZfGehz55oNvoT-WVwrD_J8Yqw1_OotD55NAw/pub?gid=1076248572&single=true&output=csv';
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSdBqkbpAzCq6Lw_jPa_Up8HWXE9_ZfGehz55oNvoT-WVwrD_J8Yqw1_OotD55NAw/pub?gid=2110390412&single=true&output=csv';
 
-        let bajasParsed = [];
-
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchBajasCSV();
+        document.addEventListener("DOMContentLoaded", () => {
+            cargarDatosCSV();
         });
 
-        // Función auxiliar para buscar valores en las columnas sin importar variaciones de nombre
-        function getFieldValue(row, possibleNames) {
-            for (const name of possibleNames) {
-                // Busca coincidencia exacta o ignorando mayúsculas/espacios
-                const foundKey = Object.keys(row).find(key => key.trim().toLowerCase() === name.trim().toLowerCase());
-                if (foundKey && row[foundKey] !== undefined && row[foundKey] !== null) {
-                    return row[foundKey].toString().trim();
-                }
-            }
-            return '';
-        }
-
-        async function fetchBajasCSV() {
+        async function cargarDatosCSV() {
             try {
                 const response = await fetch(CSV_URL);
                 const csvText = await response.text();
@@ -314,104 +181,111 @@
                     header: true,
                     skipEmptyLines: true,
                     complete: function(results) {
-                        bajasParsed = results.data.map(row => ({
-                            legajo: getFieldValue(row, ['LEGAJO', 'Legajo']),
-                            nombre: getFieldValue(row, ['APELLIDO Y NOMBRE', 'Apellido y Nombre', 'NOMBRE', 'Nombre']),
-                            ingreso: getFieldValue(row, ['FECHA INGRESO', 'FECHA DE INGRESO', 'Fecha Ingreso', 'Fecha de Ingreso', 'INGRESO', 'Ingreso']),
-                            finPp: getFieldValue(row, ['FIN PP', 'Fin PP', 'FIN P.P.', 'Fin P.P.']),
-                            sector: getFieldValue(row, ['SECTOR', 'Sector']),
-                            tarea: getFieldValue(row, ['TAREA', 'Tarea']),
-                            convenio: getFieldValue(row, ['CONVENIO', 'Convenio']),
-                            horario: getFieldValue(row, ['HORARIO', 'Horario']),
-                            conocimientos: getFieldValue(row, ['CONOCIMIENTOS ADICIONALES', 'Conocimientos Adicionales', 'CONOCIMIENTOS']) || '-'
-                        })).filter(item => item.legajo !== '' || item.nombre !== '');
-
-                        renderTable(bajasParsed);
-                        populateSectorFilter(bajasParsed);
-                        renderTaskSummary(bajasParsed);
-                        document.getElementById('totalBajasCount').textContent = bajasParsed.length;
+                        const data = results.data;
+                        renderizarTabla(data);
+                        generarResúmenes(data);
                     }
                 });
             } catch (error) {
-                console.error("Error al obtener el CSV de Google Sheets:", error);
-                document.getElementById('tableBody').innerHTML = `<tr><td colspan="9" style="color:red;">Error al cargar la información desde Google Sheets. Verifique la URL o la conexión.</td></tr>`;
+                console.error("Error al cargar el CSV:", error);
+                document.getElementById('tablaCuerpo').innerHTML = `<tr><td colspan="9" style="color:red;">Error al cargar los datos desde Google Sheets. Verifique el enlace o la conexión.</td></tr>`;
             }
         }
 
-        function renderTable(data) {
-            const tbody = document.getElementById('tableBody');
+        function renderizarTabla(data) {
+            const tbody = document.getElementById('tablaCuerpo');
             tbody.innerHTML = '';
-
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9">No se encontraron registros.</td></tr>`;
-                return;
-            }
 
             data.forEach(row => {
                 const tr = document.createElement('tr');
-                tr.setAttribute('data-sector', row.sector);
-
                 tr.innerHTML = `
-                    <td><strong>${row.legajo}</strong></td>
-                    <td>${row.nombre}</td>
-                    <td>${row.ingreso || '-'}</td>
-                    <td>${row.finPp || '-'}</td>
-                    <td>${row.sector}</td>
-                    <td>${row.tarea}</td>
-                    <td>${row.convenio}</td>
-                    <td>${row.horario}</td>
-                    <td>${row.conocimientos || '-'}</td>
+                    <td>${row['Legajo'] || ''}</td>
+                    <td>${row['Apellido y Nombre'] || row['Nombre'] || ''}</td>
+                    <td>${row['Fecha Ingreso'] || ''}</td>
+                    <td>${row['Sector'] || ''}</td>
+                    <td>${row['Tarea'] || ''}</td>
+                    <td>${row['Convenio'] || ''}</td>
+                    <td>${row['Horario'] || ''}</td>
+                    <td>${row['Grado'] || ''}</td>
+                    <td>${row['Sucursal'] || 'MO'}</td>
                 `;
                 tbody.appendChild(tr);
             });
+
+            const total = data.length;
+            document.getElementById('totalLegajosCount').textContent = `${total} Legajos`;
+            document.getElementById('recordCount').textContent = `Mostrando ${total} de ${total} legajos`;
         }
 
-        function populateSectorFilter(data) {
-            const select = document.getElementById('sectorFilter');
-            select.innerHTML = '<option value="ALL">Todos los sectores</option>';
+        function generarResúmenes(data) {
+            const total = data.length;
 
-            const sectores = new Set(data.map(item => item.sector).filter(s => s));
+            const contarPorColumna = (columna) => {
+                const conteo = {};
+                data.forEach(row => {
+                    const valor = (row[columna] || 'SIN ESPECIFICAR').trim();
+                    conteo[valor] = (conteo[valor] || 0) + 1;
+                });
+                return conteo;
+            };
 
-            sectores.forEach(sec => {
-                const option = document.createElement('option');
-                option.value = sec;
-                option.textContent = sec;
-                select.appendChild(option);
-            });
+            renderizarTablaResumen('summarySector', contarPorColumna('Sector'), total);
+            renderizarTablaResumen('summaryConvenio', contarPorColumna('Convenio'), total);
+            renderizarTablaResumen('summaryHorario', contarPorColumna('Horario'), total);
         }
 
-        function renderTaskSummary(data) {
-            const container = document.getElementById('taskSummaryGrid');
+        function renderizarTablaResumen(containerId, conteoObj, total) {
+            const container = document.getElementById(containerId);
             container.innerHTML = '';
 
-            const taskCounts = {};
-            data.forEach(item => {
-                const tarea = item.tarea ? item.tarea.trim() : 'Sin Especificar';
-                taskCounts[tarea] = (taskCounts[tarea] || 0) + 1;
+            // Ordenar de mayor a menor cantidad
+            const entradasOrdenadas = Object.entries(conteoObj).sort((a, b) => b[1] - a[1]);
+
+            entradasOrdenadas.forEach(([clave, cantidad]) => {
+                const porcentaje = ((cantidad / total) * 100).toFixed(1);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${clave}</td>
+                    <td class="text-right">${cantidad}</td>
+                    <td class="text-right">${porcentaje}%</td>
+                `;
+                container.appendChild(tr);
             });
 
-            Object.entries(taskCounts).forEach(([tarea, cantidad]) => {
-                const tag = document.createElement('div');
-                tag.className = 'task-tag';
-                tag.innerHTML = `<span>${tarea}</span> <span class="count">${cantidad}</span>`;
-                container.appendChild(tag);
-            });
+            // Fila de Total
+            const totalRow = document.createElement('tr');
+            totalRow.className = 'total-row';
+            totalRow.innerHTML = `
+                <td>TOTAL</td>
+                <td class="text-right">${total}</td>
+                <td class="text-right">100.0%</td>
+            `;
+            container.appendChild(totalRow);
         }
 
-        function filterTable() {
-            const sectorValue = document.getElementById('sectorFilter').value;
-            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+        function filtrarTabla() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('tablaLegajos');
+            const tr = table.getElementsByTagName('tr');
+            const counter = document.getElementById('recordCount');
+            
+            let visibleCount = 0;
+            const totalCount = tr.length - 1; // Descontar encabezado
 
-            const filtered = bajasParsed.filter(item => {
-                const matchesSector = sectorValue === 'ALL' || item.sector === sectorValue;
-                const matchesSearch = item.nombre.toLowerCase().includes(searchValue) || item.legajo.includes(searchValue);
-                return matchesSector && matchesSearch;
-            });
+            for (let i = 1; i < tr.length; i++) {
+                const rowText = tr[i].textContent || tr[i].innerText;
+                if (rowText.toLowerCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                    visibleCount++;
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
 
-            renderTable(filtered);
-            renderTaskSummary(filtered);
-            document.getElementById('totalBajasCount').textContent = filtered.length;
+            counter.textContent = `Mostrando ${visibleCount} de ${totalCount} legajos`;
         }
     </script>
+
 </body>
 </html>
