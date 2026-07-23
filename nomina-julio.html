@@ -39,6 +39,19 @@
             </table>
         </div>
 
+        <!-- Resumen Tarea -->
+        <div>
+            <h3>Resumen por Tarea</h3>
+            <table class="table-summary">
+                <thead>
+                    <tr><th>Tarea</th><th class="text-right">Cantidad</th><th class="text-right">%</th></tr>
+                </thead>
+                <tbody id="summaryTarea">
+                    <tr><td colspan="3" class="loading">Cargando datos...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
         <!-- Resumen Convenio -->
         <div>
             <h3>Resumen por Convenio</h3>
@@ -47,19 +60,6 @@
                     <tr><th>Convenio</th><th class="text-right">Cantidad</th><th class="text-right">%</th></tr>
                 </thead>
                 <tbody id="summaryConvenio">
-                    <tr><td colspan="3" class="loading">Cargando datos...</td></tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Resumen Horario -->
-        <div>
-            <h3>Resumen por Horario</h3>
-            <table class="table-summary">
-                <thead>
-                    <tr><th>Horario</th><th class="text-right">Cantidad</th><th class="text-right">%</th></tr>
-                </thead>
-                <tbody id="summaryHorario">
                     <tr><td colspan="3" class="loading">Cargando datos...</td></tr>
                 </tbody>
             </table>
@@ -158,8 +158,8 @@
             };
 
             renderizarTablaResumen('summarySector', contarPorColumna('Sector'), total);
+            renderizarTablaResumen('summaryTarea', contarPorColumna('Tarea'), total);
             renderizarTablaResumen('summaryConvenio', contarPorColumna('Convenio'), total);
-            renderizarTablaResumen('summaryHorario', contarPorColumna('Horario'), total);
         }
 
         function renderizarTablaResumen(containerId, conteoObj, total) {
