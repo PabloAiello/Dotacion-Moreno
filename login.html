@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Dotación Moreno</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            padding: 35px 30px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+        }
+
+        .login-card h2 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            <img src="https://raw.githubusercontent.com/PabloAiello/Dotacion-Moreno/main/logo.jpg" alt="Logo Nini" class="header-logo">
+            <h2>Acceso Restringido</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Ingresa tus credenciales para continuar</p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Usuario</label>
+                    <input type="text" id="username" placeholder="Ingresa tu usuario" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" placeholder="Ingresa tu contraseña" required>
+                </div>
+                <button type="submit" class="btn-submit">Ingresar</button>
+                <div id="errorMsg" class="error-message">Usuario o contraseña incorrectos.</div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Configura aquí tu usuario y contraseña
+        const USER_VALIDO = "admin";
+        const PASS_VALIDO = "nini2026";
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            if (user === USER_VALIDO && pass === PASS_VALIDO) {
+                // Guarda la sesión en el navegador
+                sessionStorage.setItem('authenticated', 'true');
+                // Redirige a la página principal
+                window.location.href = 'index.html';
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
