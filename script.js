@@ -1,28 +1,5 @@
-// ==========================================
-// 1. MAPA DE FOTOS DE GOOGLE DRIVE (Legajo -> ID de Drive)
-// ==========================================
-const FOTOS_DRIVE = {
-  "4990": "1TY9SSp1t0KtHIpc1nhgMEYzctLa8huJQ",
-  "4996": "1kzyFGevL6nmCpQOJYOCCSGv6trAh_SWV",
-  "4998": "1eMhQ5U3Rudq-nJIxdE4MVtwliQ8mSDGt",
-  "4999": "1qwC8kBqw1pI884gcHsBwAV9puBk1y95W",
-  "5001": "1Vk4zkrDGKrjASqSgWGOxGdWVLoHifStV"
-  // Agrega aquí los demás legajos con su respectivo ID de imagen
-};
-
-function obtenerUrlFoto(legajo) {
-  if (!legajo) return '';
-  const legajoLimpio = String(legajo).trim();
-  const driveId = FOTOS_DRIVE[legajoLimpio];
-  if (driveId) {
-    return `https://lh3.googleusercontent.com/d/${driveId}`;
-  }
-  return '';
-}
-
-// ==========================================
-// 2. CARGA Y PARSEO DE CSV
-// ==========================================
+// REEMPLAZA ESTA URL por la URL de tu Google Sheet publicado como CSV
+// Archivo -> Compartir -> Publicar en la web -> Formato: CSV (.csv)
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-TU_LINK_AQUI/pub?output=csv";
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -36,53 +13,48 @@ async function cargarDatosDesdeDrive() {
         const filas = parsearCSV(textData);
         
         renderizarTabla(filas);
+        poblarFiltroSectores(filas);
     } catch (error) {
         console.error("Error al cargar la planilla desde Google Drive:", error);
     }
 }
 
+// Convierte el CSV/TSV recibido en un array de objetos limpios
 function parsearCSV(text) {
     const lineas = text.trim().split('\n');
     const resultado = [];
 
-    // Omitir cabeceras
-    const inicio = lineas[0].toLowerCase().includes("legajo") ? 1 : 0;
+    // Omitir cabecera si la primera línea contiene encabezados
+    const inicio = lineas[0].toLowerCase().includes("sector") ? 1 : 0;
 
     for (let i = inicio; i < lineas.length; i++) {
         if (!lineas[i].trim()) continue;
 
-        // Separar por tabulación o comas
+        // Soporta delimitador por TAB (\t) o COMAS (,)
         const col = lineas[i].includes('\t') ? lineas[i].split('\t') : lineas[i].split(',');
 
-        const legajo = (col[0] || '').trim();
-        const nombre = (col[1] || '').trim();
-        const fechaIngreso = (col[2] || '').trim(); // Verifica que la fecha esté en la columna 3 (índice 2)
-        const sector = (col[3] || '').trim();
-        const tarea = (col[4] || '').trim();
-        const convenio = (col[5] || '').trim();
-        const horario = (col[6] || '').trim();
-        const grado = (col[7] || '').trim();
+        const sector = (col[0] || '').trim();
+        const puesto = (col[1] || '').trim();
 
-        if (!legajo && !nombre) continue;
+        if (!sector || !puesto) continue;
 
         resultado.push({
-            legajo: legajo,
-            nombre: nombre,
-            fechaIngreso: fechaIngreso,
             sector: sector,
-            tarea: tarea,
-            convenio: convenio,
-            horario: horario,
-            grado: grado
+            puesto: puesto,
+            tenemos: parseInt(col[2]) || 0,
+            presupuestado: parseInt(col[3]) || 0,
+            bajas: parseInt(col[4]) || 0,
+            medico: parseInt(col[5]) || 0,
+            aptos: parseInt(col[6]) || 0,
+            falta: parseInt(col[7]) || 0,
+            prioridad: (col[8] || 'Baja').trim()
         });
     }
 
     return resultado;
 }
 
-// ==========================================
-// 3. RENDERIZADO DE TABLA (FECHA + FOTO)
-// ==========================================
+// Renderiza todas las filas procesadas en el cuerpo de la tabla
 function renderizarTabla(datos) {
     const tbody = document.getElementById('tableBody');
     if (!tbody) return;
@@ -91,29 +63,62 @@ function renderizarTabla(datos) {
 
     datos.forEach(row => {
         const tr = document.createElement('tr');
+        tr.setAttribute('data-sector', row.sector);
 
-        const urlFoto = obtenerUrlFoto(row.legajo);
-        
-        // Etiqueta HTML para la imagen (con tamaño fijo y bordes redondeados)
-        const htmlFoto = urlFoto 
-            ? `<img src="${urlFoto}" alt="Foto ${row.legajo}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; margin-right: 8px;" loading="lazy">`
-            : `<div style="width: 36px; height: 36px; border-radius: 50%; background-color: #ccc; margin-right: 8px;"></div>`;
+        let badgeClass = 'badge-baja';
+        const prio = row.prioridad.toLowerCase();
+        if (prio === 'alta') badgeClass = 'badge-alta';
+        if (prio === 'media') badgeClass = 'badge-media';
 
         tr.innerHTML = `
-            <td>
-                <div style="display: flex; align-items: center;">
-                    ${htmlFoto}
-                    <span>${row.legajo}</span>
-                </div>
-            </td>
-            <td><strong>${row.nombre}</strong></td>
-            <td>${row.fechaIngreso || '-'}</td>
             <td>${row.sector}</td>
-            <td>${row.tarea}</td>
-            <td>${row.convenio}</td>
-            <td>${row.horario}</td>
-            <td>${row.grado}</td>
+            <td>${row.puesto}</td>
+            <td>${row.tenemos}</td>
+            <td>${row.presupuestado}</td>
+            <td>${row.bajas}</td>
+            <td>${row.medico}</td>
+            <td>${row.aptos}</td>
+            <td>${row.falta}</td>
+            <td><span class="${badgeClass}">${row.prioridad}</span></td>
         `;
         tbody.appendChild(tr);
+    });
+}
+
+// Genera dinámicamente las opciones del filtro dropdown
+function poblarFiltroSectores(datos) {
+    const select = document.getElementById('sectorFilter');
+    if (!select) return;
+
+    // Guardar opción seleccionada actual
+    const seleccionActual = select.value;
+
+    select.innerHTML = '<option value="ALL">Todos los sectores</option>';
+    const sectores = new Set(datos.map(item => item.sector));
+
+    sectores.forEach(sec => {
+        const option = document.createElement('option');
+        option.value = sec;
+        option.textContent = sec;
+        select.appendChild(option);
+    });
+
+    if (seleccionActual) {
+        select.value = seleccionActual;
+    }
+}
+
+// Función ejecutada por el evento onchange del filtro
+function filterTable() {
+    const filterValue = document.getElementById('sectorFilter').value;
+    const rows = document.querySelectorAll('#dataTable tbody tr');
+
+    rows.forEach(row => {
+        const sector = row.getAttribute('data-sector');
+        if (filterValue === 'ALL' || sector === filterValue) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
     });
 }
