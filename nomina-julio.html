@@ -108,6 +108,7 @@
                 Papa.parse(csvText, {
                     header: true,
                     skipEmptyLines: true,
+                    transformHeader: h => h.trim(),
                     complete: function(results) {
                         const data = results.data;
                         renderizarTabla(data);
@@ -125,11 +126,23 @@
             tbody.innerHTML = '';
 
             data.forEach(row => {
+                // Obtiene todas las claves de la fila para ubicar la 4ª columna (Columna D = Índice 3)
+                const keys = Object.keys(row);
+                const valorColumnaD = keys[3] ? row[keys[3]] : '';
+
+                // Búsqueda flexible: busca por nombres probables o toma la Columna D (posición 3)
+                const fechaIngreso = row['Fecha Ingreso'] 
+                                  || row['Fecha de Ingreso'] 
+                                  || row['FECHA INGRESO'] 
+                                  || row['F. Ingreso'] 
+                                  || valorColumnaD 
+                                  || '';
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${row['Legajo'] || ''}</td>
                     <td>${row['Apellido y Nombre'] || row['Nombre'] || ''}</td>
-                    <td>${row['Fecha Ingreso'] || ''}</td>
+                    <td>${fechaIngreso}</td>
                     <td>${row['Sector'] || ''}</td>
                     <td>${row['Tarea'] || ''}</td>
                     <td>${row['Convenio'] || ''}</td>
