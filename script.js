@@ -1,124 +1,227 @@
-// REEMPLAZA ESTA URL por la URL de tu Google Sheet publicado como CSV
-// Archivo -> Compartir -> Publicar en la web -> Formato: CSV (.csv)
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-TU_LINK_AQUI/pub?output=csv";
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nómina Julio - Dotación Moreno</title>
+    <!-- PapaParse CDN para procesar CSV de forma rápida y confiable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
 
-document.addEventListener('DOMContentLoaded', () => {
-    cargarDatosDesdeDrive();
-});
+    <div class="header">
+        <!-- Logo Nini cargado desde el repositorio -->
+        <img src="https://raw.githubusercontent.com/PabloAiello/Dotacion-Moreno/main/logo.jpg" alt="Logo Nini" class="header-logo">
+        <h1>Dotación Moreno - Nómina Completa Julio</h1>
+        <p><strong id="totalHeader">Total Registros:</strong> <span id="totalLegajosCount">Cargando...</span> | <strong>Sucursal:</strong> MO</p>
 
-async function cargarDatosDesdeDrive() {
-    try {
-        const response = await fetch(CSV_URL);
-        const textData = await response.text();
-        const filas = parsearCSV(textData);
-        
-        renderizarTabla(filas);
-        poblarFiltroSectores(filas);
-    } catch (error) {
-        console.error("Error al cargar la planilla desde Google Drive:", error);
-    }
-}
+        <!-- Botones de navegación -->
+        <div class="navigation-links">
+            <a href="index.html" class="btn-nav">📌 Dotación Pendiente</a>
+            <a href="bajas.html" class="btn-nav">🔻 Registro de Bajas</a>
+        </div>
+    </div>
 
-// Convierte el CSV/TSV recibido en un array de objetos limpios
-function parsearCSV(text) {
-    const lineas = text.trim().split('\n');
-    const resultado = [];
-
-    // Omitir cabecera si la primera línea contiene encabezados
-    const inicio = lineas[0].toLowerCase().includes("sector") ? 1 : 0;
-
-    for (let i = inicio; i < lineas.length; i++) {
-        if (!lineas[i].trim()) continue;
-
-        // Soporta delimitador por TAB (\t) o COMAS (,)
-        const col = lineas[i].includes('\t') ? lineas[i].split('\t') : lineas[i].split(',');
-
-        const sector = (col[0] || '').trim();
-        const puesto = (col[1] || '').trim();
-
-        if (!sector || !puesto) continue;
-
-        resultado.push({
-            sector: sector,
-            puesto: puesto,
-            tenemos: parseInt(col[2]) || 0,
-            presupuestado: parseInt(col[3]) || 0,
-            bajas: parseInt(col[4]) || 0,
-            medico: parseInt(col[5]) || 0,
-            aptos: parseInt(col[6]) || 0,
-            falta: parseInt(col[7]) || 0,
-            prioridad: (col[8] || 'Baja').trim()
-        });
-    }
-
-    return resultado;
-}
-
-// Renderiza todas las filas procesadas en el cuerpo de la tabla
-function renderizarTabla(datos) {
-    const tbody = document.getElementById('tableBody');
-    if (!tbody) return;
+    <h2>1. Resumen Estadístico</h2>
     
-    tbody.innerHTML = '';
+    <div class="stats-container">
+        <!-- Resumen Sector -->
+        <div>
+            <h3>Resumen por Sector</h3>
+            <table class="table-summary">
+                <thead>
+                    <tr><th>Sector</th><th class="text-right">Cantidad</th><th class="text-right">%</th></tr>
+                </thead>
+                <tbody id="summarySector">
+                    <tr><td colspan="3" class="loading">Cargando datos...</td></tr>
+                </tbody>
+            </table>
+        </div>
 
-    datos.forEach(row => {
-        const tr = document.createElement('tr');
-        tr.setAttribute('data-sector', row.sector);
+        <!-- Resumen Tarea -->
+        <div>
+            <h3>Resumen por Tarea</h3>
+            <table class="table-summary">
+                <thead>
+                    <tr><th>Tarea</th><th class="text-right">Cantidad</th><th class="text-right">%</th></tr>
+                </thead>
+                <tbody id="summaryTarea">
+                    <tr><td colspan="3" class="loading">Cargando datos...</td></tr>
+                </tbody>
+            </table>
+        </div>
 
-        let badgeClass = 'badge-baja';
-        const prio = row.prioridad.toLowerCase();
-        if (prio === 'alta') badgeClass = 'badge-alta';
-        if (prio === 'media') badgeClass = 'badge-media';
+        <!-- Resumen Convenio -->
+        <div>
+            <h3>Resumen por Convenio</h3>
+            <table class="table-summary">
+                <thead>
+                    <tr><th>Convenio</th><th class="text-right">Cantidad</th><th class="text-right">%</th></tr>
+                </thead>
+                <tbody id="summaryConvenio">
+                    <tr><td colspan="3" class="loading">Cargando datos...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-        tr.innerHTML = `
-            <td>${row.sector}</td>
-            <td>${row.puesto}</td>
-            <td>${row.tenemos}</td>
-            <td>${row.presupuestado}</td>
-            <td>${row.bajas}</td>
-            <td>${row.medico}</td>
-            <td>${row.aptos}</td>
-            <td>${row.falta}</td>
-            <td><span class="${badgeClass}">${row.prioridad}</span></td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
+    <h2>2. Detalle Completo de Personal</h2>
 
-// Genera dinámicamente las opciones del filtro dropdown
-function poblarFiltroSectores(datos) {
-    const select = document.getElementById('sectorFilter');
-    if (!select) return;
+    <!-- Buscador Integrado -->
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Buscar por legajo, nombre, sector, tarea..." onkeyup="filtrarTabla()">
+        <span id="recordCount" class="counter">Cargando...</span>
+    </div>
 
-    // Guardar opción seleccionada actual
-    const seleccionActual = select.value;
+    <table class="table-main" id="tablaLegajos">
+        <thead>
+            <tr>
+                <th>Legajo</th>
+                <th>Apellido y Nombre</th>
+                <th>Fecha Ingreso</th>
+                <th>Sector</th>
+                <th>Tarea</th>
+                <th>Convenio</th>
+                <th>Horario</th>
+                <th>Grado</th>
+                <th>Sucursal</th>
+            </tr>
+        </thead>
+        <tbody id="tablaCuerpo">
+            <tr><td colspan="9" class="loading">Cargando legajos desde Google Sheets...</td></tr>
+        </tbody>
+    </table>
 
-    select.innerHTML = '<option value="ALL">Todos los sectores</option>';
-    const sectores = new Set(datos.map(item => item.sector));
+    <script>
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSdBqkbpAzCq6Lw_jPa_Up8HWXE9_ZfGehz55oNvoT-WVwrD_J8Yqw1_OotD55NAw/pub?gid=2110390412&single=true&output=csv';
 
-    sectores.forEach(sec => {
-        const option = document.createElement('option');
-        option.value = sec;
-        option.textContent = sec;
-        select.appendChild(option);
-    });
+        document.addEventListener("DOMContentLoaded", () => {
+            cargarDatosCSV();
+        });
 
-    if (seleccionActual) {
-        select.value = seleccionActual;
-    }
-}
+        async function cargarDatosCSV() {
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
 
-// Función ejecutada por el evento onchange del filtro
-function filterTable() {
-    const filterValue = document.getElementById('sectorFilter').value;
-    const rows = document.querySelectorAll('#dataTable tbody tr');
-
-    rows.forEach(row => {
-        const sector = row.getAttribute('data-sector');
-        if (filterValue === 'ALL' || sector === filterValue) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    transformHeader: header => header.trim(), // Elimina espacios invisibles al inicio o final
+                    complete: function(results) {
+                        const data = results.data;
+                        renderizarTabla(data);
+                        generarResúmenes(data);
+                    }
+                });
+            } catch (error) {
+                console.error("Error al cargar el CSV:", error);
+                document.getElementById('tablaCuerpo').innerHTML = `<tr><td colspan="9" style="color:red;">Error al cargar los datos desde Google Sheets. Verifique el enlace o la conexión.</td></tr>`;
+            }
         }
-    });
-}
+
+        function renderizarTabla(data) {
+            const tbody = document.getElementById('tablaCuerpo');
+            tbody.innerHTML = '';
+
+            data.forEach(row => {
+                // Evalúa distintas variaciones posibles de la columna 'Fecha Ingreso'
+                const fechaIngreso = row['Fecha Ingreso'] 
+                                  || row['Fecha de Ingreso'] 
+                                  || row['Ingreso'] 
+                                  || row['FECHA INGRESO'] 
+                                  || row['FECHA DE INGRESO'] 
+                                  || row['F. Ingreso'] 
+                                  || '';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row['Legajo'] || ''}</td>
+                    <td>${row['Apellido y Nombre'] || row['Nombre'] || ''}</td>
+                    <td>${fechaIngreso}</td>
+                    <td>${row['Sector'] || ''}</td>
+                    <td>${row['Tarea'] || ''}</td>
+                    <td>${row['Convenio'] || ''}</td>
+                    <td>${row['Horario'] || ''}</td>
+                    <td>${row['Grado'] || ''}</td>
+                    <td>${row['Sucursal'] || 'MO'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            const total = data.length;
+            document.getElementById('totalLegajosCount').textContent = `${total} Legajos`;
+            document.getElementById('recordCount').textContent = `Mostrando ${total} de ${total} legajos`;
+        }
+
+        function generarResúmenes(data) {
+            const total = data.length;
+
+            const contarPorColumna = (columna) => {
+                const conteo = {};
+                data.forEach(row => {
+                    const valor = (row[columna] || 'SIN ESPECIFICAR').trim();
+                    conteo[valor] = (conteo[valor] || 0) + 1;
+                });
+                return conteo;
+            };
+
+            renderizarTablaResumen('summarySector', contarPorColumna('Sector'), total);
+            renderizarTablaResumen('summaryTarea', contarPorColumna('Tarea'), total);
+            renderizarTablaResumen('summaryConvenio', contarPorColumna('Convenio'), total);
+        }
+
+        function renderizarTablaResumen(containerId, conteoObj, total) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            const entradasOrdenadas = Object.entries(conteoObj).sort((a, b) => b[1] - a[1]);
+
+            entradasOrdenadas.forEach(([clave, cantidad]) => {
+                const porcentaje = ((cantidad / total) * 100).toFixed(1);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${clave}</td>
+                    <td class="text-right">${cantidad}</td>
+                    <td class="text-right">${porcentaje}%</td>
+                `;
+                container.appendChild(tr);
+            });
+
+            const totalRow = document.createElement('tr');
+            totalRow.className = 'total-row';
+            totalRow.innerHTML = `
+                <td>TOTAL</td>
+                <td class="text-right">${total}</td>
+                <td class="text-right">100.0%</td>
+            `;
+            container.appendChild(totalRow);
+        }
+
+        function filtrarTabla() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('tablaLegajos');
+            const tr = table.getElementsByTagName('tr');
+            const counter = document.getElementById('recordCount');
+            
+            let visibleCount = 0;
+            const totalCount = tr.length - 1;
+
+            for (let i = 1; i < tr.length; i++) {
+                const rowText = tr[i].textContent || tr[i].innerText;
+                if (rowText.toLowerCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                    visibleCount++;
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+
+            counter.textContent = `Mostrando ${visibleCount} de ${totalCount} legajos`;
+        }
+    </script>
+
+</body>
+</html>
