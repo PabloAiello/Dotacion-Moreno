@@ -7,6 +7,18 @@
     <!-- PapaParse CDN para procesar CSV de forma rápida y confiable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Estilos básicos para las miniaturas de las fotos en la tabla */
+        .foto-legajo-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #ccc;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body>
 
@@ -77,6 +89,7 @@
     <table class="table-main" id="tablaLegajos">
         <thead>
             <tr>
+                <th>Foto</th>
                 <th>Legajo</th>
                 <th>Apellido y Nombre</th>
                 <th>Fecha Ingreso</th>
@@ -89,7 +102,7 @@
             </tr>
         </thead>
         <tbody id="tablaCuerpo">
-            <tr><td colspan="9" class="loading">Cargando legajos desde Google Sheets...</td></tr>
+            <tr><td colspan="10" class="loading">Cargando legajos desde Google Sheets...</td></tr>
         </tbody>
     </table>
 
@@ -108,7 +121,7 @@
                 Papa.parse(csvText, {
                     header: true,
                     skipEmptyLines: true,
-                    transformHeader: header => header.trim(), // Elimina espacios invisibles al inicio o final
+                    transformHeader: header => header.trim(),
                     complete: function(results) {
                         const data = results.data;
                         renderizarTabla(data);
@@ -117,7 +130,7 @@
                 });
             } catch (error) {
                 console.error("Error al cargar el CSV:", error);
-                document.getElementById('tablaCuerpo').innerHTML = `<tr><td colspan="9" style="color:red;">Error al cargar los datos desde Google Sheets. Verifique el enlace o la conexión.</td></tr>`;
+                document.getElementById('tablaCuerpo').innerHTML = `<tr><td colspan="10" style="color:red;">Error al cargar los datos desde Google Sheets. Verifique el enlace o la conexión.</td></tr>`;
             }
         }
 
@@ -126,7 +139,15 @@
             tbody.innerHTML = '';
 
             data.forEach(row => {
-                // Evalúa distintas variaciones posibles de la columna 'Fecha Ingreso'
+                const legajoNum = row['Legajo'] || '';
+                
+                // Si la columna 'Foto_ID' o 'Foto' tiene el ID del archivo en Drive, lo usa. 
+                // De lo contrario, busca la miniatura usando el legajo o muestra el logo por defecto.
+                const fileId = row['Foto_ID'] || row['ID_Drive'] || row['Foto'] || '';
+                const fotoUrl = fileId 
+                    ? `https://lh3.googleusercontent.com/d/${fileId}` 
+                    : `https://raw.githubusercontent.com/PabloAiello/Dotacion-Moreno/main/logo.jpg`;
+
                 const fechaIngreso = row['Fecha Ingreso'] 
                                   || row['Fecha de Ingreso'] 
                                   || row['Ingreso'] 
@@ -137,7 +158,15 @@
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${row['Legajo'] || ''}</td>
+                    <td style="text-align: center;">
+                        <img 
+                            src="${fotoUrl}" 
+                            alt="${legajoNum}" 
+                            class="foto-legajo-thumb"
+                            onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/PabloAiello/Dotacion-Moreno/main/logo.jpg';"
+                        />
+                    </td>
+                    <td>${legajoNum}</td>
                     <td>${row['Apellido y Nombre'] || row['Nombre'] || ''}</td>
                     <td>${fechaIngreso}</td>
                     <td>${row['Sector'] || ''}</td>
