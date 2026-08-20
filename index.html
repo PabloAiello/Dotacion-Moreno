@@ -168,7 +168,7 @@
             }
         }
 
-        // Función para limpiar y extraer el ID de Google Drive aunque contenga la URL entera
+        // Extrae un ID válido de Google Drive desde URLs completas o cadenas de ID
         function obtenerDriveId(valor) {
             if (!valor) return '';
             const match = valor.match(/[-\w]{25,}/);
@@ -182,11 +182,13 @@
             data.forEach(row => {
                 const legajoNum = row['Legajo'] || '';
                 
-                // Lee el campo de la foto, limpia el ID y utiliza la API pública de miniaturas de Google Drive
+                // Lee el ID de Drive de la planilla
                 const rawFoto = row['Foto_ID'] || row['ID_Drive'] || row['Foto'] || row['FOTO'] || '';
                 const driveId = obtenerDriveId(rawFoto);
+                
+                // Usa el enlace de acceso directo directo mediante CDN de imágenes de Google
                 const fotoUrl = driveId 
-                    ? `https://drive.google.com/thumbnail?sz=w200&id=${driveId}` 
+                    ? `https://lh3.googleusercontent.com/d/${driveId}=s200` 
                     : `https://raw.githubusercontent.com/PabloAiello/Dotacion-Moreno/main/logo.jpg`;
 
                 const fechaIngreso = row['Fecha Ingreso'] 
@@ -204,6 +206,7 @@
                             src="${fotoUrl}" 
                             alt="${legajoNum}" 
                             class="foto-legajo-thumb"
+                            referrerpolicy="no-referrer"
                             onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/PabloAiello/Dotacion-Moreno/main/logo.jpg';"
                         />
                     </td>
