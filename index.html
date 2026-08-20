@@ -168,6 +168,13 @@
             }
         }
 
+        // Función para limpiar y extraer el ID de Google Drive aunque contenga la URL entera
+        function obtenerDriveId(valor) {
+            if (!valor) return '';
+            const match = valor.match(/[-\w]{25,}/);
+            return match ? match[0] : valor.trim();
+        }
+
         function renderizarTabla(data) {
             const tbody = document.getElementById('tablaCuerpo');
             tbody.innerHTML = '';
@@ -175,9 +182,11 @@
             data.forEach(row => {
                 const legajoNum = row['Legajo'] || '';
                 
-                const fileId = row['Foto_ID'] || row['ID_Drive'] || row['Foto'] || '';
-                const fotoUrl = fileId 
-                    ? `https://lh3.googleusercontent.com/d/${fileId}` 
+                // Lee el campo de la foto, limpia el ID y utiliza la API pública de miniaturas de Google Drive
+                const rawFoto = row['Foto_ID'] || row['ID_Drive'] || row['Foto'] || row['FOTO'] || '';
+                const driveId = obtenerDriveId(rawFoto);
+                const fotoUrl = driveId 
+                    ? `https://drive.google.com/thumbnail?sz=w200&id=${driveId}` 
                     : `https://raw.githubusercontent.com/PabloAiello/Dotacion-Moreno/main/logo.jpg`;
 
                 const fechaIngreso = row['Fecha Ingreso'] 
@@ -260,7 +269,6 @@
             container.appendChild(totalRow);
         }
 
-        // Genera botones dinámicamente según los sectores detectados en la plantilla
         function generarBotonesSectores(data) {
             const sectores = [...new Set(data.map(item => (item['Sector'] || 'SIN ESPECIFICAR').trim()))].sort();
             const contenedor = document.getElementById('sectorButtons');
@@ -268,7 +276,6 @@
 
             contenedor.innerHTML = '';
 
-            // Botón para restaurar la vista completa
             const btnTodos = document.createElement('button');
             btnTodos.className = 'btn-sector active';
             btnTodos.textContent = 'Todos los sectores';
@@ -284,11 +291,9 @@
             });
         }
 
-        // Filtra las filas de la tabla por sector
         function filtrarPorSector(sectorNombre, btnSeleccionado) {
-            document.getElementById('searchInput').value = ''; // Limpia el cuadro de texto
+            document.getElementById('searchInput').value = '';
             
-            // Marca de manera visual el botón presionado
             const botones = document.querySelectorAll('.btn-sector');
             botones.forEach(b => b.classList.remove('active'));
             if (btnSeleccionado) btnSeleccionado.classList.add('active');
@@ -300,7 +305,6 @@
             const totalCount = tr.length - 1;
 
             for (let i = 1; i < tr.length; i++) {
-                // Índice 4 es la celda de 'Sector' (0: Foto, 1: Legajo, 2: Apellido, 3: Fecha, 4: Sector)
                 const celdaSector = tr[i].getElementsByTagName('td')[4];
                 if (celdaSector) {
                     const textoSector = (celdaSector.textContent || celdaSector.innerText).trim().toLowerCase();
@@ -317,7 +321,6 @@
         }
 
         function filtrarTabla() {
-            // Remueve el resaltado de botones si se usa la búsqueda manual por texto
             const botones = document.querySelectorAll('.btn-sector');
             botones.forEach(b => b.classList.remove('active'));
 
