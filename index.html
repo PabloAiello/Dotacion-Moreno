@@ -1,238 +1,1292 @@
+<!DOCTYPE html>
+<html lang="es">
+
 <head>
+
     <script>
+        // CONTROL DE SESIÓN
         if (sessionStorage.getItem('authenticated') !== 'true') {
             window.location.href = 'login.html';
         }
     </script>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
     <title>Dotación Pendiente - Sede Moreno</title>
-    ...
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dotación Pendiente - Sede Moreno</title>
+
     <link rel="stylesheet" href="styles.css">
+
 </head>
+
 <body>
 
+    <!-- ============================= -->
+    <!-- ENCABEZADO -->
+    <!-- ============================= -->
+
     <div class="header">
-        <img src="logo.jpg" alt="Logo Nini" class="header-logo">
+
+        <img src="logo.jpg"
+             alt="Logo Nini"
+             class="header-logo">
+
         <h1>DOTACIÓN PENDIENTE – SEDE MORENO</h1>
+
         <p>Seguimiento operativo mapeado dinámicamente</p>
-        
+
         <div class="navigation-links">
-            <a href="nomina-julio.html" class="btn-nav">📊 Nómina Septiembre</a>
-            <a href="bajas.html" class="btn-nav">🔻 Bajas</a>
+
+            <a href="nomina-julio.html"
+               class="btn-nav">
+                📊 Nómina Septiembre
+            </a>
+
+            <a href="bajas.html"
+               class="btn-nav">
+                🔻 Bajas
+            </a>
+
         </div>
+
     </div>
 
-    <!-- Indicadores Generales -->
+
+    <!-- ============================= -->
+    <!-- INDICADORES -->
+    <!-- ============================= -->
+
     <div class="metrics-grid">
+
         <div class="metric-card">
             <h4>👥 Presupuestado</h4>
-            <div class="value" id="totalPresupuestado">0</div>
-        </div>
-        <div class="metric-card">
-            <h4>✅ Tenemos</h4>
-            <div class="value" id="totalTenemos" style="color: #0056b3;">0</div>
-        </div>
-        <div class="metric-card">
-            <h4>🔻 Bajas</h4>
-            <div class="value" id="totalBajas" style="color: #d9534f;">0</div>
-        </div>
-        <div class="metric-card">
-            <h4>🏥 Médico</h4>
-            <div class="value" id="totalMedico" style="color: #8e44ad;">0</div>
-        </div>
-        <div class="metric-card">
-            <h4>👍 Aptos</h4>
-            <div class="value" id="totalAptos" style="color: #f39c12;">0</div>
-        </div>
-        <div class="metric-card">
-            <h4>🔴 Falta</h4>
-            <div class="value" id="totalFalta" style="color: #c0392b;">0</div>
-        </div>
-        <div class="metric-card">
-            <h4>📊 % Cobertura</h4>
-            <div class="value" id="totalCobertura" style="color: #27ae60;">0%</div>
-        </div>
-    </div>
-
-    <!-- Tabla con Filtro de Sectores -->
-    <div class="table-container">
-        <div class="filter-bar">
-            <div class="filter-group">
-                <label for="sectorFilter">🔍 Filtrar por Sector:</label>
-                <select id="sectorFilter" onchange="filterTable()">
-                    <option value="ALL">Todos los sectores</option>
-                </select>
+            <div class="value"
+                 id="totalPresupuestado">
+                0
             </div>
         </div>
 
-        <div class="table-wrapper">
-            <table id="dataTable">
-                <thead>
-                    <tr>
-                        <th>SECTOR</th>
-                        <th>PUESTO</th>
-                        <th>TENEMOS</th>
-                        <th>PRESUPUESTADO</th>
-                        <th>BAJAS</th>
-                        <th>MÉDICO</th>
-                        <th>APTOS</th>
-                        <th>FALTA</th>
-                        <th>PRIORIDAD</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <!-- Filas generadas dinámicamente -->
-                </tbody>
-            </table>
+        <div class="metric-card">
+            <h4>✅ Tenemos</h4>
+            <div class="value"
+                 id="totalTenemos"
+                 style="color:#0056b3;">
+                0
+            </div>
         </div>
+
+        <div class="metric-card">
+            <h4>🔻 Bajas</h4>
+            <div class="value"
+                 id="totalBajas"
+                 style="color:#d9534f;">
+                0
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <h4>🏥 Médico</h4>
+            <div class="value"
+                 id="totalMedico"
+                 style="color:#8e44ad;">
+                0
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <h4>👍 Aptos</h4>
+            <div class="value"
+                 id="totalAptos"
+                 style="color:#f39c12;">
+                0
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <h4>🔴 Falta</h4>
+            <div class="value"
+                 id="totalFalta"
+                 style="color:#c0392b;">
+                0
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <h4>📊 % Cobertura</h4>
+            <div class="value"
+                 id="totalCobertura"
+                 style="color:#27ae60;">
+                0%
+            </div>
+        </div>
+
     </div>
 
-    <script>
-        // Enlace directo en formato CSV con el ID específico de la solapa BUSQUEDAS
-        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdBqkbpAzCq6Lw_jPa_Up8HWXE9_ZfGehz55oNvoT-WVwrD_J8Yqw1_OotD55NAw/pub?gid=1030521285&single=true&output=csv";
 
-        let dotacionParsed = [];
+    <!-- ============================= -->
+    <!-- TABLA -->
+    <!-- ============================= -->
 
-        async function fetchDriveData() {
-            try {
-                const response = await fetch(SHEET_CSV_URL);
-                const csvText = await response.text();
-                dotacionParsed = parseCSV(csvText);
-                renderTable(dotacionParsed);
-                populateSectorFilter(dotacionParsed);
-                calcularMetricas(dotacionParsed);
-            } catch (error) {
-                console.error("Error al cargar los datos desde Google Drive:", error);
+    <div class="table-container">
+
+        <div class="filter-bar">
+
+            <div class="filter-group">
+
+                <label for="sectorFilter">
+                    🔍 Filtrar por Sector:
+                </label>
+
+                <select id="sectorFilter"
+                        onchange="filterTable()">
+
+                    <option value="ALL">
+                        Todos los sectores
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table id="dataTable">
+
+                <thead>
+
+                    <tr>
+
+                        <th>SECTOR</th>
+
+                        <th>PUESTO</th>
+
+                        <th>TENEMOS</th>
+
+                        <th>PRESUPUESTADO</th>
+
+                        <th>BAJAS</th>
+
+                        <th>MÉDICO</th>
+
+                        <th>APTOS</th>
+
+                        <th>FALTA</th>
+
+                        <th>PRIORIDAD</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="tableBody">
+
+                    <!--
+                    Las filas se generan
+                    automáticamente desde Google Sheets
+                    -->
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+
+<script>
+
+/* =========================================================
+   GOOGLE SHEETS
+========================================================= */
+
+const SHEET_CSV_URL =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vSdBqkbpAzCq6Lw_jPa_Up8HWXE9_ZfGehz55oNvoT-WVwrD_J8Yqw1_OotD55NAw/pub?gid=1030521285&single=true&output=csv";
+
+
+let dotacionParsed = [];
+
+
+/* =========================================================
+   CARGAR INFORMACIÓN
+========================================================= */
+
+async function fetchDriveData() {
+
+    try {
+
+        const response = await fetch(
+            SHEET_CSV_URL + "&t=" + new Date().getTime(),
+            {
+                cache: "no-store"
             }
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "No se pudo cargar Google Sheets"
+            );
+
         }
 
-        function parseCSVLine(line) {
-            const result = [];
-            let current = '';
-            let inQuotes = false;
-            for (let i = 0; i < line.length; i++) {
-                const char = line[i];
-                if (char === '"') {
-                    inQuotes = !inQuotes;
-                } else if ((char === ',' || char === '\t') && !inQuotes) {
-                    result.push(current.trim());
-                    current = '';
-                } else {
-                    current += char;
-                }
-            }
-            result.push(current.trim());
-            return result;
-        }
 
-        function parseCSV(text) {
-            const lines = text.trim().split('\n');
-            const data = [];
-            
-            const startIndex = lines[0].toLowerCase().includes('sector') ? 1 : 0;
+        const csvText = await response.text();
 
-            for (let i = startIndex; i < lines.length; i++) {
-                if (!lines[i].trim()) continue;
-                const cols = parseCSVLine(lines[i]);
-                if (cols.length >= 2) {
-                    data.push({
-                        sector: cols[0] ? cols[0].replace(/^"(.*)"$/, '$1') : '',
-                        puesto: cols[1] ? cols[1].replace(/^"(.*)"$/, '$1') : '',
-                        tenemos: parseInt(cols[2]) || 0,
-                        presupuestado: parseInt(cols[3]) || 0,
-                        bajas: parseInt(cols[5]) || 0,
-                        medico: parseInt(cols[7]) || 0,
-                        aptos: parseInt(cols[8]) || 0,
-                        falta: parseInt(cols[9]) || 0,
-                        prioridad: cols[11] ? cols[11].replace(/^"(.*)"$/, '$1') : 'Baja'
-                    });
-                }
-            }
-            return data.filter(item => item.sector !== '');
-        }
 
-        document.addEventListener('DOMContentLoaded', fetchDriveData);
+        console.log(
+            "CSV recibido:",
+            csvText
+        );
 
-        function renderTable(data) {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
 
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.setAttribute('data-sector', row.sector);
+        dotacionParsed =
+            parseCSV(csvText);
 
-                let badgeClass = 'badge-baja';
-                const prio = (row.prioridad || '').toLowerCase();
-                if (prio === 'alta') badgeClass = 'badge-alta';
-                if (prio === 'media') badgeClass = 'badge-media';
 
-                tr.innerHTML = `
-                    <td>${row.sector}</td>
-                    <td>${row.puesto}</td>
-                    <td>${row.tenemos}</td>
-                    <td>${row.presupuestado}</td>
-                    <td>${row.bajas}</td>
-                    <td>${row.medico}</td>
-                    <td>${row.aptos}</td>
-                    <td>${row.falta}</td>
-                    <td><span class="${badgeClass}">${row.prioridad || 'Baja'}</span></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+        console.log(
+            "Datos procesados:",
+            dotacionParsed
+        );
 
-        function populateSectorFilter(data) {
-            const select = document.getElementById('sectorFilter');
-            select.innerHTML = '<option value="ALL">Todos los sectores</option>';
-            const sectores = new Set(data.map(item => item.sector));
 
-            sectores.forEach(sec => {
-                const option = document.createElement('option');
-                option.value = sec;
-                option.textContent = sec;
-                select.appendChild(option);
-            });
-        }
+        renderTable(
+            dotacionParsed
+        );
 
-        function calcularMetricas(data) {
-            let tenemos = 0, presupuestado = 0, bajas = 0, medico = 0, aptos = 0, falta = 0;
 
-            data.forEach(item => {
-                tenemos += item.tenemos;
-                presupuestado += item.presupuestado;
-                bajas += item.bajas;
-                medico += item.medico;
-                aptos += item.aptos;
-                falta += item.falta;
-            });
+        populateSectorFilter(
+            dotacionParsed
+        );
 
-            document.getElementById('totalTenemos').textContent = tenemos;
-            document.getElementById('totalPresupuestado').textContent = presupuestado;
-            document.getElementById('totalBajas').textContent = bajas;
-            document.getElementById('totalMedico').textContent = medico;
-            document.getElementById('totalAptos').textContent = aptos;
-            document.getElementById('totalFalta').textContent = falta;
 
-            const cobertura = presupuestado > 0 ? ((tenemos / presupuestado) * 100).toFixed(1) : 0;
-            document.getElementById('totalCobertura').textContent = cobertura + '%';
-        }
+        calcularMetricas(
+            dotacionParsed
+        );
 
-        function filterTable() {
-            const filterValue = document.getElementById('sectorFilter').value;
-            if (filterValue === 'ALL') {
-                renderTable(dotacionParsed);
+
+    } catch (error) {
+
+        console.error(
+            "Error al cargar los datos:",
+            error
+        );
+
+        document.getElementById(
+            "tableBody"
+        ).innerHTML = `
+
+            <tr>
+
+                <td colspan="9"
+                    style="
+                    text-align:center;
+                    padding:30px;
+                    color:red;
+                    ">
+
+                    No se pudieron cargar
+                    los datos de Google Sheets.
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+}
+
+
+
+/* =========================================================
+   PARSER CSV
+   Lee correctamente comas dentro de comillas
+========================================================= */
+
+function parseCSVLine(line) {
+
+    const result = [];
+
+    let current = "";
+
+    let inQuotes = false;
+
+
+    for (
+        let i = 0;
+        i < line.length;
+        i++
+    ) {
+
+        const char =
+            line[i];
+
+
+        if (char === '"') {
+
+            /*
+            Si estamos dentro de comillas
+            y aparece "", significa
+            una comilla escapada.
+            */
+
+            if (
+                inQuotes &&
+                line[i + 1] === '"'
+            ) {
+
+                current += '"';
+
+                i++;
+
             } else {
-                const filtered = dotacionParsed.filter(item => item.sector === filterValue);
-                renderTable(filtered);
+
+                inQuotes =
+                    !inQuotes;
+
             }
+
         }
-    </script>
+
+        else if (
+            char === "," &&
+            !inQuotes
+        ) {
+
+            result.push(
+                current.trim()
+            );
+
+            current = "";
+
+        }
+
+        else {
+
+            current += char;
+
+        }
+
+    }
+
+
+    result.push(
+        current.trim()
+    );
+
+
+    return result;
+
+}
+
+
+
+/* =========================================================
+   NORMALIZAR ENCABEZADOS
+
+   MÉDICO = MEDICO
+   Presupuestado = PRESUPUESTADO
+========================================================= */
+
+function normalizarTexto(texto) {
+
+    return String(
+        texto || ""
+    )
+
+    .normalize("NFD")
+
+    .replace(
+        /[\u0300-\u036f]/g,
+        ""
+    )
+
+    .trim()
+
+    .toUpperCase();
+
+}
+
+
+
+/* =========================================================
+   CONVERTIR NÚMEROS
+========================================================= */
+
+function convertirNumero(valor) {
+
+    if (
+        valor === null ||
+        valor === undefined ||
+        valor === ""
+    ) {
+
+        return 0;
+
+    }
+
+
+    let limpio =
+        String(valor)
+
+        .replace(/"/g, "")
+
+        .trim();
+
+
+    /*
+    Si el dato fuera:
+    1.250
+    lo convierte a 1250
+    */
+
+    if (
+        /^\d{1,3}(\.\d{3})+$/.test(
+            limpio
+        )
+    ) {
+
+        limpio =
+            limpio.replace(
+                /\./g,
+                ""
+            );
+
+    }
+
+
+    /*
+    Si usa coma decimal:
+    10,5
+    */
+
+    limpio =
+        limpio.replace(
+            ",",
+            "."
+        );
+
+
+    const numero =
+        Number(limpio);
+
+
+    return Number.isFinite(numero)
+        ? numero
+        : 0;
+
+}
+
+
+
+/* =========================================================
+   PROCESAR CSV
+========================================================= */
+
+function parseCSV(text) {
+
+    const lines =
+        text
+        .replace(/\r/g, "")
+        .trim()
+        .split("\n");
+
+
+    if (
+        lines.length < 2
+    ) {
+
+        console.error(
+            "El archivo no tiene suficientes filas"
+        );
+
+        return [];
+
+    }
+
+
+    /* ===============================
+       ENCABEZADOS
+    =============================== */
+
+    const headers =
+        parseCSVLine(
+            lines[0]
+        ).map(
+            normalizarTexto
+        );
+
+
+    console.log(
+        "ENCABEZADOS DETECTADOS:",
+        headers
+    );
+
+
+
+    /* ===============================
+       BUSCAR COLUMNA POR NOMBRE
+    =============================== */
+
+    function buscarColumna(
+        ...posiblesNombres
+    ) {
+
+        for (
+            const nombre
+            of posiblesNombres
+        ) {
+
+            const buscado =
+                normalizarTexto(
+                    nombre
+                );
+
+
+            const index =
+                headers.indexOf(
+                    buscado
+                );
+
+
+            if (
+                index !== -1
+            ) {
+
+                return index;
+
+            }
+
+        }
+
+
+        return -1;
+
+    }
+
+
+
+    /* ===============================
+       UBICACIÓN AUTOMÁTICA
+       DE LAS COLUMNAS
+    =============================== */
+
+    const idxSector =
+        buscarColumna(
+            "SECTOR"
+        );
+
+
+    const idxPuesto =
+        buscarColumna(
+            "PUESTO"
+        );
+
+
+    const idxTenemos =
+        buscarColumna(
+            "TENEMOS"
+        );
+
+
+    const idxPresupuestado =
+        buscarColumna(
+            "PRESUPUESTADO",
+            "PRESUPUESTO"
+        );
+
+
+    const idxBajas =
+        buscarColumna(
+            "BAJAS",
+            "BAJA"
+        );
+
+
+    const idxMedico =
+        buscarColumna(
+            "MEDICO",
+            "MÉDICO"
+        );
+
+
+    const idxAptos =
+        buscarColumna(
+            "APTOS",
+            "APTO"
+        );
+
+
+    const idxFalta =
+        buscarColumna(
+            "FALTA",
+            "FALTAN",
+            "FALTANTE"
+        );
+
+
+    const idxPrioridad =
+        buscarColumna(
+            "PRIORIDAD"
+        );
+
+
+
+    console.log(
+        "COLUMNAS DETECTADAS:",
+        {
+
+            sector:
+                idxSector,
+
+            puesto:
+                idxPuesto,
+
+            tenemos:
+                idxTenemos,
+
+            presupuestado:
+                idxPresupuestado,
+
+            bajas:
+                idxBajas,
+
+            medico:
+                idxMedico,
+
+            aptos:
+                idxAptos,
+
+            falta:
+                idxFalta,
+
+            prioridad:
+                idxPrioridad
+
+        }
+    );
+
+
+
+    /* ===============================
+       FUNCIONES AUXILIARES
+    =============================== */
+
+    function obtenerTexto(
+        columnas,
+        indice,
+        defecto = ""
+    ) {
+
+        if (
+            indice === -1
+        ) {
+
+            return defecto;
+
+        }
+
+
+        return String(
+            columnas[indice] || ""
+        )
+
+        .replace(
+            /^"(.*)"$/,
+            "$1"
+        )
+
+        .trim();
+
+    }
+
+
+
+    function obtenerNumero(
+        columnas,
+        indice
+    ) {
+
+        if (
+            indice === -1
+        ) {
+
+            return 0;
+
+        }
+
+
+        return convertirNumero(
+            columnas[indice]
+        );
+
+    }
+
+
+
+    /* ===============================
+       CREAR DATOS
+    =============================== */
+
+    const data = [];
+
+
+    for (
+        let i = 1;
+        i < lines.length;
+        i++
+    ) {
+
+
+        if (
+            !lines[i].trim()
+        ) {
+
+            continue;
+
+        }
+
+
+        const columnas =
+            parseCSVLine(
+                lines[i]
+            );
+
+
+        const item = {
+
+            sector:
+                obtenerTexto(
+                    columnas,
+                    idxSector
+                ),
+
+            puesto:
+                obtenerTexto(
+                    columnas,
+                    idxPuesto
+                ),
+
+            tenemos:
+                obtenerNumero(
+                    columnas,
+                    idxTenemos
+                ),
+
+            presupuestado:
+                obtenerNumero(
+                    columnas,
+                    idxPresupuestado
+                ),
+
+            bajas:
+                obtenerNumero(
+                    columnas,
+                    idxBajas
+                ),
+
+            medico:
+                obtenerNumero(
+                    columnas,
+                    idxMedico
+                ),
+
+            aptos:
+                obtenerNumero(
+                    columnas,
+                    idxAptos
+                ),
+
+            falta:
+                obtenerNumero(
+                    columnas,
+                    idxFalta
+                ),
+
+            prioridad:
+                obtenerTexto(
+                    columnas,
+                    idxPrioridad,
+                    "Baja"
+                )
+
+        };
+
+
+        /*
+        Solo agregamos filas
+        que tengan Sector
+        */
+
+        if (
+            item.sector !== ""
+        ) {
+
+            data.push(
+                item
+            );
+
+        }
+
+    }
+
+
+    return data;
+
+}
+
+
+
+/* =========================================================
+   MOSTRAR TABLA
+========================================================= */
+
+function renderTable(data) {
+
+    const tbody =
+        document.getElementById(
+            "tableBody"
+        );
+
+
+    tbody.innerHTML = "";
+
+
+    if (
+        data.length === 0
+    ) {
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td colspan="9"
+                    style="
+                    text-align:center;
+                    padding:30px;
+                    ">
+
+                    No hay información
+                    para mostrar.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+
+    data.forEach(
+        row => {
+
+            const tr =
+                document.createElement(
+                    "tr"
+                );
+
+
+            tr.setAttribute(
+                "data-sector",
+                row.sector
+            );
+
+
+
+            /* PRIORIDAD */
+
+            let badgeClass =
+                "badge-baja";
+
+
+            const prioridad =
+                normalizarTexto(
+                    row.prioridad
+                );
+
+
+            if (
+                prioridad === "ALTA"
+            ) {
+
+                badgeClass =
+                    "badge-alta";
+
+            }
+
+            else if (
+                prioridad === "MEDIA"
+            ) {
+
+                badgeClass =
+                    "badge-media";
+
+            }
+
+
+
+            tr.innerHTML = `
+
+                <td>
+                    ${row.sector}
+                </td>
+
+                <td>
+                    ${row.puesto}
+                </td>
+
+                <td>
+                    ${row.tenemos}
+                </td>
+
+                <td>
+                    ${row.presupuestado}
+                </td>
+
+                <td>
+                    ${row.bajas}
+                </td>
+
+                <td>
+                    ${row.medico}
+                </td>
+
+                <td>
+                    ${row.aptos}
+                </td>
+
+                <td>
+                    ${row.falta}
+                </td>
+
+                <td>
+
+                    <span class="${badgeClass}">
+
+                        ${row.prioridad || "Baja"}
+
+                    </span>
+
+                </td>
+
+            `;
+
+
+            tbody.appendChild(
+                tr
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   CREAR FILTRO DE SECTORES
+========================================================= */
+
+function populateSectorFilter(data) {
+
+    const select =
+        document.getElementById(
+            "sectorFilter"
+        );
+
+
+    select.innerHTML = `
+
+        <option value="ALL">
+            Todos los sectores
+        </option>
+
+    `;
+
+
+
+    const sectores =
+        [
+
+            ...new Set(
+
+                data
+
+                .map(
+                    item =>
+                        item.sector
+                )
+
+                .filter(
+                    Boolean
+                )
+
+            )
+
+        ];
+
+
+    /*
+    Orden alfabético
+    */
+
+    sectores.sort(
+        (a, b) =>
+            a.localeCompare(
+                b,
+                "es"
+            )
+    );
+
+
+
+    sectores.forEach(
+        sector => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                sector;
+
+
+            option.textContent =
+                sector;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   CALCULAR MÉTRICAS
+========================================================= */
+
+function calcularMetricas(data) {
+
+    let tenemos = 0;
+
+    let presupuestado = 0;
+
+    let bajas = 0;
+
+    let medico = 0;
+
+    let aptos = 0;
+
+    let falta = 0;
+
+
+
+    data.forEach(
+        item => {
+
+            tenemos +=
+                Number(
+                    item.tenemos
+                ) || 0;
+
+
+            presupuestado +=
+                Number(
+                    item.presupuestado
+                ) || 0;
+
+
+            bajas +=
+                Number(
+                    item.bajas
+                ) || 0;
+
+
+            medico +=
+                Number(
+                    item.medico
+                ) || 0;
+
+
+            aptos +=
+                Number(
+                    item.aptos
+                ) || 0;
+
+
+            falta +=
+                Number(
+                    item.falta
+                ) || 0;
+
+        }
+    );
+
+
+
+    document.getElementById(
+        "totalTenemos"
+    ).textContent =
+        tenemos;
+
+
+
+    document.getElementById(
+        "totalPresupuestado"
+    ).textContent =
+        presupuestado;
+
+
+
+    document.getElementById(
+        "totalBajas"
+    ).textContent =
+        bajas;
+
+
+
+    document.getElementById(
+        "totalMedico"
+    ).textContent =
+        medico;
+
+
+
+    document.getElementById(
+        "totalAptos"
+    ).textContent =
+        aptos;
+
+
+
+    document.getElementById(
+        "totalFalta"
+    ).textContent =
+        falta;
+
+
+
+    /* ===============================
+       COBERTURA ACTUAL
+    =============================== */
+
+    let cobertura = 0;
+
+
+    if (
+        presupuestado > 0
+    ) {
+
+        cobertura =
+            (
+                tenemos /
+                presupuestado *
+                100
+            ).toFixed(1);
+
+    }
+
+
+    document.getElementById(
+        "totalCobertura"
+    ).textContent =
+        cobertura + "%";
+
+}
+
+
+
+/* =========================================================
+   FILTRAR TABLA
+========================================================= */
+
+function filterTable() {
+
+    const filtro =
+        document.getElementById(
+            "sectorFilter"
+        ).value;
+
+
+
+    if (
+        filtro === "ALL"
+    ) {
+
+        renderTable(
+            dotacionParsed
+        );
+
+
+        calcularMetricas(
+            dotacionParsed
+        );
+
+    }
+
+    else {
+
+        const filtrados =
+            dotacionParsed.filter(
+                item =>
+                    item.sector === filtro
+            );
+
+
+        renderTable(
+            filtrados
+        );
+
+
+        /*
+        AHORA LOS INDICADORES
+        TAMBIÉN CAMBIAN SEGÚN
+        EL SECTOR SELECCIONADO
+        */
+
+        calcularMetricas(
+            filtrados
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   INICIAR
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    fetchDriveData
+);
+
+</script>
+
+
 </body>
+
 </html>
